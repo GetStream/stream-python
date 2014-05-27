@@ -23,10 +23,12 @@ def connect(api_key, api_secret):
 '''
 TODO:
 
-pk_gt and pk_gte seems to have the same output (pk_gt doesnt always work)
+- pk_gt and pk_gte seems to have the same output (pk_gt doesnt always work)
+- follow sometimes breaks
 
-Test coverage
-Pypi entry
-Read the docs
-Travis setup
+- test coverage
+- read the docs
+
+- Api & Code review Tommaso
+- Update getstream.io/docs page
 '''
