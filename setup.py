@@ -6,7 +6,7 @@ from setuptools.command.test import test as TestCommand
 from feedly import __version__, __maintainer__, __email__
 import sys
 
-long_description = open('README.md').read()
+long_description = open('README.rst').read()
 
 tests_require = [
     'mock',
