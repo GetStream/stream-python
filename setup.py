@@ -3,7 +3,7 @@
 
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
-from feedly import __version__, __maintainer__, __email__
+from stream import __version__, __maintainer__, __email__
 import sys
 
 long_description = open('README.rst').read()
@@ -16,7 +16,7 @@ tests_require = [
 ]
 
 install_requires = [
-    'requests',
+    'requests>=2.3.0',
 ]
 
 
