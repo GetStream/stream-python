@@ -23,14 +23,10 @@ def connect(api_key, api_secret):
 '''
 TODO:
 
-Simplify signing (tommaso please check)
 pk_gt and pk_gte seems to have the same output (pk_gt doesnt always work)
-follow functionality doesnt work
 
 Test coverage
-Documentation
 Pypi entry
-Github
 Read the docs
 Travis setup
 '''
