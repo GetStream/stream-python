@@ -1,18 +1,17 @@
 
 
-
 class StreamApiException(Exception):
 
     def __init__(self, error_message, status_code=None):
         self.detail = error_message
         if status_code is not None:
             self.status_code = status_code
-            
+
     code = 1
-    
+
     def __repr__(self):
         return '%s (%s)' % (self.__class__.__name__, self.detail)
-    
+
     def __unicode__(self):
         return '%s (%s)' % (self.__class__.__name__, self.detail)
 
@@ -70,7 +69,8 @@ class SiteSuspendedException(StreamApiException):
     '''
     status_code = 401
     code = 7
-    
+
+
 def get_exceptions():
     from stream import exceptions
     classes = []
@@ -83,9 +83,8 @@ def get_exceptions():
             pass
     return classes
 
+
 def get_exception_dict():
     classes = get_exceptions()
     exception_dict = {c.code: c for c in classes}
     return exception_dict
-
-    

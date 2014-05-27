@@ -3,9 +3,8 @@ import stream
 import time
 
 
-
-
 class ClientTest(TestCase):
+
     def setUp(self):
         # DEBUG account details
         self.c = stream.connect(
@@ -51,18 +50,17 @@ class ClientTest(TestCase):
         self.assertEqual(activity_id_found, activity_id)
 
     def _get_first_aggregated_activity(self, activities):
-        print 'activities', activities[0]['activities']
         try:
             return activities[0]['activities'][0]
         except IndexError, e:
             pass
-        
+
     def _get_first_activity(self, activities):
         try:
             return activities[0]
         except IndexError, e:
             pass
-        
+
     def test_unfollow(self):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
         activity_id = self.user1.add_activity(activity_data)['id']

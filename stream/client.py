@@ -3,7 +3,6 @@ from stream import exceptions
 import logging
 from stream.signing import StreamSigner
 from stream.utils import validate_feed
-from simplejson.scanner import JSONDecodeError
 
 logger = logging.getLogger(__name__)
 
@@ -60,10 +59,9 @@ class StreamClient(object):
         '''
         Returns the headers with the signed authorization key
         '''
-        feed = feed.replace(':','')
+        feed = feed.replace(':', '')
         signature = StreamSigner(secret=self.api_secret).signature(feed)
         headers = {'Authorization': '%s %s' % (feed, signature)}
-        print headers
         return headers
 
     def _make_request(self, method, relative_url, feed, params=None, data=None):
@@ -76,14 +74,11 @@ class StreamClient(object):
         headers = self.get_headers(feed)
         url = self.base_url + relative_url
 
-        logger.debug('stream api call %s, headers %s params %s data %s', url, headers, default_params, data)
-        print default_params
-        response = method(url, data=data, headers=headers, params=default_params)
-        try:
-            result = response.json()
-        except JSONDecodeError, e:
-            print 'couldnt not parse json "%s"' % response.text
-            1/0
+        logger.debug('stream api call %s, headers %s params %s data %s',
+                     url, headers, default_params, data)
+        response = method(url, data=data, headers=headers,
+                          params=default_params)
+        result = response.json()
         if result.get('exception'):
             self.raise_exception(result)
         return result
@@ -96,7 +91,8 @@ class StreamClient(object):
         error_message = result['detail']
         error_code = result.get('code')
         exception_dict = get_exception_dict()
-        exception_class = exception_dict.get(error_code, exceptions.StreamApiException)
+        exception_class = exception_dict.get(
+            error_code, exceptions.StreamApiException)
         exception = exception_class(error_message)
         raise exception
 

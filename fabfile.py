@@ -68,6 +68,7 @@ def validate():
             'pep8 --exclude=migrations --ignore=E501,E225 .')
         local('%s test' % manage_py)
 
+
 def clean():
     # all dirs which contain python code
     python_dirs = []
@@ -78,7 +79,6 @@ def clean():
     for d in python_dirs:
         print d
         local('bash -c "autopep8 -i %s/*.py"' % d)
-
 
 
 def docs():

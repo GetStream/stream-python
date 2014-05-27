@@ -2,6 +2,7 @@ from stream.utils import validate_feed
 
 
 class Feed(object):
+
     def __init__(self, client, feed_id):
         '''
         Initializes the Feed class
@@ -15,7 +16,7 @@ class Feed(object):
         self.feed_id = feed_id
         self.feed_url = 'feed/%s/' % feed_id.replace(':', '/')
         self.feed_together = feed_id.replace(':', '')
-    
+
     def add_activity(self, activity_data):
         '''
         Adds an activity to the feed, this will also trigger an update
@@ -28,9 +29,10 @@ class Feed(object):
             activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
             activity_id = feed.add_activity(activity_data)
         '''
-        result = self.client.post(self.feed_url, data=activity_data, feed=self.feed_id)
+        result = self.client.post(
+            self.feed_url, data=activity_data, feed=self.feed_id)
         return result
-    
+
     def remove_activity(self, activity_id):
         '''
         Removes an activity from the feed
@@ -41,7 +43,7 @@ class Feed(object):
         url = self.feed_url + '%s/' % activity_id
         result = self.client.delete(url, feed=self.feed_id)
         return result
-    
+
     def follow(self, target_feed):
         '''
         Follows the given feed
@@ -50,9 +52,10 @@ class Feed(object):
         '''
         validate_feed(target_feed)
         url = self.feed_url + 'follows/'
-        response = self.client.post(url, data=dict(target=target_feed), feed=self.feed_id)
+        response = self.client.post(
+            url, data=dict(target=target_feed), feed=self.feed_id)
         return response
-    
+
     def unfollow(self, target_feed):
         '''
         Unfollow the given feed
@@ -74,7 +77,6 @@ class Feed(object):
             # slow pagination using offset
             feed.get(limit=10, offset=10)
         '''
-        response = self.client.get(self.feed_url, params=params, feed=self.feed_id)
+        response = self.client.get(
+            self.feed_url, params=params, feed=self.feed_id)
         return response
-    
-    

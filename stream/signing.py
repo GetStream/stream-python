@@ -28,5 +28,3 @@ class StreamSigner(object):
         signed = hmac.new(key, msg=str(value), digestmod=hashlib.sha1)
         signature = b64_encode(signed.digest())
         return str(signature)
-
-
