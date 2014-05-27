@@ -16,9 +16,10 @@ stream-python is a Python client for `Stream <https://getstream.io/>`_.
     # Instantiate a feed object
     user_feed_1 = client.feed('user:1')
 
-    # Get activities from 5 to 10
+    # Get activities from 5 to 10 (slow pagination)
     result = user_feed_1.get(limit=5, offset=5)
-    activities = result['activities']
+    # (Recommended) Use the faster pk_lt type of pagination
+    result = user_feed_1.get(limit=5, pk_lt=112334)
     
     # Create a new activity
     activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
