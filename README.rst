@@ -32,6 +32,16 @@ stream-python is a Python client for `Stream <https://getstream.io/>`_.
 
     # Stop following another feed
     user_feed_1.unfollow('flat:42')
+    
+    
+Docs are available on `GetStream.io`_.
+
+.. _GetStream.io: http://getstream.io/docs/
+
+
+API docs are on `Read the docs`_.
+
+.. _Read the docs: http://stream-python.readthedocs.org/en/latest/
 
 
 Installation
