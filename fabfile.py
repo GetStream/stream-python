@@ -82,5 +82,4 @@ def clean():
 
 
 def docs():
-    local('sphinx-build -Eav docs_public html')
-    local('python manage.py build_docs')
+    local('sphinx-build -Eav docs html')
