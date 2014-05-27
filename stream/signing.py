@@ -7,24 +7,20 @@ def b64_encode(s):
     return base64.urlsafe_b64encode(s).strip(b'=')
 
 
-class StreamSigner(object):
-
+def sign(secret, value):
     '''
-    Simplified stream signer which doesnt rely on Django
+    Base64 encoded sha1 signature
+    
+    :param secret: the secret
+    :param value: the value to sign (commonly a feed id such as user:1)
     
     **Example**::
-        signature = StreamSigner(secret).sign(feed)
+        signature = sign('secret', 'user:1')
     
-    In essence it does
-    - hmac.new
-    - base64 encoded
     '''
+    key = hashlib.sha1((secret).encode('utf-8')).digest()
+    signed = hmac.new(key, msg=str(value), digestmod=hashlib.sha1)
+    signature = b64_encode(signed.digest())
+    return str(signature)
 
-    def __init__(self, secret):
-        self.secret = secret
 
-    def signature(self, value):
-        key = hashlib.sha1((self.secret).encode('utf-8')).digest()
-        signed = hmac.new(key, msg=str(value), digestmod=hashlib.sha1)
-        signature = b64_encode(signed.digest())
-        return str(signature)

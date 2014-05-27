@@ -1,7 +1,7 @@
 import requests
 from stream import exceptions
 import logging
-from stream.signing import StreamSigner
+from stream.signing import sign
 from stream.utils import validate_feed
 
 logger = logging.getLogger(__name__)
@@ -60,7 +60,7 @@ class StreamClient(object):
         Returns the headers with the signed authorization key
         '''
         feed = feed.replace(':', '')
-        signature = StreamSigner(secret=self.api_secret).signature(feed)
+        signature = sign(self.api_secret, feed)
         headers = {'Authorization': '%s %s' % (feed, signature)}
         return headers
 
