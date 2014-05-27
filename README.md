@@ -1,4 +1,9 @@
-stream-python
-=============
+Stream client
+-------------
 
-Python client for Stream
+
+
+## Running tests ##
+
+py.test stream/tests.py
+
