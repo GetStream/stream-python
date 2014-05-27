@@ -1,11 +1,11 @@
 stream-python
 =========
 
-.. image:: https://secure.travis-ci.org/tbarbugli/stream-php.png?branch=master
-   :target: http://travis-ci.org/tbarbugli/stream-php
+.. image:: https://circleci.com/gh/tschellenbach/stream-python.png?circle-token=ca08d1aa53fd4f9c3255a89bde5cb08c59b9586a
+   :target: https://circleci.com/gh/tschellenbach/stream-python/tree/master
 
 
-stream-php is a Python client for `Stream <https://getstream.io/>`_.
+stream-python is a Python client for `Stream <https://getstream.io/>`_.
 
 .. code-block:: python
 
