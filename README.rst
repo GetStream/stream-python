@@ -65,5 +65,7 @@ First, make sure you can run the test suite. Tests are run via py.test
 ::
 
 py.test stream/tests.py
+# with coverage
+py.test stream/tests.py --cov stream --cov-report html
 
 
