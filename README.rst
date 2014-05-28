@@ -62,12 +62,12 @@ Contributing
 
 First, make sure you can run the test suite. Tests are run via py.test
 
-::
+.. code-block:: bash
 
-py.test stream/tests.py
-# with coverage
-py.test stream/tests.py --cov stream --cov-report html
-# against a local API backend
-LOCAL=true py.test stream/tests.py
+    py.test stream/tests.py
+    # with coverage
+    py.test stream/tests.py --cov stream --cov-report html
+    # against a local API backend
+    LOCAL=true py.test stream/tests.py
 
 
