@@ -1,3 +1,4 @@
 test:
   post:
+    - pip install python-coveralls
     - coveralls
