@@ -106,4 +106,10 @@ class ClientTest(TestCase):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'debug_example_undefined': 'test'}
         response = self.user1.add_activity(activity_data)
         print response
-        print 'hi'
+        
+    def test_wrong_feed_spec(self):
+        self.c = stream.connect(
+            '5crf3bhfzesnMISSING',
+            'tfq2sdqpj9g446sbv653x3aqmgn33hsn8uzdc9jpskaw8mj6vsnhzswuwptuj9su'
+        )
+        self.assertRaises(ValueError, lambda: self.c.feed('user1'))

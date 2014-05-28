@@ -80,10 +80,10 @@ class StreamClient(object):
                           params=default_params)
         result = response.json()
         if result.get('exception'):
-            self.raise_exception(result)
+            self.raise_exception(result, status_code=response.status_code)
         return result
 
-    def raise_exception(self, result):
+    def raise_exception(self, result, status_code):
         '''
         Map the exception code to an exception class and raise it
         '''
@@ -93,7 +93,7 @@ class StreamClient(object):
         exception_dict = get_exception_dict()
         exception_class = exception_dict.get(
             error_code, exceptions.StreamApiException)
-        exception = exception_class(error_message)
+        exception = exception_class(error_message, status_code=status_code)
         raise exception
 
     def post(self, *args, **kwargs):
