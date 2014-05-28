@@ -26,7 +26,8 @@ class PyTest(TestCommand):
 
     def finalize_options(self):
         TestCommand.finalize_options(self)
-        self.test_args = ['stream/tests.py']
+        
+        self.test_args = ['stream/tests.py --cov stream --cov-report term-missing']
         self.test_suite = True
 
     def run_tests(self):

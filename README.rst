@@ -5,6 +5,10 @@ stream-python
    :target: https://circleci.com/gh/tschellenbach/stream-python/tree/master
 
 
+.. image:: https://coveralls.io/repos/tschellenbach/stream-python/badge.png
+  :target: https://coveralls.io/r/tschellenbach/stream-python
+
+
 stream-python is a Python client for `Stream <https://getstream.io/>`_.
 
 .. code-block:: python
