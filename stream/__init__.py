@@ -22,8 +22,6 @@ def connect(api_key, api_secret):
 
 '''
 TODO:
-- Api & Code review Tommaso
-
 - test coverage
 - read the docs
 - Update getstream.io/docs page
