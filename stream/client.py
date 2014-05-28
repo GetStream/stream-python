@@ -3,13 +3,13 @@ from stream import exceptions
 import logging
 from stream.signing import sign
 from stream.utils import validate_feed
+import os
 
 logger = logging.getLogger(__name__)
 
 
 class StreamClient(object):
     base_url = 'https://getstream.io/api/'
-    # base_url = 'http://localhost:8000/api/'
 
     def __init__(self, api_key, api_secret, base_url=None):
         '''
@@ -40,6 +40,8 @@ class StreamClient(object):
         self.api_secret = api_secret
         if base_url is not None:
             self.base_url = base_url
+        if os.environ.get('LOCAL'):
+            self.base_url = 'http://localhost:8000/api/'
 
     def feed(self, feed_id):
         '''
@@ -77,10 +79,10 @@ class StreamClient(object):
         headers = self.get_headers(feed)
         url = self.base_url + relative_url
 
-        logger.debug('stream api call %s, headers %s params %s data %s',
-                     url, headers, default_params, data)
         response = method(url, data=data, headers=headers,
                           params=default_params)
+        logger.debug('stream api call %s, headers %s data %s',
+                     response.url, headers, data)
         result = response.json()
         if result.get('exception'):
             self.raise_exception(result, status_code=response.status_code)
