@@ -25,6 +25,7 @@ TODO:
 
 - pk_gt and pk_gte seems to have the same output (pk_gt doesnt always work)
 - follow sometimes breaks
+- missing field exceptions are raised in an inconsistent way to other errors
 
 - test coverage
 - read the docs

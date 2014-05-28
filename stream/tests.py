@@ -1,6 +1,7 @@
 from unittest2.case import TestCase
 import stream
 import time
+from stream.exceptions import ApiKeyException
 
 
 class ClientTest(TestCase):
@@ -90,3 +91,19 @@ class ClientTest(TestCase):
         # try pk_lt based
         self.user1.get(limit=2, pk_lt=activity_id_two)['results']
         self.assertEqual(activities[0]['id'], activity_id)
+        
+    def test_api_key_exception(self):
+        self.c = stream.connect(
+            '5crf3bhfzesnMISSING',
+            'tfq2sdqpj9g446sbv653x3aqmgn33hsn8uzdc9jpskaw8mj6vsnhzswuwptuj9su'
+        )
+        self.user1 = self.c.feed('user:1')
+        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'debug_example_undefined': 'test'}
+        self.assertRaises(ApiKeyException, lambda: self.user1.add_activity(activity_data))
+        
+        
+    def test_missing_field_exception(self):
+        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'debug_example_undefined': 'test'}
+        response = self.user1.add_activity(activity_data)
+        print response
+        print 'hi'

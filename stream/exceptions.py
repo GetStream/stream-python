@@ -16,7 +16,7 @@ class StreamApiException(Exception):
         return '%s (%s)' % (self.__class__.__name__, self.detail)
 
 
-class KeyException(StreamApiException):
+class ApiKeyException(StreamApiException):
 
     '''
     Raised when there is an issue with your Access Key
