@@ -3,6 +3,7 @@ import stream
 import time
 from stream.exceptions import ApiKeyException, InputException,\
     CustomFieldException
+import random
 
 
 class ClientTest(TestCase):
@@ -32,7 +33,8 @@ class ClientTest(TestCase):
         self.assertNotEqual(activities[0]['id'], activity_id)
 
     def test_follow(self):
-        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
+        actor_id = random.randint(10, 100000)
+        activity_data = {'actor': actor_id, 'verb': 'tweet', 'object': 1}
         activity_id = self.user1.add_activity(activity_data)['id']
         self.aggregated2.follow('user:1')
         time.sleep(10)
