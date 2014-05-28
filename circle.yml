@@ -1,0 +1,5 @@
+test:
+  override:
+    - py.test stream/tests.py --cov stream --cov-report term-missing
+  post:
+    - coveralls

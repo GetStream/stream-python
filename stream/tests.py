@@ -11,12 +11,13 @@ def connect_debug():
         u'5crf3bhfzesn',
         u'tfq2sdqpj9g446sbv653x3aqmgn33hsn8uzdc9jpskaw8mj6vsnhzswuwptuj9su'
     )
-    
+
 client = connect_debug()
 user1 = client.feed('user:1')
 aggregated2 = client.feed('aggregated:2')
 aggregated3 = client.feed('aggregated:3')
 flat3 = client.feed('flat:3')
+
 
 class ClientTest(TestCase):
 

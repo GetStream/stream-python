@@ -10,18 +10,16 @@ long_description = open('README.rst').read()
 
 unit = 'unittest2py3k' if sys.version_info > (3, 0, 0) else 'unittest2'
 tests_require = [
-    'mock',
     'pep8',
     unit,
     'pytest',
+    'python-coveralls',
 ]
 
 
 install_requires = [
     'requests>=2.3.0',
 ]
-
-
 
 
 class PyTest(TestCommand):
