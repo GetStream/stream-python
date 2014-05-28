@@ -1,7 +1,8 @@
 from unittest2.case import TestCase
 import stream
 import time
-from stream.exceptions import ApiKeyException
+from stream.exceptions import ApiKeyException, InputException,\
+    CustomFieldException
 
 
 class ClientTest(TestCase):
@@ -101,11 +102,13 @@ class ClientTest(TestCase):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'debug_example_undefined': 'test'}
         self.assertRaises(ApiKeyException, lambda: self.user1.add_activity(activity_data))
         
-        
     def test_missing_field_exception(self):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'debug_example_undefined': 'test'}
-        response = self.user1.add_activity(activity_data)
-        print response
+        self.assertRaises(CustomFieldException, lambda: self.user1.add_activity(activity_data))
+   
+    def test_missing_actor(self):
+        activity_data = {'verb': 'tweet', 'object': 1, 'debug_example_undefined': 'test'}
+        self.assertRaises(InputException, lambda: self.user1.add_activity(activity_data))
         
     def test_wrong_feed_spec(self):
         self.c = stream.connect(
