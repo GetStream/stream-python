@@ -6,17 +6,27 @@ from stream.exceptions import ApiKeyException, InputException,\
 import random
 
 
+def connect_debug():
+    return stream.connect(
+        u'5crf3bhfzesn',
+        u'tfq2sdqpj9g446sbv653x3aqmgn33hsn8uzdc9jpskaw8mj6vsnhzswuwptuj9su'
+    )
+    
+client = connect_debug()
+user1 = client.feed('user:1')
+aggregated2 = client.feed('aggregated:2')
+aggregated3 = client.feed('aggregated:3')
+flat3 = client.feed('flat:3')
+
 class ClientTest(TestCase):
 
     def setUp(self):
         # DEBUG account details
-        self.c = stream.connect(
-            u'5crf3bhfzesn',
-            u'tfq2sdqpj9g446sbv653x3aqmgn33hsn8uzdc9jpskaw8mj6vsnhzswuwptuj9su'
-        )
-        self.user1 = self.c.feed('user:1')
-        self.aggregated2 = self.c.feed('aggregated:2')
-        self.flat3 = self.c.feed('flat:3')
+        self.c = client
+        self.user1 = user1
+        self.aggregated2 = aggregated2
+        self.aggregated3 = aggregated3
+        self.flat3 = flat3
 
     def test_add_activity(self):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
@@ -37,7 +47,7 @@ class ClientTest(TestCase):
         activity_data = {'actor': actor_id, 'verb': 'tweet', 'object': 1}
         activity_id = self.user1.add_activity(activity_data)['id']
         self.aggregated2.follow('user:1')
-        time.sleep(10)
+        time.sleep(5)
         activities = self.aggregated2.get(limit=3)['results']
         activity = self._get_first_aggregated_activity(activities)
         activity_id_found = activity['id'] if activity is not None else None
@@ -68,10 +78,10 @@ class ClientTest(TestCase):
     def test_unfollow(self):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
         activity_id = self.user1.add_activity(activity_data)['id']
-        self.aggregated2.follow('user:1')
-        self.aggregated2.unfollow('user:1')
+        self.aggregated3.follow('user:1')
+        self.aggregated3.unfollow('user:1')
         time.sleep(5)
-        activities = self.aggregated2.get(limit=3)['results']
+        activities = self.aggregated3.get(limit=3)['results']
         activity = self._get_first_aggregated_activity(activities)
         activity_id_found = activity['id'] if activity is not None else None
         self.assertNotEqual(activity_id_found, activity_id)
