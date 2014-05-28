@@ -12,7 +12,7 @@ unit = 'unittest2py3k' if sys.version_info > (3, 0, 0) else 'unittest2'
 tests_require = [
     'pep8',
     unit,
-    'pytest',
+    #'pytest',
     'python-coveralls',
     'pytest-cov',
 ]
