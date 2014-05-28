@@ -9,14 +9,15 @@ logger = logging.getLogger(__name__)
 
 class StreamClient(object):
     base_url = 'https://getstream.io/api/'
-    base_url = 'http://localhost:8000/api/'
+    # base_url = 'http://localhost:8000/api/'
 
-    def __init__(self, api_key, api_secret):
+    def __init__(self, api_key, api_secret, base_url=None):
         '''
         Initialize the client with the given api key and secret
 
         :param api_key: the api key
         :param api_secret: the api secret
+        :param base_url: (optionally overwrite the api base url)
 
         **Example usage**::
 
@@ -37,6 +38,8 @@ class StreamClient(object):
         '''
         self.api_key = api_key
         self.api_secret = api_secret
+        if base_url is not None:
+            self.base_url = base_url
 
     def feed(self, feed_id):
         '''
