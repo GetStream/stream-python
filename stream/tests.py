@@ -88,8 +88,8 @@ class ClientTest(TestCase):
         # try offset based
         activities = self.user1.get(limit=2, offset=1)['results']
         self.assertEqual(activities[0]['id'], activity_id_two)
-        # try pk_lt based
-        self.user1.get(limit=2, pk_lt=activity_id_two)['results']
+        # try id_lt based
+        activities = self.user1.get(limit=2, id_lt=activity_id_two)['results']
         self.assertEqual(activities[0]['id'], activity_id)
         
     def test_api_key_exception(self):

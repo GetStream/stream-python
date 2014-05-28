@@ -71,8 +71,8 @@ class Feed(object):
         
         **Example**::
         
-            # fast pagination using primary key filtering
-            feed.get(limit=10, pk_lte=100292310)
+            # fast pagination using id filtering
+            feed.get(limit=10, id_lte=100292310)
             
             # slow pagination using offset
             feed.get(limit=10, offset=10)

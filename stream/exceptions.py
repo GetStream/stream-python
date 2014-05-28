@@ -43,7 +43,6 @@ class InputException(StreamApiException):
     code = 4
 
 
-# TODO: this is subclassing the wrong thing it seems
 class CustomFieldException(StreamApiException):
 
     '''

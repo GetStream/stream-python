@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 class StreamClient(object):
     base_url = 'https://getstream.io/api/'
-    # base_url = 'http://localhost:8000/api/'
+    base_url = 'http://localhost:8000/api/'
 
     def __init__(self, api_key, api_secret):
         '''
