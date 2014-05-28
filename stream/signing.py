@@ -27,5 +27,6 @@ def sign(secret, value):
     '''
     key = hashlib.sha1((secret).encode('utf-8')).digest()
     signed = hmac.new(key, msg=force_str(value), digestmod=hashlib.sha1)
-    signature = b64_encode(signed.digest())
-    return force_str(signature)
+    digest = signed.digest()
+    signature = b64_encode(digest)
+    return signature.decode('ascii')
