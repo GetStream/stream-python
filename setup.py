@@ -14,6 +14,7 @@ tests_require = [
     unit,
     'pytest',
     'python-coveralls',
+    'pytest-cov',
 ]
 
 
