@@ -10,8 +10,8 @@ class ClientTest(TestCase):
     def setUp(self):
         # DEBUG account details
         self.c = stream.connect(
-            '5crf3bhfzesn',
-            'tfq2sdqpj9g446sbv653x3aqmgn33hsn8uzdc9jpskaw8mj6vsnhzswuwptuj9su'
+            u'5crf3bhfzesn',
+            u'tfq2sdqpj9g446sbv653x3aqmgn33hsn8uzdc9jpskaw8mj6vsnhzswuwptuj9su'
         )
         self.user1 = self.c.feed('user:1')
         self.aggregated2 = self.c.feed('aggregated:2')
@@ -54,13 +54,13 @@ class ClientTest(TestCase):
     def _get_first_aggregated_activity(self, activities):
         try:
             return activities[0]['activities'][0]
-        except IndexError, e:
+        except IndexError as e:
             pass
 
     def _get_first_activity(self, activities):
         try:
             return activities[0]
-        except IndexError, e:
+        except IndexError as e:
             pass
 
     def test_unfollow(self):
