@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class StreamClient(object):
     base_url = 'https://getstream.io/api/'
 
-    def __init__(self, api_key, api_secret, base_url=None):
+    def __init__(self, api_key, api_secret, site_id, base_url=None):
         '''
         Initialize the client with the given api key and secret
 
@@ -38,6 +38,7 @@ class StreamClient(object):
         '''
         self.api_key = api_key
         self.api_secret = api_secret
+        self.site_id = site_id
         if base_url is not None:
             self.base_url = base_url
         if os.environ.get('LOCAL'):

@@ -28,6 +28,13 @@ class ClientTest(TestCase):
         self.aggregated2 = aggregated2
         self.aggregated3 = aggregated3
         self.flat3 = flat3
+        
+    def test_heroku(self):
+        url = 'https://thierry:pass@getstream.io/?site=1'
+        client = stream.connect(url)
+        self.assertEqual(client.api_key, 'thierry')
+        self.assertEqual(client.api_secret, 'pass')
+        self.assertEqual(client.site_id, '1')
 
     def test_add_activity(self):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
