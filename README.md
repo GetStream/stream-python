@@ -1,15 +1,26 @@
-stream-python =========
+stream-python
+=============
 
 [![image](https://circleci.com/gh/tschellenbach/stream-python.png?circle-token=ca08d1aa53fd4f9c3255a89bde5cb08c59b9586a)](https://circleci.com/gh/tschellenbach/stream-python/tree/master)
 
-![image](https://coveralls.io/repos/tschellenbach/stream-python/badge.png)
+[![Coverage Status](https://coveralls.io/repos/tschellenbach/stream-python/badge.png?branch=master)](https://coveralls.io/r/tschellenbach/stream-python?branch=master)
 
-> target
-> :   <https://coveralls.io/r/tschellenbach/stream-python>
->
 stream-python is a Python client for [Stream](https://getstream.io/).
 
-~~~~ {.sourceCode .python}
+Installation
+============
+
+Install from Pypi
+-----------------
+
+```bash
+pip install stream-python
+```
+
+Usage
+=====
+
+```python
 # Instantiate a new client
 import stream
 client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET')
@@ -35,32 +46,24 @@ user_feed_1.follow('flat:42')
 
 # Stop following another feed
 user_feed_1.unfollow('flat:42')
-~~~~
+```
 
 Docs are available on [GetStream.io](http://getstream.io/docs/).
 
 API docs are on [Read the
 docs](http://stream-python.readthedocs.org/en/latest/).
 
-Installation
-============
 
-Install from Pypi
------------------
-
-~~~~ {.sourceCode .bash}
-pip install stream-python
-~~~~
 
 Contributing
 ============
 
 First, make sure you can run the test suite. Tests are run via py.test
 
-~~~~ {.sourceCode .bash}
+```bash
 py.test stream/tests.py
 # with coverage
 py.test stream/tests.py --cov stream --cov-report html
 # against a local API backend
 LOCAL=true py.test stream/tests.py
-~~~~
+```
