@@ -1,12 +1,10 @@
-stream-python =========
+stream-python
+=============
 
 [![image](https://circleci.com/gh/tschellenbach/stream-python.png?circle-token=ca08d1aa53fd4f9c3255a89bde5cb08c59b9586a)](https://circleci.com/gh/tschellenbach/stream-python/tree/master)
 
-![image](https://coveralls.io/repos/tschellenbach/stream-python/badge.png)
+[![Coverage Status](https://coveralls.io/repos/tschellenbach/stream-python/badge.png?branch=master)](https://coveralls.io/r/tschellenbach/stream-python?branch=master)
 
-> target
-> :   <https://coveralls.io/r/tschellenbach/stream-python>
->
 stream-python is a Python client for [Stream](https://getstream.io/).
 
 ~~~~ {.sourceCode .python}
