@@ -6,7 +6,7 @@ from setuptools.command.test import test as TestCommand
 from stream import __version__, __maintainer__, __email__
 import sys
 
-long_description = open('README.rst').read()
+long_description = open('README.md').read()
 
 unit = 'unittest2py3k' if sys.version_info > (3, 0, 0) else 'unittest2'
 tests_require = [
