@@ -46,19 +46,19 @@ Installation
 Install from Pypi
 -----------------
 
-~~~~ {.sourceCode .bash}
+```bash
 pip install stream-python
-~~~~
+```
 
 Contributing
 ============
 
 First, make sure you can run the test suite. Tests are run via py.test
 
-~~~~ {.sourceCode .bash}
+```bash
 py.test stream/tests.py
 # with coverage
 py.test stream/tests.py --cov stream --cov-report html
 # against a local API backend
 LOCAL=true py.test stream/tests.py
-~~~~
+```
