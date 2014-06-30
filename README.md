@@ -7,6 +7,19 @@ stream-python
 
 stream-python is a Python client for [Stream](https://getstream.io/).
 
+Installation
+============
+
+Install from Pypi
+-----------------
+
+```bash
+pip install stream-python
+```
+
+Usage
+=====
+
 ```python
 # Instantiate a new client
 import stream
@@ -40,15 +53,7 @@ Docs are available on [GetStream.io](http://getstream.io/docs/).
 API docs are on [Read the
 docs](http://stream-python.readthedocs.org/en/latest/).
 
-Installation
-============
 
-Install from Pypi
------------------
-
-```bash
-pip install stream-python
-```
 
 Contributing
 ============
