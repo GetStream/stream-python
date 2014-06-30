@@ -7,7 +7,7 @@ stream-python
 
 stream-python is a Python client for [Stream](https://getstream.io/).
 
-~~~~ {.sourceCode .python}
+```python
 # Instantiate a new client
 import stream
 client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET')
@@ -33,7 +33,7 @@ user_feed_1.follow('flat:42')
 
 # Stop following another feed
 user_feed_1.unfollow('flat:42')
-~~~~
+```
 
 Docs are available on [GetStream.io](http://getstream.io/docs/).
 
