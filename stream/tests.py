@@ -55,7 +55,7 @@ class ClientTest(TestCase):
         activity_data = {'actor': actor_id, 'verb': 'tweet', 'object': 1}
         activity_id = self.user1.add_activity(activity_data)['id']
         self.aggregated2.follow('user:1')
-        time.sleep(5)
+        time.sleep(10)
         activities = self.aggregated2.get(limit=3)['results']
         activity = self._get_first_aggregated_activity(activities)
         activity_id_found = activity['id'] if activity is not None else None
@@ -65,7 +65,7 @@ class ClientTest(TestCase):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
         activity_id = self.user1.add_activity(activity_data)['id']
         self.flat3.follow('user:1')
-        time.sleep(5)
+        time.sleep(10)
         activities = self.flat3.get(limit=3)['results']
         activity = self._get_first_activity(activities)
         activity_id_found = activity['id'] if activity is not None else None
