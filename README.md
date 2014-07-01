@@ -31,8 +31,8 @@ user_feed_1 = client.feed('user:1')
 
 # Get activities from 5 to 10 (slow pagination)
 result = user_feed_1.get(limit=5, offset=5)
-# (Recommended & faster) Filter on an id less than 112334
-result = user_feed_1.get(limit=5, id_lt=112334)
+# (Recommended & faster) Filter on an id less than the given UUID
+result = user_feed_1.get(limit=5, id_lt="e561de8f-00f1-11e4-b400-0cc47a024be0")
 
 # Create a new activity
 activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
