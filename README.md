@@ -39,7 +39,7 @@ activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
 activity_response = user_feed_1.add_activity(activity_data)
 
 # Remove an activity by its id
-user_feed_1.remove('12345678910')
+user_feed_1.remove("e561de8f-00f1-11e4-b400-0cc47a024be0")
 
 # Follow another feed
 user_feed_1.follow('flat:42')
