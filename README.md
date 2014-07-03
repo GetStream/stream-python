@@ -7,18 +7,16 @@ stream-python
 
 stream-python is a Python client for [Stream](https://getstream.io/).
 
-Installation
-============
+### Installation
 
-Install from Pypi
------------------
+#### Install from Pypi
+
 
 ```bash
 pip install stream-python
 ```
 
-Usage
-=====
+### Usage
 
 ```python
 # Instantiate a new client
@@ -55,8 +53,7 @@ docs](http://stream-python.readthedocs.org/en/latest/).
 
 
 
-Contributing
-============
+### Contributing
 
 First, make sure you can run the test suite. Tests are run via py.test
 
