@@ -4,7 +4,7 @@ import time
 from stream.exceptions import ApiKeyException, InputException,\
     CustomFieldException
 import random
-
+import os
 
 def connect_debug():
     return stream.connect(
@@ -31,10 +31,19 @@ class ClientTest(TestCase):
         
     def test_heroku(self):
         url = 'https://thierry:pass@getstream.io/?site=1'
-        client = stream.connect(url)
+        os.environ['STREAM_URL'] = url
+        client = stream.connect()
         self.assertEqual(client.api_key, 'thierry')
         self.assertEqual(client.api_secret, 'pass')
         self.assertEqual(client.site_id, '1')
+        
+    def test_heroku_overwrite(self):
+        url = 'https://thierry:pass@getstream.io/?site=1'
+        os.environ['STREAM_URL'] = url
+        client = stream.connect('a', 'b', 'c')
+        self.assertEqual(client.api_key, 'a')
+        self.assertEqual(client.api_secret, 'b')
+        self.assertEqual(client.site_id, 'c')
 
     def test_add_activity(self):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
