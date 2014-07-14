@@ -1,4 +1,4 @@
-import re
+import re, os
 
 __author__ = 'Thierry Schellenbach'
 __copyright__ = 'Copyright 2012, Thierry Schellenbach'
@@ -10,7 +10,7 @@ __email__ = 'thierryschellenbach@gmail.com'
 __status__ = 'Production'
 
 
-def connect(api_key, api_secret=None, site_id=None):
+def connect(api_key=None, api_secret=None, site_id=None):
     '''
     Returns a Client object
 
@@ -19,11 +19,11 @@ def connect(api_key, api_secret=None, site_id=None):
     :param site_id: the site id (used for listening to feed changes)
     '''
     from stream.client import StreamClient
-    
+    stream_url = os.environ.get('STREAM_URL')
     # support for the heroku STREAM_URL syntax
-    if api_key.startswith('https'):
+    if stream_url and not api_key:
         pattern = re.compile('https\:\/\/(\w+)\:(\w+).*site=(\d+)', re.IGNORECASE)
-        result = pattern.match(api_key)
+        result = pattern.match(stream_url)
         if result and len(result.groups())==3:
             api_key, api_secret, site_id = result.groups()
         else:

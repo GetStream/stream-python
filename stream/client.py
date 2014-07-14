@@ -66,22 +66,14 @@ class StreamClient(object):
         params = dict(api_key=self.api_key)
         return params
 
-    def get_headers(self, feed):
-        '''
-        Returns the headers with the signed authorization key
-        '''
-        feed_together = feed.replace(':', '')
-        headers = {'Authorization': '%s %s' % (feed_together, feed.token)}
-        return headers
-
-    def _make_request(self, method, relative_url, feed, params=None, data=None):
+    def _make_request(self, method, relative_url, authorization, params=None, data=None):
         params = params or {}
         data = data or {}
 
         default_params = self.get_default_params()
         default_params.update(params)
 
-        headers = self.get_headers(feed)
+        headers = headers = {'Authorization': authorization}
         url = self.base_url + relative_url
 
         response = method(url, data=data, headers=headers,

@@ -5,11 +5,12 @@ from stream.exceptions import ApiKeyException, InputException,\
 import random
 from unittest.case import TestCase
 
+import os
 
 def connect_debug():
     return stream.connect(
-        u'5crf3bhfzesn',
-        u'tfq2sdqpj9g446sbv653x3aqmgn33hsn8uzdc9jpskaw8mj6vsnhzswuwptuj9su'
+        u'ahj2ndz7gsan',
+        u'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy'
     )
 
 client = connect_debug()
@@ -31,11 +32,20 @@ class ClientTest(TestCase):
         
     def test_heroku(self):
         url = 'https://thierry:pass@getstream.io/?site=1'
-        client = stream.connect(url)
+        os.environ['STREAM_URL'] = url
+        client = stream.connect()
         self.assertEqual(client.api_key, 'thierry')
         self.assertEqual(client.api_secret, 'pass')
         self.assertEqual(client.site_id, '1')
         
+    def test_heroku_overwrite(self):
+        url = 'https://thierry:pass@getstream.io/?site=1'
+        os.environ['STREAM_URL'] = url
+        client = stream.connect('a', 'b', 'c')
+        self.assertEqual(client.api_key, 'a')
+        self.assertEqual(client.api_secret, 'b')
+        self.assertEqual(client.site_id, 'c')
+
     def test_token_retrieval(self):
         token = self.user1.token
 
@@ -58,7 +68,7 @@ class ClientTest(TestCase):
         activity_data = {'actor': actor_id, 'verb': 'tweet', 'object': 1}
         activity_id = self.user1.add_activity(activity_data)['id']
         self.aggregated2.follow('user:1')
-        time.sleep(5)
+        time.sleep(10)
         activities = self.aggregated2.get(limit=3)['results']
         activity = self._get_first_aggregated_activity(activities)
         activity_id_found = activity['id'] if activity is not None else None
@@ -68,7 +78,7 @@ class ClientTest(TestCase):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
         activity_id = self.user1.add_activity(activity_data)['id']
         self.flat3.follow('user:1')
-        time.sleep(5)
+        time.sleep(10)
         activities = self.flat3.get(limit=3)['results']
         activity = self._get_first_activity(activities)
         activity_id_found = activity['id'] if activity is not None else None
