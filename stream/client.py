@@ -52,7 +52,12 @@ class StreamClient(object):
         '''
         validate_feed(feed_id)
         from stream.feed import Feed
-        return Feed(self, feed_id)
+        
+        # generate the token
+        feed_together = feed_id.replace(':', '')
+        token = sign(self.api_secret, feed_together)
+        
+        return Feed(self, feed_id, token)
 
     def get_default_params(self):
         '''
@@ -65,9 +70,8 @@ class StreamClient(object):
         '''
         Returns the headers with the signed authorization key
         '''
-        feed = feed.replace(':', '')
-        signature = sign(self.api_secret, feed)
-        headers = {'Authorization': '%s %s' % (feed, signature)}
+        feed_together = feed.replace(':', '')
+        headers = {'Authorization': '%s %s' % (feed_together, feed.token)}
         return headers
 
     def _make_request(self, method, relative_url, feed, params=None, data=None):

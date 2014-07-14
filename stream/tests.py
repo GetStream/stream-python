@@ -1,9 +1,9 @@
-from unittest2.case import TestCase
 import stream
 import time
 from stream.exceptions import ApiKeyException, InputException,\
     CustomFieldException
 import random
+from unittest.case import TestCase
 
 
 def connect_debug():
@@ -35,6 +35,9 @@ class ClientTest(TestCase):
         self.assertEqual(client.api_key, 'thierry')
         self.assertEqual(client.api_secret, 'pass')
         self.assertEqual(client.site_id, '1')
+        
+    def test_token_retrieval(self):
+        token = self.user1.token
 
     def test_add_activity(self):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}

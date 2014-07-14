@@ -3,7 +3,7 @@ from stream.utils import validate_feed
 
 class Feed(object):
 
-    def __init__(self, client, feed_id):
+    def __init__(self, client, feed_id, token):
         '''
         Initializes the Feed class
         
@@ -16,6 +16,7 @@ class Feed(object):
         self.feed_id = feed_id
         self.feed_url = 'feed/%s/' % feed_id.replace(':', '/')
         self.feed_together = feed_id.replace(':', '')
+        self.token = token
 
     def add_activity(self, activity_data):
         '''
