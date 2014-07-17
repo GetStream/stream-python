@@ -45,6 +45,13 @@ user_feed_1.follow('flat:42')
 # Stop following another feed
 user_feed_1.unfollow('flat:42')
 
+# Batch adding activities
+activities = [
+	{'actor': 1, 'verb': 'tweet', 'object': 1},
+	{'actor': 2, 'verb': 'watch', 'object': 3}
+]
+user_feed_1.add_activities(activities)
+
 # Generating tokens for client side usage
 token = user_feed_1.token
 # Javascript client side feed initialization

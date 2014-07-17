@@ -62,6 +62,17 @@ class ClientTest(TestCase):
         self.user1.remove_activity(activity_id)
         activities = self.user1.get(limit=1)['results']
         self.assertNotEqual(activities[0]['id'], activity_id)
+        
+    def test_add_activities(self):
+        activity_data = [
+            {'actor': 1, 'verb': 'tweet', 'object': 1},
+            {'actor': 2, 'verb': 'watch', 'object': 2},
+        ]
+        response = self.user1.add_activities(activity_data)
+        activity_ids = [a['id'] for a in response['activities']]
+        activities = self.user1.get(limit=2)['results']
+        get_activity_ids = [a['id'] for a in activities]
+        self.assertEqual(get_activity_ids, activity_ids[::-1])
 
     def test_follow(self):
         actor_id = random.randint(10, 100000)

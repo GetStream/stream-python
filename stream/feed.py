@@ -34,6 +34,25 @@ class Feed(object):
         result = self.client.post(
             self.feed_url, data=activity_data, authorization=self.authorization)
         return result
+    
+    def add_activities(self, activity_list):
+        '''
+        Adds a list of activities to the feed
+        
+        :param activity_list: a list with the activity data dicts
+        
+        **Example**::
+            
+            activity_data = [
+                {'actor': 1, 'verb': 'tweet', 'object': 1},
+                {'actor': 2, 'verb': 'watch', 'object': 2},
+            ]
+            result = feed.add_activities(activity_data)
+        '''
+        data = dict(activities=activity_list)
+        result = self.client.post(
+            self.feed_url, data=data, authorization=self.authorization)
+        return result
 
     def remove_activity(self, activity_id):
         '''

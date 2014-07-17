@@ -4,6 +4,7 @@ import logging
 from stream.signing import sign
 from stream.utils import validate_feed
 import os
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -73,10 +74,12 @@ class StreamClient(object):
         default_params = self.get_default_params()
         default_params.update(params)
 
-        headers = headers = {'Authorization': authorization}
+        headers = {'Authorization': authorization}
+        headers['Content-type'] = 'application/json'
+        
         url = self.base_url + relative_url
 
-        response = method(url, data=data, headers=headers,
+        response = method(url, data=json.dumps(data), headers=headers,
                           params=default_params)
         logger.debug('stream api call %s, headers %s data %s',
                      response.url, headers, data)
