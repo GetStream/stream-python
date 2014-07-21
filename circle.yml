@@ -1,4 +1,5 @@
 test:
   post:
+    - pip install stream-python
     - pip install python-coveralls
     - coveralls
