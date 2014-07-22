@@ -6,7 +6,6 @@ from setuptools.command.test import test as TestCommand
 from stream import __version__, __maintainer__, __email__
 import sys
 
-long_description = open('README.md').read()
 
 unit = 'unittest2py3k' if sys.version_info > (3, 0, 0) else 'unittest2'
 tests_require = [
@@ -44,7 +43,6 @@ setup(
     author_email=__email__,
     url='http://github.com/tschellenbach/stream-python',
     description='Client for getstream.io. Build scalable newsfeeds & activity streams in a few hours instead of weeks.',
-    long_description=long_description,
     packages=find_packages(),
     zip_safe=False,
     install_requires=install_requires,
