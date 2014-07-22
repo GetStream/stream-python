@@ -3,6 +3,7 @@
 class StreamApiException(Exception):
 
     def __init__(self, error_message, status_code=None):
+        Exception.__init__(self, error_message)
         self.detail = error_message
         if status_code is not None:
             self.status_code = status_code

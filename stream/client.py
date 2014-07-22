@@ -95,7 +95,7 @@ class StreamClient(object):
         from stream.exceptions import get_exception_dict
         error_message = result['detail']
         exception_fields = result.get('exception_fields')
-        if exception_fields:
+        if exception_fields is not None:
             errors = []
             for field, errors in exception_fields.items():
                 errors.append('Field "%s" errors: %s' % (field, ','.join(errors)))
