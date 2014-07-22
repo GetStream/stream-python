@@ -18,8 +18,11 @@ tests_require = [
 ]
 
 long_description = '''
-Documentation is available on Github_
-.. _Github: http://github.com/tschellenbach/stream-python
+Documentation
+-------------
+Full documentation is available on `Github`_.
+
+.. _`Github`: https://github.com/tschellenbach/stream-python
 '''
 
 install_requires = [
