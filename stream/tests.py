@@ -157,8 +157,12 @@ class ClientTest(TestCase):
     def test_missing_actor(self):
         activity_data = {'verb': 'tweet', 'object':
                          1, 'debug_example_undefined': 'test'}
-        self.assertRaises(InputException, lambda:
-                          self.user1.add_activity(activity_data))
+        doit = lambda: self.user1.add_activity(activity_data)
+        try:
+            doit()
+            raise ValueError('should have raised InputException')
+        except InputException as e:
+            pass
 
     def test_wrong_feed_spec(self):
         self.c = stream.connect(

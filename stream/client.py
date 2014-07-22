@@ -94,6 +94,12 @@ class StreamClient(object):
         '''
         from stream.exceptions import get_exception_dict
         error_message = result['detail']
+        exception_fields = result.get('exception_fields')
+        if exception_fields:
+            errors = []
+            for field, errors in exception_fields.items():
+                errors.append('Field "%s" errors: %s' % (field, ','.join(errors)))
+            error_message = '\n'.join(errors)
         error_code = result.get('code')
         exception_dict = get_exception_dict()
         exception_class = exception_dict.get(
