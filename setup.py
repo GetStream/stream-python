@@ -17,6 +17,10 @@ tests_require = [
     'pytest-cov',
 ]
 
+long_description = '''
+.. _Github: http://github.com/tschellenbach/stream-python
+Documentation is available on Github_
+'''
 
 install_requires = [
     'requests>=2.3.0',
@@ -43,6 +47,7 @@ setup(
     author_email=__email__,
     url='http://github.com/tschellenbach/stream-python',
     description='Client for getstream.io. Build scalable newsfeeds & activity streams in a few hours instead of weeks.',
+    long_description=long_description,
     packages=find_packages(),
     zip_safe=False,
     install_requires=install_requires,
