@@ -148,12 +148,14 @@ class ClientTest(TestCase):
         self.assertRaises(ApiKeyException, lambda:
                           self.user1.add_activity(activity_data))
 
-    def test_missing_field_exception(self):
-        activity_data = {'actor': 1, 'verb': 'tweet',
-                         'object': 1, 'debug_example_undefined': 'test'}
-        self.assertRaises(CustomFieldException, lambda:
-                          self.user1.add_activity(activity_data))
-
+    def test_complex_field(self):
+        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'participants': ['Tommaso', 'Thierry']}
+        response = self.user1.add_activity(activity_data)
+        activity_id = response['id']
+        activities = self.user1.get(limit=1)['results']
+        self.assertEqual(activities[0]['id'], activity_id)
+        self.assertEqual(activities[0]['participants'], ['Tommaso', 'Thierry'])
+        
     def test_missing_actor(self):
         activity_data = {'verb': 'tweet', 'object':
                          1, 'debug_example_undefined': 'test'}
