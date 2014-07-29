@@ -176,15 +176,17 @@ class ClientTest(TestCase):
         b.) The same time and foreign id
         '''
         now = datetime.datetime.now(tzlocal())
+        utcnow = datetime.datetime.utcnow()
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'time': now}
         response = self.user1.add_activity(activity_data)
         response = self.user1.add_activity(activity_data)
         activities = self.user1.get(limit=2)['results']
-        self.assertDatetimeAlmostEqual(activities[0]['time'], now)
-        self.assertClearlyNotEqual(activities[1]['time'], now)
+        self.assertDatetimeAlmostEqual(activities[0]['time'], utcnow)
+        self.assertClearlyNotEqual(activities[1]['time'], utcnow)
         
     def test_uniqueness_foreign_id(self):
         now = datetime.datetime.now(tzlocal())
+        utcnow = datetime.datetime.utcnow()
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:11', 'time': now}
         response = self.user1.add_activity(activity_data)
         activity_data = {'actor': 2, 'verb': 'tweet', 'object': 3, 'foreign_id': 'tweet:11', 'time': now}
@@ -193,7 +195,7 @@ class ClientTest(TestCase):
         # the second post should have overwritten the first one (because they had same id)
         self.assertEqual(activities[0]['object'], '3')
         self.assertEqual(activities[0]['foreign_id'], 'tweet:11')
-        self.assertEqual(activities[0]['time'], datetime.datetime.utcnow())
+        self.assertDatetimeAlmostEqual(activities[0]['time'], utcnow)
         
     def test_missing_actor(self):
         activity_data = {'verb': 'tweet', 'object':
