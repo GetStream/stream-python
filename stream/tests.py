@@ -191,9 +191,9 @@ class ClientTest(TestCase):
         response = self.user1.add_activity(activity_data)
         activities = self.user1.get(limit=2)['results']
         # the second post should have overwritten the first one (because they had same id)
-        self.assertEqual(activities[0]['object'], 3)
+        self.assertEqual(activities[0]['object'], '3')
         self.assertEqual(activities[0]['foreign_id'], 'tweet:11')
-        self.assertEqual(activities[0]['time'], now)
+        self.assertEqual(activities[0]['time'], datetime.datetime.utcnow())
         
     def test_missing_actor(self):
         activity_data = {'verb': 'tweet', 'object':
