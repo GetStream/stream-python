@@ -1,3 +1,4 @@
+from dateutil.tz import tzlocal
 import stream
 import time
 from stream.exceptions import ApiKeyException, InputException,\
@@ -174,29 +175,25 @@ class ClientTest(TestCase):
         a.) The same time and activity data
         b.) The same time and foreign id
         '''
-        now = datetime.datetime.now()
+        now = datetime.datetime.now(tzlocal())
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'time': now}
         response = self.user1.add_activity(activity_data)
         response = self.user1.add_activity(activity_data)
         activities = self.user1.get(limit=2)['results']
-        for activity in activities:
-            print activity['id'], activity['time']
         self.assertDatetimeAlmostEqual(activities[0]['time'], now)
         self.assertClearlyNotEqual(activities[1]['time'], now)
         
     def test_uniqueness_foreign_id(self):
-        today = datetime.datetime.today()
-        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:11', 'mydate': today}
+        now = datetime.datetime.now(tzlocal())
+        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:11', 'time': now}
         response = self.user1.add_activity(activity_data)
-        activity_data = {'actor': 2, 'verb': 'tweet', 'object': 3, 'foreign_id': 'tweet:11', 'mydate': today}
+        activity_data = {'actor': 2, 'verb': 'tweet', 'object': 3, 'foreign_id': 'tweet:11', 'time': now}
         response = self.user1.add_activity(activity_data)
         activities = self.user1.get(limit=2)['results']
-        for activity in activities:
-            print activity['id'], activity['object'], activity['time']
-        print activities[0]
-        self.assertEqual(activities[0]['mydate'], today)
-        self.assertEqual(activities[0]['object'], 1)
-        self.assertEqual(activities[0]['foreign_id'], 'tweet:10')
+        # the second post should have overwritten the first one (because they had same id)
+        self.assertEqual(activities[0]['object'], 3)
+        self.assertEqual(activities[0]['foreign_id'], 'tweet:11')
+        self.assertEqual(activities[0]['time'], now)
         
     def test_missing_actor(self):
         activity_data = {'verb': 'tweet', 'object':

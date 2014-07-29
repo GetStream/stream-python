@@ -49,6 +49,7 @@ def loads(*args, **kwargs):
     kwargs['object_hook'] = _datetime_decoder
     return json.loads(*args, **kwargs)
 
+
 def load(*args, **kwargs):
     kwargs['object_hook'] = _datetime_decoder
     return json.load(*args, **kwargs)

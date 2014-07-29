@@ -15,6 +15,7 @@ tests_require = [
     'python-coveralls',
     'unittest2',
     'pytest-cov',
+    'python-dateutil'
 ]
 
 long_description = '''
