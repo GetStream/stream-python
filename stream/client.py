@@ -1,12 +1,17 @@
 import requests
-from stream import exceptions
+from stream import exceptions, serializer
 import logging
 from stream.signing import sign
 from stream.utils import validate_feed
 import os
 import json
+import datetime
 
 logger = logging.getLogger(__name__)
+
+import datetime
+
+
 
 
 class StreamClient(object):
@@ -66,7 +71,7 @@ class StreamClient(object):
         '''
         params = dict(api_key=self.api_key)
         return params
-
+    
     def _make_request(self, method, relative_url, authorization, params=None, data=None):
         params = params or {}
         data = data or {}
@@ -79,11 +84,12 @@ class StreamClient(object):
         
         url = self.base_url + relative_url
 
-        response = method(url, data=json.dumps(data), headers=headers,
+        serialized = serializer.dumps(data)
+        response = method(url, data=serialized, headers=headers,
                           params=default_params)
         logger.debug('stream api call %s, headers %s data %s',
                      response.url, headers, data)
-        result = response.json()
+        result = serializer.loads(response.content)
         if result.get('exception'):
             self.raise_exception(result, status_code=response.status_code)
         return result

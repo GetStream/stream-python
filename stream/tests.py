@@ -6,6 +6,8 @@ import random
 from unittest.case import TestCase
 
 import os
+import datetime
+from stream import serializer
 
 def connect_debug():
     return stream.connect(
@@ -156,6 +158,46 @@ class ClientTest(TestCase):
         self.assertEqual(activities[0]['id'], activity_id)
         self.assertEqual(activities[0]['participants'], ['Tommaso', 'Thierry'])
         
+    def assertDatetimeAlmostEqual(self, a, b):
+        difference = abs(a-b)
+        if difference > datetime.timedelta(milliseconds=1):
+            self.assertEqual(a, b)
+
+    def assertClearlyNotEqual(self, a, b):
+        difference = abs(a-b)
+        if difference < datetime.timedelta(milliseconds=1):
+            raise ValueError('the dates are too close')
+        
+    def test_uniqueness(self):
+        '''
+        In order for things to be considere unique they need:
+        a.) The same time and activity data
+        b.) The same time and foreign id
+        '''
+        now = datetime.datetime.now()
+        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'time': now}
+        response = self.user1.add_activity(activity_data)
+        response = self.user1.add_activity(activity_data)
+        activities = self.user1.get(limit=2)['results']
+        for activity in activities:
+            print activity['id'], activity['time']
+        self.assertDatetimeAlmostEqual(activities[0]['time'], now)
+        self.assertClearlyNotEqual(activities[1]['time'], now)
+        
+    def test_uniqueness_foreign_id(self):
+        today = datetime.datetime.today()
+        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:11', 'mydate': today}
+        response = self.user1.add_activity(activity_data)
+        activity_data = {'actor': 2, 'verb': 'tweet', 'object': 3, 'foreign_id': 'tweet:11', 'mydate': today}
+        response = self.user1.add_activity(activity_data)
+        activities = self.user1.get(limit=2)['results']
+        for activity in activities:
+            print activity['id'], activity['object'], activity['time']
+        print activities[0]
+        self.assertEqual(activities[0]['mydate'], today)
+        self.assertEqual(activities[0]['object'], 1)
+        self.assertEqual(activities[0]['foreign_id'], 'tweet:10')
+        
     def test_missing_actor(self):
         activity_data = {'verb': 'tweet', 'object':
                          1, 'debug_example_undefined': 'test'}
@@ -172,3 +214,14 @@ class ClientTest(TestCase):
             'tfq2sdqpj9g446sbv653x3aqmgn33hsn8uzdc9jpskaw8mj6vsnhzswuwptuj9su'
         )
         self.assertRaises(ValueError, lambda: self.c.feed('user1'))
+        
+    def test_serialization(self):
+        today = datetime.date.today()
+        now = datetime.datetime.now()
+        data = dict(string='string', float=0.1, int=1, date=today, datetime=now)
+        serialized = serializer.dumps(data)
+        loaded = serializer.loads(serialized)
+        self.assertEqual(data, loaded)
+        
+        
+        
