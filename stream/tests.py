@@ -20,6 +20,7 @@ client = connect_debug()
 user1 = client.feed('user:1')
 aggregated2 = client.feed('aggregated:2')
 aggregated3 = client.feed('aggregated:3')
+topic1 = client.feed('topic:1')
 flat3 = client.feed('flat:3')
 
 
@@ -31,6 +32,7 @@ class ClientTest(TestCase):
         self.user1 = user1
         self.aggregated2 = aggregated2
         self.aggregated3 = aggregated3
+        self.topic1 = topic1
         self.flat3 = flat3
         
     def test_heroku(self):
@@ -184,6 +186,26 @@ class ClientTest(TestCase):
         self.assertDatetimeAlmostEqual(activities[0]['time'], utcnow)
         self.assertClearlyNotEqual(activities[1]['time'], utcnow)
         
+    def test_uniqueness_topic(self):
+        '''
+        In order for things to be considere unique they need:
+        a.) The same time and activity data, or
+        b.) The same time and foreign id
+        '''
+        # follow both the topic and the user
+        self.flat3.follow('topic:1')
+        self.flat3.follow('user:1')
+        # add the same activity twice
+        now = datetime.datetime.now(tzlocal())
+        tweet = 'My Way %s' % random.randint(10, 100000)
+        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'time': now, 'tweet': tweet}
+        self.topic1.add_activity(activity_data)
+        self.user1.add_activity(activity_data)
+        # verify that flat3 contains the activity exactly once
+        response = self.flat3.get(limit=3)
+        activity_tweets = [a.get('tweet') for a in response['results']]
+        self.assertEqual(activity_tweets.count(tweet), 1)
+        
     def test_uniqueness_foreign_id(self):
         now = datetime.datetime.now(tzlocal())
         utcnow = datetime.datetime.utcnow()
@@ -196,6 +218,7 @@ class ClientTest(TestCase):
         self.assertEqual(activities[0]['object'], '3')
         self.assertEqual(activities[0]['foreign_id'], 'tweet:11')
         self.assertDatetimeAlmostEqual(activities[0]['time'], utcnow)
+        self.assertNotEqual(activities[1]['foreign_id'], 'tweet:11')
         
     def test_missing_actor(self):
         activity_data = {'verb': 'tweet', 'object':
