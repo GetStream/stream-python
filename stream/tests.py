@@ -179,7 +179,7 @@ class ClientTest(TestCase):
         '''
         now = datetime.datetime.now(tzlocal())
         utcnow = datetime.datetime.utcnow()
-        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'time': now}
+        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'time': utcnow}
         response = self.user1.add_activity(activity_data)
         response = self.user1.add_activity(activity_data)
         activities = self.user1.get(limit=2)['results']
