@@ -177,7 +177,6 @@ class ClientTest(TestCase):
         a.) The same time and activity data
         b.) The same time and foreign id
         '''
-        now = datetime.datetime.now(tzlocal())
         utcnow = datetime.datetime.utcnow()
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'time': utcnow}
         response = self.user1.add_activity(activity_data)
