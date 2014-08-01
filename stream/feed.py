@@ -54,15 +54,22 @@ class Feed(object):
             self.feed_url, data=data, authorization=self.authorization)
         return result
 
-    def remove_activity(self, activity_id):
+    def remove_activity(self, activity_id=None, foreign_id=None):
         '''
         Removes an activity from the feed
         
         :param activity_id: the activity id to remove from this feed
         (note this will also remove the activity from feeds which follow this feed)
+        :param foreign_id: the foreign id you provided when adding the activity
         '''
-        url = self.feed_url + '%s/' % activity_id
-        result = self.client.delete(url, authorization=self.authorization)
+        identifier = activity_id or foreign_id
+        if not identifier:
+            raise ValueError('please either provide activity_id or foreign_id')
+        url = self.feed_url + '%s/' % identifier
+        params = dict()
+        if foreign_id is not None:
+            params['foreign_id'] = '1'
+        result = self.client.delete(url, authorization=self.authorization, params=params)
         return result
 
     def follow(self, target_feed):
