@@ -74,6 +74,8 @@ class ClientTest(TestCase):
         self.user1.remove_activity(foreign_id='tweet:10')
         activities = self.user1.get(limit=1)['results']
         self.assertNotEqual(activities[0]['id'], activity_id)
+        # verify this doesnt raise an error, but fails silently
+        self.user1.remove_activity(foreign_id='tweet:unknowandmissing')
         
     def test_add_activities(self):
         activity_data = [
