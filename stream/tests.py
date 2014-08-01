@@ -68,6 +68,13 @@ class ClientTest(TestCase):
         activities = self.user1.get(limit=1)['results']
         self.assertNotEqual(activities[0]['id'], activity_id)
         
+    def test_remove_activity_by_foreign_id(self):
+        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:10'}
+        activity_id = self.user1.add_activity(activity_data)['id']
+        self.user1.remove_activity(foreign_id='tweet:10')
+        activities = self.user1.get(limit=1)['results']
+        self.assertNotEqual(activities[0]['id'], activity_id)
+        
     def test_add_activities(self):
         activity_data = [
             {'actor': 1, 'verb': 'tweet', 'object': 1},
