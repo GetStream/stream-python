@@ -84,6 +84,34 @@ class Feed(object):
             url, data=dict(target=target_feed), authorization=self.authorization)
         return response
 
+    def parse_follow_data(self, response):
+        return {
+            'count': response['count'],
+            'results': response['results']
+        }
+
+    def followers(self, limit=100, page=1):
+        params = {
+            'limit': limit,
+            'page': page
+        }
+        url = self.feed_url + 'followers/'
+        response = self.client.get(
+            url, params=params, authorization=self.authorization)
+        return self.parse_follow_data(response)
+
+    def following(self, limit=100, page=1, feeds=None):
+        feeds = feeds is not None and ','.join(feeds) or ''
+        params = {
+            'limit': limit,
+            'page': page,
+            'filter': feeds
+        }
+        url = self.feed_url + 'follows/'
+        response = self.client.get(
+            url, params=params, authorization=self.authorization)
+        return self.parse_follow_data(response)
+
     def unfollow(self, target_feed):
         '''
         Unfollow the given feed

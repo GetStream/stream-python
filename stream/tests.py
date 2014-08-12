@@ -132,6 +132,53 @@ class ClientTest(TestCase):
         activity_id_found = activity['id'] if activity is not None else None
         self.assertNotEqual(activity_id_found, activity_id)
 
+    def test_empty_followings(self):
+        asocial = client.feed('user:asocialpython')
+        followings = asocial.following()
+        self.assertEqual(followings['count'], 0)
+        self.assertEqual(followings['results'], [])
+
+    def test_get_followings(self):
+        social = client.feed('user:psocial')
+        social.follow('user:apy')
+        social.follow('user:bpy')
+        followings = social.following(limit=1, page=2)
+        self.assertEqual(followings['count'], 2)
+        self.assertEqual(followings['results'][0]['feed_id'], 'user:psocial')
+        self.assertEqual(followings['results'][0]['target_id'], 'user:apy')
+
+    def test_empty_followers(self):
+        asocial = client.feed('user:asocialpython')
+        followers = asocial.following()
+        self.assertEqual(followers['count'], 0)
+        self.assertEqual(followers['results'], [])
+
+    def test_get_followers(self):
+        social = client.feed('user:psocial')
+        client.feed('user:spammy1').follow('user:psocial')
+        client.feed('user:spammy2').follow('user:psocial')
+        followers = social.followers(limit=1, page=2)
+        self.assertEqual(followers['count'], 2)
+        self.assertEqual(followers['results'][0]['feed_id'], 'user:spammy1')
+        self.assertEqual(followers['results'][0]['target_id'], 'user:psocial')
+
+    def test_empty_do_i_follow(self):
+        social = client.feed('user:psocial')
+        social.follow('user:apy')
+        social.follow('user:bpy')
+        followings = social.following(feeds=['user:cpy'])
+        self.assertEqual(followings['count'], 0)
+        self.assertEqual(followings['results'], [])
+
+    def test_do_i_follow(self):
+        social = client.feed('user:psocial')
+        social.follow('user:apy')
+        social.follow('user:bpy')
+        followings = social.following(feeds=['user:apy'])
+        self.assertEqual(followings['count'], 1)
+        self.assertEqual(followings['results'][0]['feed_id'], 'user:psocial')
+        self.assertEqual(followings['results'][0]['target_id'], 'user:apy')
+
     def test_get(self):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
         activity_id = self.user1.add_activity(activity_data)['id']
@@ -252,6 +299,3 @@ class ClientTest(TestCase):
         serialized = serializer.dumps(data)
         loaded = serializer.loads(serialized)
         self.assertEqual(data, loaded)
-        
-        
-        
