@@ -19,6 +19,13 @@ class Feed(object):
         self.token = token
         self.authorization = self.feed_together + ' ' + self.token
 
+    def add_to_signature(self, recipients):
+        data = []
+        for recipient in recipients:
+            feed = self.client.feed(recipient)
+            data.append("%s %s" % (recipient, feed.token))
+        return data
+
     def add_activity(self, activity_data):
         '''
         Adds an activity to the feed, this will also trigger an update
@@ -31,6 +38,9 @@ class Feed(object):
             activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
             activity_id = feed.add_activity(activity_data)
         '''
+        if activity_data.get('to'):
+            activity_data['to'] = self.add_to_signature(activity_data['to'])
+
         result = self.client.post(
             self.feed_url, data=activity_data, authorization=self.authorization)
         return result
@@ -49,6 +59,10 @@ class Feed(object):
             ]
             result = feed.add_activities(activity_data)
         '''
+        for activity_data in activity_list:
+            if activity_data.get('to'):
+                activity_data['to'] = self.add_to_signature(activity_data['to'])
+
         data = dict(activities=activity_list)
         result = self.client.post(
             self.feed_url, data=data, authorization=self.authorization)

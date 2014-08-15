@@ -61,6 +61,17 @@ class ClientTest(TestCase):
         activities = self.user1.get(limit=1)['results']
         self.assertEqual(activities[0]['id'], activity_id)
 
+    def test_add_activity_to(self):
+        activity_data = {
+            'actor': 1, 'verb': 'tweet', 'object': 1,
+            'to': ['user:pyto1']
+        }
+        response = self.user1.add_activity(activity_data)
+        feed = client.feed('user:pyto1')
+        activity_id = response['id']
+        activities = feed.get(limit=1)['results']
+        self.assertEqual(activities[0]['id'], activity_id)
+
     def test_remove_activity(self):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
         activity_id = self.user1.add_activity(activity_data)['id']
@@ -85,6 +96,28 @@ class ClientTest(TestCase):
         response = self.user1.add_activities(activity_data)
         activity_ids = [a['id'] for a in response['activities']]
         activities = self.user1.get(limit=2)['results']
+        get_activity_ids = [a['id'] for a in activities]
+        self.assertEqual(get_activity_ids, activity_ids[::-1])
+
+    def test_add_activities_to(self):
+        to = ['user:pyto2', 'user:pyto3']
+        activity_data = [
+            {'actor': 1, 'verb': 'tweet', 'object': 1, 'to': to},
+            {'actor': 2, 'verb': 'watch', 'object': 2, 'to': to},
+        ]
+        response = self.user1.add_activities(activity_data)
+        activity_ids = [a['id'] for a in response['activities']]
+        activities = self.user1.get(limit=2)['results']
+        get_activity_ids = [a['id'] for a in activities]
+        self.assertEqual(get_activity_ids, activity_ids[::-1])
+        # test first target
+        feed = client.feed('user:pyto2')
+        activities = feed.get(limit=2)['results']
+        get_activity_ids = [a['id'] for a in activities]
+        self.assertEqual(get_activity_ids, activity_ids[::-1])
+        # test second target
+        feed = client.feed('user:pyto3')
+        activities = feed.get(limit=2)['results']
         get_activity_ids = [a['id'] for a in activities]
         self.assertEqual(get_activity_ids, activity_ids[::-1])
 
