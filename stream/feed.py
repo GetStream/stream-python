@@ -92,10 +92,13 @@ class Feed(object):
         
         :param target_feed: the feed to follow, ie flat:3
         '''
-        validate_feed(target_feed)
         url = self.feed_url + 'follows/'
+        data = {
+            'target': target_feed,
+            'target_token': self.client.feed(target_feed).token
+        }
         response = self.client.post(
-            url, data=dict(target=target_feed), authorization=self.authorization)
+            url, data=data, authorization=self.authorization)
         return response
 
     def parse_follow_data(self, response):

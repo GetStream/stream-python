@@ -132,6 +132,18 @@ class ClientTest(TestCase):
         activity_id_found = activity['id'] if activity is not None else None
         self.assertEqual(activity_id_found, activity_id)
 
+    def test_follow_private(self):
+        feed = client.feed('secret:py1')
+        actor_id = random.randint(10, 100000)
+        activity_data = {'actor': actor_id, 'verb': 'tweet', 'object': 1}
+        activity_id = feed.add_activity(activity_data)['id']
+        self.aggregated2.follow('secret:py1')
+        time.sleep(10)
+        activities = self.aggregated2.get(limit=3)['results']
+        activity = self._get_first_aggregated_activity(activities)
+        activity_id_found = activity['id'] if activity is not None else None
+        self.assertEqual(activity_id_found, activity_id)
+
     def test_flat_follow(self):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
         activity_id = self.user1.add_activity(activity_data)['id']
@@ -259,7 +271,7 @@ class ClientTest(TestCase):
         difference = abs(a-b)
         if difference < datetime.timedelta(milliseconds=1):
             raise ValueError('the dates are too close')
-        
+
     def test_uniqueness(self):
         '''
         In order for things to be considere unique they need:
@@ -273,7 +285,7 @@ class ClientTest(TestCase):
         activities = self.user1.get(limit=2)['results']
         self.assertDatetimeAlmostEqual(activities[0]['time'], utcnow)
         self.assertClearlyNotEqual(activities[1]['time'], utcnow)
-        
+
     def test_uniqueness_topic(self):
         '''
         In order for things to be considere unique they need:
@@ -293,7 +305,7 @@ class ClientTest(TestCase):
         response = self.flat3.get(limit=3)
         activity_tweets = [a.get('tweet') for a in response['results']]
         self.assertEqual(activity_tweets.count(tweet), 1)
-        
+
     def test_uniqueness_foreign_id(self):
         now = datetime.datetime.now(tzlocal())
         utcnow = (now - now.utcoffset()).replace(tzinfo=None)
@@ -307,7 +319,7 @@ class ClientTest(TestCase):
         self.assertEqual(activities[0]['foreign_id'], 'tweet:11')
         self.assertDatetimeAlmostEqual(activities[0]['time'], utcnow)
         self.assertNotEqual(activities[1]['foreign_id'], 'tweet:11')
-        
+
     def test_missing_actor(self):
         activity_data = {'verb': 'tweet', 'object':
                          1, 'debug_example_undefined': 'test'}
@@ -324,7 +336,7 @@ class ClientTest(TestCase):
             'tfq2sdqpj9g446sbv653x3aqmgn33hsn8uzdc9jpskaw8mj6vsnhzswuwptuj9su'
         )
         self.assertRaises(ValueError, lambda: self.c.feed('user1'))
-        
+
     def test_serialization(self):
         today = datetime.date.today()
         now = datetime.datetime.now()

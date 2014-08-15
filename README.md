@@ -54,6 +54,15 @@ activities = [
 ]
 user_feed_1.add_activities(activities)
 
+# Add an activity and push it to other feeds too using the `to` field
+activity = {
+    "actor_id":"1",
+    "verb":"like",
+    "object_id":"3",
+    "to":["user:44", "user:45"]
+];
+user_feed_1.add_activity(activity);
+
 # Generating tokens for client side usage
 token = user_feed_1.token
 # Javascript client side feed initialization
