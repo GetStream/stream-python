@@ -54,6 +54,10 @@ user_feed_1.follow('flat:42')
 # Stop following another feed
 user_feed_1.unfollow('flat:42')
 
+# List followers/following
+following = user_feed_1.following(offset=0, limit=2)
+followers = user_feed_1.followers(offset=0, limit=10)
+
 # Batch adding activities
 activities = [
 	{'actor': 1, 'verb': 'tweet', 'object': 1},
