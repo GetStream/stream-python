@@ -43,6 +43,14 @@ class ClientTest(TestCase):
         self.assertEqual(client.api_key, 'thierry')
         self.assertEqual(client.api_secret, 'pass')
         self.assertEqual(client.site_id, '1')
+        
+    def test_heroku_real(self):
+        url = 'https://bvt88g4kvc63:twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd@getstream.io/?site=669'
+        os.environ['STREAM_URL'] = url
+        client = stream.connect()
+        self.assertEqual(client.api_key, 'bvt88g4kvc63')
+        self.assertEqual(client.api_secret, 'twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd')
+        self.assertEqual(client.site_id, '669')
 
     def test_heroku_overwrite(self):
         url = 'https://thierry:pass@getstream.io/?site=1'
