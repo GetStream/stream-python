@@ -107,21 +107,21 @@ class Feed(object):
             'results': response['results']
         }
 
-    def followers(self, limit=100, page=1):
+    def followers(self, offset=0, limit=25):
         params = {
             'limit': limit,
-            'page': page
+            'offset': offset
         }
         url = self.feed_url + 'followers/'
         response = self.client.get(
             url, params=params, authorization=self.authorization)
         return self.parse_follow_data(response)
 
-    def following(self, limit=100, page=1, feeds=None):
+    def following(self, offset=0, limit=25, feeds=None):
         feeds = feeds is not None and ','.join(feeds) or ''
         params = {
+            'offset': offset,
             'limit': limit,
-            'page': page,
             'filter': feeds
         }
         url = self.feed_url + 'follows/'
