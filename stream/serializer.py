@@ -6,6 +6,7 @@ Adds the ability to send date and datetime objects to the API
 The date and datetime formats from the API are automatically supported and parsed
 '''
 
+
 def _datetime_encoder(obj):
     if isinstance(obj, (datetime.datetime, datetime.date)):
         return obj.isoformat()
@@ -22,13 +23,17 @@ def _datetime_decoder(dict_):
 
         if value is not None and isinstance(value, basestring):
             try:
-                # The api always returns times like this 2014-07-25T09:12:24.735
-                datetime_obj = datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f" )
+                # The api always returns times like this
+                # 2014-07-25T09:12:24.735
+                datetime_obj = datetime.datetime.strptime(
+                    value, "%Y-%m-%dT%H:%M:%S.%f")
                 dict_[key] = datetime_obj
             except (ValueError, TypeError):
                 try:
-                    # The api always returns times like this 2014-07-25T09:12:24.735
-                    datetime_obj = datetime.datetime.strptime(value, "%Y-%m-%d" )
+                    # The api always returns times like this
+                    # 2014-07-25T09:12:24.735
+                    datetime_obj = datetime.datetime.strptime(
+                        value, "%Y-%m-%d")
                     dict_[key] = datetime_obj.date()
                 except (ValueError, TypeError):
                     continue

@@ -10,13 +10,13 @@ def b64_encode(s):
 def sign(secret, value):
     '''
     Base64 encoded sha1 signature
-    
+
     :param secret: the secret
     :param value: the value to sign (commonly a feed id such as user:1)
-    
+
     **Example**::
         signature = sign('secret', 'user:1')
-    
+
     '''
     key = hashlib.sha1((secret).encode('utf-8')).digest()
     signed = hmac.new(key, msg=value.encode('utf8'), digestmod=hashlib.sha1)

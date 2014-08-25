@@ -12,8 +12,6 @@ logger = logging.getLogger(__name__)
 import datetime
 
 
-
-
 class StreamClient(object):
     base_url = 'https://getstream.io/api/'
 
@@ -58,11 +56,11 @@ class StreamClient(object):
         '''
         validate_feed(feed_id)
         from stream.feed import Feed
-        
+
         # generate the token
         feed_together = feed_id.replace(':', '')
         token = sign(self.api_secret, feed_together)
-        
+
         return Feed(self, feed_id, token)
 
     def get_default_params(self):
@@ -71,7 +69,7 @@ class StreamClient(object):
         '''
         params = dict(api_key=self.api_key)
         return params
-    
+
     def _make_request(self, method, relative_url, authorization, params=None, data=None):
         params = params or {}
         data = data or {}
@@ -81,7 +79,7 @@ class StreamClient(object):
 
         headers = {'Authorization': authorization}
         headers['Content-type'] = 'application/json'
-        
+
         url = self.base_url + relative_url
 
         serialized = serializer.dumps(data)
@@ -104,7 +102,8 @@ class StreamClient(object):
         if exception_fields is not None:
             errors = []
             for field, errors in exception_fields.items():
-                errors.append('Field "%s" errors: %s' % (field, ','.join(errors)))
+                errors.append('Field "%s" errors: %s' %
+                              (field, ','.join(errors)))
             error_message = '\n'.join(errors)
         error_code = result.get('code')
         exception_dict = get_exception_dict()

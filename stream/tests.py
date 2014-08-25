@@ -10,6 +10,7 @@ import os
 import datetime
 from stream import serializer
 
+
 def connect_debug():
     return stream.connect(
         u'ahj2ndz7gsan',
@@ -34,7 +35,7 @@ class ClientTest(TestCase):
         self.aggregated3 = aggregated3
         self.topic1 = topic1
         self.flat3 = flat3
-        
+
     def test_heroku(self):
         url = 'https://thierry:pass@getstream.io/?site=1'
         os.environ['STREAM_URL'] = url
@@ -42,7 +43,7 @@ class ClientTest(TestCase):
         self.assertEqual(client.api_key, 'thierry')
         self.assertEqual(client.api_secret, 'pass')
         self.assertEqual(client.site_id, '1')
-        
+
     def test_heroku_overwrite(self):
         url = 'https://thierry:pass@getstream.io/?site=1'
         os.environ['STREAM_URL'] = url
@@ -78,16 +79,17 @@ class ClientTest(TestCase):
         self.user1.remove_activity(activity_id)
         activities = self.user1.get(limit=1)['results']
         self.assertNotEqual(activities[0]['id'], activity_id)
-        
+
     def test_remove_activity_by_foreign_id(self):
-        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:10'}
+        activity_data = {
+            'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:10'}
         activity_id = self.user1.add_activity(activity_data)['id']
         self.user1.remove_activity(foreign_id='tweet:10')
         activities = self.user1.get(limit=1)['results']
         self.assertNotEqual(activities[0]['id'], activity_id)
         # verify this doesnt raise an error, but fails silently
         self.user1.remove_activity(foreign_id='tweet:unknowandmissing')
-        
+
     def test_add_activities(self):
         activity_data = [
             {'actor': 1, 'verb': 'tweet', 'object': 1},
@@ -180,7 +182,6 @@ class ClientTest(TestCase):
     def test_empty_followings(self):
         asocial = client.feed('user:asocialpython')
         followings = asocial.following()
-        self.assertEqual(followings['count'], 0)
         self.assertEqual(followings['results'], [])
 
     def test_get_followings(self):
@@ -189,18 +190,18 @@ class ClientTest(TestCase):
         social.follow('user:bpy')
         social.follow('user:cpy')
         followings = social.following(offset=0, limit=2)
-        self.assertEqual(followings['count'], 2)
+        self.assertEqual(len(followings['results']), 2)
         self.assertEqual(followings['results'][0]['feed_id'], 'user:psocial')
-        self.assertEqual(followings['results'][0]['target_id'], 'user:apy')
+        self.assertEqual(followings['results'][0]['target_id'], 'user:cpy')
         followings = social.following(offset=1, limit=2)
-        self.assertEqual(followings['count'], 2)
+        self.assertEqual(len(followings['results']), 2)
         self.assertEqual(followings['results'][0]['feed_id'], 'user:psocial')
         self.assertEqual(followings['results'][0]['target_id'], 'user:bpy')
 
     def test_empty_followers(self):
         asocial = client.feed('user:asocialpython')
         followers = asocial.following()
-        self.assertEqual(followers['count'], 0)
+        self.assertEqual(len(followers['results']), 0)
         self.assertEqual(followers['results'], [])
 
     def test_get_followers(self):
@@ -209,11 +210,11 @@ class ClientTest(TestCase):
         client.feed('user:spammy2').follow('user:psocial')
         client.feed('user:spammy3').follow('user:psocial')
         followers = social.followers(offset=0, limit=2)
-        self.assertEqual(followers['count'], 2)
-        self.assertEqual(followers['results'][0]['feed_id'], 'user:spammy1')
+        self.assertEqual(len(followers['results']), 2)
+        self.assertEqual(followers['results'][0]['feed_id'], 'user:spammy3')
         self.assertEqual(followers['results'][0]['target_id'], 'user:psocial')
         followers = social.followers(offset=1, limit=2)
-        self.assertEqual(followers['count'], 2)
+        self.assertEqual(len(followers['results']), 2)
         self.assertEqual(followers['results'][0]['feed_id'], 'user:spammy2')
         self.assertEqual(followers['results'][0]['target_id'], 'user:psocial')
 
@@ -222,7 +223,7 @@ class ClientTest(TestCase):
         social.follow('user:apy')
         social.follow('user:bpy')
         followings = social.following(feeds=['user:missingpy'])
-        self.assertEqual(followings['count'], 0)
+        self.assertEqual(len(followings['results']), 0)
         self.assertEqual(followings['results'], [])
 
     def test_do_i_follow(self):
@@ -230,7 +231,7 @@ class ClientTest(TestCase):
         social.follow('user:apy')
         social.follow('user:bpy')
         followings = social.following(feeds=['user:apy'])
-        self.assertEqual(followings['count'], 1)
+        self.assertEqual(len(followings['results']), 1)
         self.assertEqual(followings['results'][0]['feed_id'], 'user:psocial')
         self.assertEqual(followings['results'][0]['target_id'], 'user:apy')
 
@@ -265,20 +266,21 @@ class ClientTest(TestCase):
                           self.user1.add_activity(activity_data))
 
     def test_complex_field(self):
-        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'participants': ['Tommaso', 'Thierry']}
+        activity_data = {'actor': 1, 'verb': 'tweet',
+                         'object': 1, 'participants': ['Tommaso', 'Thierry']}
         response = self.user1.add_activity(activity_data)
         activity_id = response['id']
         activities = self.user1.get(limit=1)['results']
         self.assertEqual(activities[0]['id'], activity_id)
         self.assertEqual(activities[0]['participants'], ['Tommaso', 'Thierry'])
-        
+
     def assertDatetimeAlmostEqual(self, a, b):
-        difference = abs(a-b)
+        difference = abs(a - b)
         if difference > datetime.timedelta(milliseconds=1):
             self.assertEqual(a, b)
 
     def assertClearlyNotEqual(self, a, b):
-        difference = abs(a-b)
+        difference = abs(a - b)
         if difference < datetime.timedelta(milliseconds=1):
             raise ValueError('the dates are too close')
 
@@ -289,7 +291,8 @@ class ClientTest(TestCase):
         b.) The same time and foreign id
         '''
         utcnow = datetime.datetime.utcnow()
-        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'time': utcnow}
+        activity_data = {
+            'actor': 1, 'verb': 'tweet', 'object': 1, 'time': utcnow}
         response = self.user1.add_activity(activity_data)
         response = self.user1.add_activity(activity_data)
         activities = self.user1.get(limit=2)['results']
@@ -308,7 +311,8 @@ class ClientTest(TestCase):
         # add the same activity twice
         now = datetime.datetime.now(tzlocal())
         tweet = 'My Way %s' % random.randint(10, 100000)
-        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'time': now, 'tweet': tweet}
+        activity_data = {
+            'actor': 1, 'verb': 'tweet', 'object': 1, 'time': now, 'tweet': tweet}
         self.topic1.add_activity(activity_data)
         self.user1.add_activity(activity_data)
         # verify that flat3 contains the activity exactly once
@@ -319,12 +323,15 @@ class ClientTest(TestCase):
     def test_uniqueness_foreign_id(self):
         now = datetime.datetime.now(tzlocal())
         utcnow = (now - now.utcoffset()).replace(tzinfo=None)
-        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:11', 'time': now}
+        activity_data = {'actor': 1, 'verb': 'tweet',
+                         'object': 1, 'foreign_id': 'tweet:11', 'time': now}
         response = self.user1.add_activity(activity_data)
-        activity_data = {'actor': 2, 'verb': 'tweet', 'object': 3, 'foreign_id': 'tweet:11', 'time': now}
+        activity_data = {'actor': 2, 'verb': 'tweet',
+                         'object': 3, 'foreign_id': 'tweet:11', 'time': now}
         response = self.user1.add_activity(activity_data)
         activities = self.user1.get(limit=2)['results']
-        # the second post should have overwritten the first one (because they had same id)
+        # the second post should have overwritten the first one (because they
+        # had same id)
         self.assertEqual(activities[0]['object'], '3')
         self.assertEqual(activities[0]['foreign_id'], 'tweet:11')
         self.assertDatetimeAlmostEqual(activities[0]['time'], utcnow)
@@ -350,7 +357,8 @@ class ClientTest(TestCase):
     def test_serialization(self):
         today = datetime.date.today()
         now = datetime.datetime.now()
-        data = dict(string='string', float=0.1, int=1, date=today, datetime=now)
+        data = dict(
+            string='string', float=0.1, int=1, date=today, datetime=now)
         serialized = serializer.dumps(data)
         loaded = serializer.loads(serialized)
         self.assertEqual(data, loaded)

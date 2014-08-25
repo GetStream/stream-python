@@ -1,4 +1,5 @@
-import re, os
+import re
+import os
 
 __author__ = 'Thierry Schellenbach'
 __copyright__ = 'Copyright 2012, Thierry Schellenbach'
@@ -22,13 +23,12 @@ def connect(api_key=None, api_secret=None, site_id=None):
     stream_url = os.environ.get('STREAM_URL')
     # support for the heroku STREAM_URL syntax
     if stream_url and not api_key:
-        pattern = re.compile('https\:\/\/(\w+)\:(\w+).*site=(\d+)', re.IGNORECASE)
+        pattern = re.compile(
+            'https\:\/\/(\w+)\:(\w+).*site=(\d+)', re.IGNORECASE)
         result = pattern.match(stream_url)
-        if result and len(result.groups())==3:
+        if result and len(result.groups()) == 3:
             api_key, api_secret, site_id = result.groups()
         else:
             raise ValueError('Invalid api key or heroku url')
-    
+
     return StreamClient(api_key, api_secret, site_id)
-
-
