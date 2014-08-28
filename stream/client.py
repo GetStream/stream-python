@@ -103,7 +103,7 @@ class StreamClient(object):
             errors = []
             for field, errors in exception_fields.items():
                 errors.append('Field "%s" errors: %s' %
-                              (field, ','.repr(errors)))
+                              (field, repr(errors)))
             error_message = '\n'.join(errors)
         error_code = result.get('code')
         exception_dict = get_exception_dict()
