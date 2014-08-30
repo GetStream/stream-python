@@ -368,7 +368,6 @@ class ClientTest(TestCase):
         activities = feed.get(limit=3)['results']
         # the second post should have overwritten the first one (because they
         # had same id)
-        print activities[0]['time'], now
         self.assertEqual(activities[0]['foreign_id'], 'tweet:2')
         self.assertEqual(activities[1]['foreign_id'], 'tweet:1')
         self.assertEqual(activities[2]['foreign_id'], 'tweet:0')
