@@ -13,6 +13,8 @@ class Feed(object):
 
         '''
         self.client = client
+        # TODO: rename feed_id to feed.id everywhere
+        self.id = feed_id
         self.feed_id = feed_id
         self.feed_url = 'feed/%s/' % feed_id.replace(':', '/')
         self.feed_together = feed_id.replace(':', '')

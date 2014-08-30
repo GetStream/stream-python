@@ -208,7 +208,7 @@ class ClientTest(TestCase):
 
     def test_empty_followers(self):
         asocial = client.feed('user:asocialpython')
-        followers = asocial.following()
+        followers = asocial.followers()
         self.assertEqual(len(followers['results']), 0)
         self.assertEqual(followers['results'], [])
 
