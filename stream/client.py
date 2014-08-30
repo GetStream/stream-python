@@ -83,6 +83,7 @@ class StreamClient(object):
         url = self.base_url + relative_url
 
         serialized = serializer.dumps(data)
+        print serialized
         response = method(url, data=serialized, headers=headers,
                           params=default_params)
         logger.debug('stream api call %s, headers %s data %s',

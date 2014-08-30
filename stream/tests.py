@@ -19,6 +19,7 @@ def connect_debug():
 
 client = connect_debug()
 user1 = client.feed('user:1')
+user2 = client.feed('user:2')
 aggregated2 = client.feed('aggregated:2')
 aggregated3 = client.feed('aggregated:3')
 topic1 = client.feed('topic:1')
@@ -31,6 +32,7 @@ class ClientTest(TestCase):
         # DEBUG account details
         self.c = client
         self.user1 = user1
+        self.user2 = user2
         self.aggregated2 = aggregated2
         self.aggregated3 = aggregated3
         self.topic1 = topic1
@@ -344,6 +346,33 @@ class ClientTest(TestCase):
         self.assertEqual(activities[0]['foreign_id'], 'tweet:11')
         self.assertDatetimeAlmostEqual(activities[0]['time'], utcnow)
         self.assertNotEqual(activities[1]['foreign_id'], 'tweet:11')
+        
+    def test_time_ordering(self):
+        '''
+        datetime.datetime.utcnow() is our recommended approach
+        so if we add an activity
+        add one using time
+        add another activity it should be in the right spot
+        '''
+        now = datetime.datetime.utcnow
+        feed = self.user2
+        for index, activity_time in enumerate([None, now, None]):
+            time.sleep(1)
+            if activity_time is not None:
+                activity_time = activity_time()
+                middle = activity_time
+            activity_data = {'actor': 1, 'verb': 'tweet',
+                             'object': 1, 'foreign_id': 'tweet:%s' % index, 'time': activity_time}
+            feed.add_activity(activity_data)
+
+        activities = feed.get(limit=3)['results']
+        # the second post should have overwritten the first one (because they
+        # had same id)
+        print activities[0]['time'], now
+        self.assertEqual(activities[0]['foreign_id'], 'tweet:2')
+        self.assertEqual(activities[1]['foreign_id'], 'tweet:1')
+        self.assertEqual(activities[2]['foreign_id'], 'tweet:0')
+        self.assertDatetimeAlmostEqual(activities[1]['time'], middle)
 
     def test_missing_actor(self):
         activity_data = {'verb': 'tweet', 'object':
