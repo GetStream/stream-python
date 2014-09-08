@@ -274,10 +274,10 @@ class ClientTest(TestCase):
         notification_feed.add_activity(activity_data)['id']
         activities = notification_feed.get(mark_read=True)['results']
         for activity in activities:
-            self.assertFalse(activity['is_read'], False)
+            self.assertFalse(activity['is_read'])
         activities = notification_feed.get()['results']
         for activity in activities:
-            self.assertFalse(activity['is_read'], True)
+            self.assertFalse(activity['is_read'])
 
     def test_mark_read_by_id(self):
         notification_feed = client.feed('notification:py1')
@@ -291,11 +291,12 @@ class ClientTest(TestCase):
         ids = []
         for activity in activities:
             ids.append(activity['id'])
-            self.assertFalse(activity['is_read'], False)
+            self.assertFalse(activity['is_read'])
         ids = ids[:2]
         activities = notification_feed.get(mark_read=ids)['results']
         for activity in activities:
-            self.assertFalse(activity['is_read'], activity['id'] in ids)
+            if activity['id'] in ids:
+                self.assertTrue(activity['is_read'])
 
     def test_api_key_exception(self):
         self.c = stream.connect(
