@@ -264,6 +264,39 @@ class ClientTest(TestCase):
         activities = self.user1.get(limit=2, id_lt=activity_id_two)['results']
         self.assertEqual(activities[0]['id'], activity_id)
 
+    def test_mark_read(self):
+        notification_feed = client.feed('notification:py1')
+        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
+        notification_feed.add_activity(activity_data)['id']
+        activity_data = {'actor': 2, 'verb': 'add', 'object': 2}
+        notification_feed.add_activity(activity_data)['id']
+        activity_data = {'actor': 3, 'verb': 'watch', 'object': 2}
+        notification_feed.add_activity(activity_data)['id']
+        activities = notification_feed.get(mark_read=True)['results']
+        for activity in activities:
+            self.assertFalse(activity['is_read'], False)
+        activities = notification_feed.get()['results']
+        for activity in activities:
+            self.assertFalse(activity['is_read'], True)
+
+    def test_mark_read_by_id(self):
+        notification_feed = client.feed('notification:py1')
+        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
+        notification_feed.add_activity(activity_data)['id']
+        activity_data = {'actor': 2, 'verb': 'add', 'object': 2}
+        notification_feed.add_activity(activity_data)['id']
+        activity_data = {'actor': 3, 'verb': 'watch', 'object': 2}
+        notification_feed.add_activity(activity_data)['id']
+        activities = notification_feed.get()['results']
+        ids = []
+        for activity in activities:
+            ids.append(activity['id'])
+            self.assertFalse(activity['is_read'], False)
+        ids = ids[:2]
+        activities = notification_feed.get(mark_read=ids)['results']
+        for activity in activities:
+            self.assertFalse(activity['is_read'], activity['id'] in ids)
+
     def test_api_key_exception(self):
         self.c = stream.connect(
             '5crf3bhfzesnMISSING',
