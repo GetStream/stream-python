@@ -1,8 +1,7 @@
 from dateutil.tz import tzlocal
 import stream
 import time
-from stream.exceptions import ApiKeyException, InputException,\
-    CustomFieldException
+from stream.exceptions import ApiKeyException, InputException
 import random
 from unittest.case import TestCase
 
@@ -63,7 +62,7 @@ class ClientTest(TestCase):
         self.assertEqual(client.site_id, 'c')
 
     def test_token_retrieval(self):
-        token = self.user1.token
+        self.user1.token
 
     def test_add_activity(self):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
@@ -293,7 +292,8 @@ class ClientTest(TestCase):
             ids.append(activity['id'])
             self.assertFalse(activity['is_read'])
         ids = ids[:2]
-        activities = notification_feed.get(mark_read=ids)['results']
+        notification_feed.get(mark_read=ids)
+        activities = notification_feed.get()['results']
         for activity in activities:
             if activity['id'] in ids:
                 self.assertTrue(activity['is_read'])
