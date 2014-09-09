@@ -65,10 +65,11 @@ class ClientTest(TestCase):
         self.user1.token
 
     def test_add_activity(self):
+        feed = client.feed('user:py1')
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
-        response = self.user1.add_activity(activity_data)
+        response = feed.add_activity(activity_data)
         activity_id = response['id']
-        activities = self.user1.get(limit=1)['results']
+        activities = feed.get(limit=1)['results']
         self.assertEqual(activities[0]['id'], activity_id)
 
     def test_add_activity_to(self):
@@ -133,12 +134,14 @@ class ClientTest(TestCase):
         self.assertEqual(get_activity_ids, activity_ids[::-1])
 
     def test_follow(self):
+        feed = client.feed('user:test_follow')
+        agg_feed = client.feed('aggregated:test_follow')
         actor_id = random.randint(10, 100000)
         activity_data = {'actor': actor_id, 'verb': 'tweet', 'object': 1}
-        activity_id = self.user1.add_activity(activity_data)['id']
-        self.aggregated2.follow('user:1')
+        activity_id = feed.add_activity(activity_data)['id']
+        agg_feed.follow('user:test_follow')
         time.sleep(10)
-        activities = self.aggregated2.get(limit=3)['results']
+        activities = agg_feed.get(limit=3)['results']
         activity = self._get_first_aggregated_activity(activities)
         activity_id_found = activity['id'] if activity is not None else None
         self.assertEqual(activity_id_found, activity_id)
