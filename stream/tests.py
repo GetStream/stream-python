@@ -264,22 +264,23 @@ class ClientTest(TestCase):
         self.assertEqual(activities[0]['id'], activity_id)
 
     def test_mark_read(self):
-        notification_feed = client.feed('notification:py1')
+        notification_feed = client.feed('notification:py3')
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
-        notification_feed.add_activity(activity_data)['id']
+        notification_feed.add_activity(activity_data)
         activity_data = {'actor': 2, 'verb': 'add', 'object': 2}
-        notification_feed.add_activity(activity_data)['id']
+        notification_feed.add_activity(activity_data)
         activity_data = {'actor': 3, 'verb': 'watch', 'object': 2}
-        notification_feed.add_activity(activity_data)['id']
-        activities = notification_feed.get(mark_read=True)['results']
-        for activity in activities:
-            self.assertFalse(activity['is_read'])
+        notification_feed.add_activity(activity_data)
         activities = notification_feed.get()['results']
         for activity in activities:
             self.assertFalse(activity['is_read'])
+        activities = notification_feed.get(mark_read=True)['results']
+        activities = notification_feed.get()['results']
+        for activity in activities:
+            self.assertTrue(activity['is_read'])
 
     def test_mark_read_by_id(self):
-        notification_feed = client.feed('notification:py1')
+        notification_feed = client.feed('notification:py2')
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
         notification_feed.add_activity(activity_data)['id']
         activity_data = {'actor': 2, 'verb': 'add', 'object': 2}
