@@ -148,20 +148,22 @@ class ClientTest(TestCase):
 
     def test_follow_private(self):
         feed = client.feed('secret:py1')
+        agg_feed = client.feed('aggregated:test_follow_private')
         actor_id = random.randint(10, 100000)
         activity_data = {'actor': actor_id, 'verb': 'tweet', 'object': 1}
         activity_id = feed.add_activity(activity_data)['id']
-        self.aggregated2.follow('secret:py1')
+        agg_feed.follow('secret:py1')
         time.sleep(10)
-        activities = self.aggregated2.get(limit=3)['results']
+        activities = agg_feed.get(limit=3)['results']
         activity = self._get_first_aggregated_activity(activities)
         activity_id_found = activity['id'] if activity is not None else None
         self.assertEqual(activity_id_found, activity_id)
 
     def test_flat_follow(self):
+        feed = client.feed('user:test_flat_follow')
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
-        activity_id = self.user1.add_activity(activity_data)['id']
-        self.flat3.follow('user:1')
+        activity_id = feed.add_activity(activity_data)['id']
+        self.flat3.follow('user:test_flat_follow')
         time.sleep(10)
         activities = self.flat3.get(limit=3)['results']
         activity = self._get_first_activity(activities)
