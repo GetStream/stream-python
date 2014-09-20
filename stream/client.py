@@ -1,15 +1,13 @@
-import requests
-from stream import exceptions, serializer
 import logging
+import os
+import requests
+from requests.adapters import HTTPAdapter
+from stream import exceptions, serializer
 from stream.signing import sign
 from stream.utils import validate_feed
-import os
-import json
-import datetime
+
 
 logger = logging.getLogger(__name__)
-
-import datetime
 
 
 class StreamClient(object):
@@ -47,6 +45,8 @@ class StreamClient(object):
             self.base_url = base_url
         if os.environ.get('LOCAL'):
             self.base_url = 'http://localhost:8000/api/'
+        self.session = requests.Session()
+        self.session.mount(self.base_url, HTTPAdapter(max_retries=3))
 
     def feed(self, feed_id):
         '''
@@ -116,16 +116,16 @@ class StreamClient(object):
         '''
         Shortcut for make request
         '''
-        return self._make_request(requests.post, *args, **kwargs)
+        return self._make_request(self.session.post, *args, **kwargs)
 
     def get(self, *args, **kwargs):
         '''
         Shortcut for make request
         '''
-        return self._make_request(requests.get, *args, **kwargs)
+        return self._make_request(self.session.get, *args, **kwargs)
 
     def delete(self, *args, **kwargs):
         '''
         Shortcut for make request
         '''
-        return self._make_request(requests.delete, *args, **kwargs)
+        return self._make_request(self.session.delete, *args, **kwargs)
