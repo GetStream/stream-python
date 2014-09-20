@@ -2,6 +2,13 @@
  Change history
 ================
 
+1.1.1
+=====
+:release-date: 2014-09-20 08:00 A.M GMT
+:by: Tommaso Barbugli
+
+* Add HTTP client retries
+
 1.1.0
 =====
 :release-date: 2014-09-08 08:00 A.M GMT

@@ -276,11 +276,11 @@ class ClientTest(TestCase):
         notification_feed.add_activity(activity_data)
         activity_data = {'actor': 3, 'verb': 'watch', 'object': 2}
         notification_feed.add_activity(activity_data)
-        activities = notification_feed.get()['results']
+        activities = notification_feed.get(limit=3)['results']
         for activity in activities:
             self.assertFalse(activity['is_read'])
         activities = notification_feed.get(mark_read=True)['results']
-        activities = notification_feed.get()['results']
+        activities = notification_feed.get(limit=3)['results']
         for activity in activities:
             self.assertTrue(activity['is_read'])
 
@@ -292,14 +292,14 @@ class ClientTest(TestCase):
         notification_feed.add_activity(activity_data)['id']
         activity_data = {'actor': 3, 'verb': 'watch', 'object': 2}
         notification_feed.add_activity(activity_data)['id']
-        activities = notification_feed.get()['results']
+        activities = notification_feed.get(limit=3)['results']
         ids = []
         for activity in activities:
             ids.append(activity['id'])
             self.assertFalse(activity['is_read'])
         ids = ids[:2]
         notification_feed.get(mark_read=ids)
-        activities = notification_feed.get()['results']
+        activities = notification_feed.get(limit=3)['results']
         for activity in activities:
             if activity['id'] in ids:
                 self.assertTrue(activity['is_read'])
