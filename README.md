@@ -25,7 +25,7 @@ client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET')
 # Find your API keys here https://getstream.io/dashboard/
 
 # Instantiate a feed object
-user_feed_1 = client.feed('user:1')
+user_feed_1 = client.feed('user', '1')
 
 # Get activities from 5 to 10 (slow pagination)
 result = user_feed_1.get(limit=5, offset=5)
@@ -36,7 +36,7 @@ result = user_feed_1.get(limit=5, id_lt="e561de8f-00f1-11e4-b400-0cc47a024be0")
 activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:1'}
 activity_response = user_feed_1.add_activity(activity_data)
 # Create a bit more complex activity
-activity_data = {'actor': 1, 'verb': 'run', 'object': 1, 'foreign_id': 'run:1', 
+activity_data = {'actor': 1, 'verb': 'run', 'object': 1, 'foreign_id': 'run', '1', 
 	'course': {'name': 'Golden Gate park', 'distance': 10},
 	'participants': ['Thierry', 'Tommaso'],
 	'started_at': datetime.datetime.now()
@@ -49,10 +49,10 @@ user_feed_1.remove("e561de8f-00f1-11e4-b400-0cc47a024be0")
 user_feed_1.remove(foreign_id='tweet:1')
 
 # Follow another feed
-user_feed_1.follow('flat:42')
+user_feed_1.follow('flat', '42')
 
 # Stop following another feed
-user_feed_1.unfollow('flat:42')
+user_feed_1.unfollow('flat', '42')
 
 # List followers/following
 following = user_feed_1.following(offset=0, limit=2)
@@ -77,7 +77,7 @@ user_feed_1.add_activity(activity);
 # Generating tokens for client side usage
 token = user_feed_1.token
 # Javascript client side feed initialization
-# user1 = client.feed('user:1', '{{ token }}');
+# user1 = client.feed('user', '1', '{{ token }}');
 ```
 
 Docs are available on [GetStream.io](http://getstream.io/docs/).

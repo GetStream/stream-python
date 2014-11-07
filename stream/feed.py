@@ -3,30 +3,24 @@ from stream.utils import validate_feed
 
 class Feed(object):
 
-    def __init__(self, client, feed_id, token):
+    def __init__(self, client, feed_slug, user_id, token):
         '''
         Initializes the Feed class
 
         :param client: the api client
-        :param feed_id: the feed id (string)
-
-
+        :param feed_slug: the slug of the feed, ie user, flat, notification
+        :param user_id: the id of the user
+        :param token: the token
         '''
         self.client = client
-        # TODO: rename feed_id to feed.id everywhere
-        self.id = feed_id
-        self.feed_id = feed_id
-        self.feed_url = 'feed/%s/' % feed_id.replace(':', '/')
-        self.feed_together = feed_id.replace(':', '')
+        self.feed_slug = feed_slug
+        self.user_id = user_id
+        self.id = '%s:%s' % (feed_slug, user_id)
         self.token = token
-        self.authorization = self.feed_together + ' ' + self.token
-
-    def add_to_signature(self, recipients):
-        data = []
-        for recipient in recipients:
-            feed = self.client.feed(recipient)
-            data.append("%s %s" % (recipient, feed.token))
-        return data
+        
+        self.feed_url = 'feed/%s/' % self.id.replace(':', '/')
+        self.feed_together = self.id.replace(':', '')
+        self.signature = self.feed_together + ' ' + self.token
 
     def add_activity(self, activity_data):
         '''
@@ -44,7 +38,7 @@ class Feed(object):
             activity_data['to'] = self.add_to_signature(activity_data['to'])
 
         result = self.client.post(
-            self.feed_url, data=activity_data, authorization=self.authorization)
+            self.feed_url, data=activity_data, signature=self.signature)
         return result
 
     def add_activities(self, activity_list):
@@ -68,7 +62,7 @@ class Feed(object):
 
         data = dict(activities=activity_list)
         result = self.client.post(
-            self.feed_url, data=data, authorization=self.authorization)
+            self.feed_url, data=data, signature=self.signature)
         return result
 
     def remove_activity(self, activity_id=None, foreign_id=None):
@@ -87,55 +81,9 @@ class Feed(object):
         if foreign_id is not None:
             params['foreign_id'] = '1'
         result = self.client.delete(
-            url, authorization=self.authorization, params=params)
+            url, signature=self.signature, params=params)
         return result
-
-    def follow(self, target_feed):
-        '''
-        Follows the given feed
-
-        :param target_feed: the feed to follow, ie flat:3
-        '''
-        url = self.feed_url + 'follows/'
-        data = {
-            'target': target_feed,
-            'target_token': self.client.feed(target_feed).token
-        }
-        response = self.client.post(
-            url, data=data, authorization=self.authorization)
-        return response
-
-    def followers(self, offset=0, limit=25):
-        params = {
-            'limit': limit,
-            'offset': offset
-        }
-        url = self.feed_url + 'followers/'
-        response = self.client.get(
-            url, params=params, authorization=self.authorization)
-        return response
-
-    def following(self, offset=0, limit=25, feeds=None):
-        feeds = feeds is not None and ','.join(feeds) or ''
-        params = {
-            'offset': offset,
-            'limit': limit,
-            'filter': feeds
-        }
-        url = self.feed_url + 'follows/'
-        response = self.client.get(
-            url, params=params, authorization=self.authorization)
-        return response
-
-    def unfollow(self, target_feed):
-        '''
-        Unfollow the given feed
-        '''
-        validate_feed(target_feed)
-        url = self.feed_url + 'follows/%s/' % target_feed
-        response = self.client.delete(url, authorization=self.authorization)
-        return response
-
+    
     def get(self, **params):
         '''
         Get the activities in this feed
@@ -152,5 +100,75 @@ class Feed(object):
         if isinstance(mark_read, (list, tuple)):
             params['mark_read'] = ','.join(mark_read)
         response = self.client.get(
-            self.feed_url, params=params, authorization=self.authorization)
+            self.feed_url, params=params, signature=self.signature)
         return response
+
+    def follow(self, target_feed_slug, target_user_id):
+        '''
+        Follows the given feed
+
+        :param target_feed_slug: the slug of the target feed
+        :param target_user_id: the user id
+        '''
+        target_feed_id = '%s:%s' % (target_feed_slug, target_user_id)
+        url = self.feed_url + 'follows/'
+        data = {
+            'target': target_feed_id,
+            'target_token': self.client.feed(target_feed_slug, target_user_id).token
+        }
+        response = self.client.post(
+            url, data=data, signature=self.signature)
+        return response
+    
+    def unfollow(self, target_feed_slug, target_user_id):
+        '''
+        Unfollow the given feed
+        '''
+        target_feed_id = '%s:%s' % (target_feed_slug, target_user_id)
+        url = self.feed_url + 'follows/%s/' % target_feed_id
+        response = self.client.delete(url, signature=self.signature)
+        return response
+
+    def followers(self, offset=0, limit=25, filter=None):
+        '''
+        Lists the followers for the given feed
+        '''
+        filter = filter is not None and ','.join(filter) or ''
+        params = {
+            'limit': limit,
+            'offset': offset,
+            'filter': filter
+        }
+        url = self.feed_url + 'followers/'
+        response = self.client.get(
+            url, params=params, signature=self.signature)
+        return response
+
+    def following(self, offset=0, limit=25, filter=None):
+        '''
+        List the feeds which this feed is following
+        '''
+        filter = filter is not None and ','.join(filter) or ''
+        params = {
+            'offset': offset,
+            'limit': limit,
+            'filter': filter
+        }
+        url = self.feed_url + 'follows/'
+        response = self.client.get(
+            url, params=params, signature=self.signature)
+        return response
+
+    def add_to_signature(self, recipients):
+        '''
+        Takes a list of recipients such as ['user:1', 'user:2']
+        and turns it into a list with the tokens included
+        ['user:1 token', 'user:2 token']
+        '''
+        data = []
+        for recipient in recipients:
+            validate_feed(recipient)
+            feed_slug, user_id = recipient.split(':')
+            feed = self.client.feed(feed_slug, user_id)
+            data.append("%s %s" % (recipient, feed.token))
+        return data

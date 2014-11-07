@@ -1,10 +1,9 @@
-import logging
-import os
-import requests
 from requests.adapters import HTTPAdapter
 from stream import exceptions, serializer
 from stream.signing import sign
-from stream.utils import validate_feed
+import logging
+import os
+import requests
 
 
 logger = logging.getLogger(__name__)
@@ -13,7 +12,7 @@ logger = logging.getLogger(__name__)
 class StreamClient(object):
     base_url = 'https://getstream.io/api/'
 
-    def __init__(self, api_key, api_secret, site_id, base_url=None):
+    def __init__(self, api_key, api_secret, site_id, version='v1.0', timeout=3.0, base_url=None):
         '''
         Initialize the client with the given api key and secret
 
@@ -41,27 +40,28 @@ class StreamClient(object):
         self.api_key = api_key
         self.api_secret = api_secret
         self.site_id = site_id
+        self.version = version
+        self.timeout = timeout
         if base_url is not None:
             self.base_url = base_url
         if os.environ.get('LOCAL'):
             self.base_url = 'http://localhost:8000/api/'
         self.session = requests.Session()
-        self.session.mount(self.base_url, HTTPAdapter(max_retries=3))
+        self.session.mount(self.base_url, HTTPAdapter(max_retries=0))
 
-    def feed(self, feed_id):
+    def feed(self, feed_slug, user_id):
         '''
         Returns a Feed object
 
         :param feed_id: the feed object
         '''
-        validate_feed(feed_id)
         from stream.feed import Feed
 
         # generate the token
-        feed_together = feed_id.replace(':', '')
-        token = sign(self.api_secret, feed_together)
+        feed_id = '%s%s' % (feed_slug, user_id)
+        token = sign(self.api_secret, feed_id)
 
-        return Feed(self, feed_id, token)
+        return Feed(self, feed_slug, user_id, token)
 
     def get_default_params(self):
         '''
@@ -69,22 +69,28 @@ class StreamClient(object):
         '''
         params = dict(api_key=self.api_key)
         return params
+    
+    def get_full_url(self, relative_url):
+        url = self.base_url + self.version + '/' + relative_url
+        return url
+    
+    def get_user_agent(self):
+        from stream import __version__
+        agent = 'stream-javascript-client-%s' % __version__
+        return agent
 
-    def _make_request(self, method, relative_url, authorization, params=None, data=None):
+    def _make_request(self, method, relative_url, signature, params=None, data=None):
         params = params or {}
         data = data or {}
-
         default_params = self.get_default_params()
         default_params.update(params)
-
-        headers = {'Authorization': authorization}
+        headers = {'Authorization': signature}
         headers['Content-type'] = 'application/json'
-
-        url = self.base_url + relative_url
-
+        headers['User-Agent'] = self.get_user_agent()
+        url = self.get_full_url(relative_url)
         serialized = serializer.dumps(data)
         response = method(url, data=serialized, headers=headers,
-                          params=default_params)
+                          params=default_params, timeout=self.timeout)
         logger.debug('stream api call %s, headers %s data %s',
                      response.url, headers, data)
         result = serializer.loads(response.content)
@@ -102,7 +108,7 @@ class StreamClient(object):
         if exception_fields is not None:
             errors = []
             for field, errors in exception_fields.items():
-                errors.append('Field "%s" errors: %s' %
+                errors.append('Field "%s" errors: %s' % 
                               (field, repr(errors)))
             error_message = '\n'.join(errors)
         error_code = result.get('code')
