@@ -19,6 +19,7 @@ def connect_debug():
 random_postfix = str(random.randint(0, 1000000))
 client = connect_debug()
 
+
 def getfeed(feed_slug, user_id):
     '''
     Adds the random postfix to the user id
