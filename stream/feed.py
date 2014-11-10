@@ -129,30 +129,30 @@ class Feed(object):
         response = self.client.delete(url, signature=self.signature)
         return response
 
-    def followers(self, offset=0, limit=25, filter=None):
+    def followers(self, offset=0, limit=25, feeds=None):
         '''
         Lists the followers for the given feed
         '''
-        filter = filter is not None and ','.join(filter) or ''
+        feeds = feeds is not None and ','.join(feeds) or ''
         params = {
             'limit': limit,
             'offset': offset,
-            'filter': filter
+            'filter': feeds
         }
         url = self.feed_url + 'followers/'
         response = self.client.get(
             url, params=params, signature=self.signature)
         return response
 
-    def following(self, offset=0, limit=25, filter=None):
+    def following(self, offset=0, limit=25, feeds=None):
         '''
         List the feeds which this feed is following
         '''
-        filter = filter is not None and ','.join(filter) or ''
+        feeds = feeds is not None and ','.join(feeds) or ''
         params = {
             'offset': offset,
             'limit': limit,
-            'filter': filter
+            'filter': feeds
         }
         url = self.feed_url + 'follows/'
         response = self.client.get(
