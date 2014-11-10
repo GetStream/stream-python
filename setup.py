@@ -14,7 +14,7 @@ tests_require = [
     #'pytest',
     'python-coveralls',
     'unittest2',
-    'pytest-cov',
+    'pytest-cov==1.8.1',
     'python-dateutil'
 ]
 
