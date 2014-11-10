@@ -7,5 +7,11 @@ python:
 notifications:
   email:
     - thierryschellenbach@gmail.com
+install:
+  - pip install pep8 --use-mirrors
+  - pip install python-coveralls --use-mirrors
+before_script:
+  # ensure we validate against pep standards
+  - "pep8 --exclude=migrations --ignore=E501,E225,W293 stream"
 after_success:
    - coveralls
