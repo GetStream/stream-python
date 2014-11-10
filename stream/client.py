@@ -96,28 +96,39 @@ class StreamClient(object):
                           params=default_params, timeout=self.timeout)
         logger.debug('stream api call %s, headers %s data %s',
                      response.url, headers, data)
-        result = serializer.loads(response.text)
-        if result.get('exception'):
-            self.raise_exception(result, status_code=response.status_code)
-        return result
+        try:
+            parsed_result = serializer.loads(response.text)
+        except ValueError:
+            parsed_result = None
+        if parsed_result.get('exception') or response.status_code >= 500:
+            self.raise_exception(parsed_result, status_code=response.status_code)
+        return parsed_result
 
     def raise_exception(self, result, status_code):
         '''
         Map the exception code to an exception class and raise it
+        If result.exception and result.detail are available use that
+        Otherwise just raise a generic error
         '''
         from stream.exceptions import get_exception_dict
-        error_message = result['detail']
-        exception_fields = result.get('exception_fields')
-        if exception_fields is not None:
-            errors = []
-            for field, errors in exception_fields.items():
-                errors.append('Field "%s" errors: %s' %
-                              (field, repr(errors)))
-            error_message = '\n'.join(errors)
-        error_code = result.get('code')
-        exception_dict = get_exception_dict()
-        exception_class = exception_dict.get(
-            error_code, exceptions.StreamApiException)
+        exception_class = exceptions.StreamApiException
+        
+        if result is not None:
+            error_message = result['detail']
+            exception_fields = result.get('exception_fields')
+            if exception_fields is not None:
+                errors = []
+                for field, errors in exception_fields.items():
+                    errors.append('Field "%s" errors: %s' %
+                                  (field, repr(errors)))
+                error_message = '\n'.join(errors)
+            error_code = result.get('code')
+            exception_dict = get_exception_dict()
+            exception_class = exception_dict.get(
+                error_code, exceptions.StreamApiException)
+        else:
+            error_message = 'GetStreamAPI%s' % status_code
+            
         exception = exception_class(error_message, status_code=status_code)
         raise exception
 

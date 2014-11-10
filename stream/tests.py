@@ -342,6 +342,7 @@ class ClientTest(TestCase):
         a.) The same time and activity data
         b.) The same time and foreign id
         '''
+        from pprint import pprint
         utcnow = datetime.datetime.utcnow()
         activity_data = {
             'actor': 1, 'verb': 'tweet', 'object': 1, 'time': utcnow}
@@ -349,7 +350,8 @@ class ClientTest(TestCase):
         response = self.user1.add_activity(activity_data)
         activities = self.user1.get(limit=2)['results']
         self.assertDatetimeAlmostEqual(activities[0]['time'], utcnow)
-        self.assertClearlyNotEqual(activities[1]['time'], utcnow)
+        if (len(activities) > 1):
+            self.assertClearlyNotEqual(activities[1]['time'], utcnow)
 
     def test_uniqueness_topic(self):
         '''
@@ -358,11 +360,11 @@ class ClientTest(TestCase):
         b.) The same time and foreign id
         '''
         # follow both the topic and the user
-        self.flat3.follow('topic', '1')
-        self.flat3.follow('user', '1')
+        self.flat3.follow('topic', self.topic1.user_id)
+        self.flat3.follow('user', self.user1.user_id)
         # add the same activity twice
         now = datetime.datetime.now(tzlocal())
-        tweet = 'My Way %s' % random.randint(10, 100000)
+        tweet = 'My Way %s' % random_postfix
         activity_data = {
             'actor': 1, 'verb': 'tweet', 'object': 1, 'time': now, 'tweet': tweet}
         self.topic1.add_activity(activity_data)
