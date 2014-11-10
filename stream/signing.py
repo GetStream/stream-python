@@ -19,7 +19,8 @@ def sign(api_secret, feed_id):
 
     '''
     hashed_secret = hashlib.sha1((api_secret).encode('utf-8')).digest()
-    signed = hmac.new(hashed_secret, msg=feed_id.encode('utf8'), digestmod=hashlib.sha1)
+    signed = hmac.new(
+        hashed_secret, msg=feed_id.encode('utf8'), digestmod=hashlib.sha1)
     digest = signed.digest()
     urlsafe_digest = b64_encode(digest)
     token = urlsafe_digest.decode('ascii')

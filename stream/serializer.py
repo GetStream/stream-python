@@ -8,7 +8,6 @@ The date and datetime formats from the API are automatically supported and parse
 '''
 
 
-
 def _datetime_encoder(obj):
     if isinstance(obj, (datetime.datetime, datetime.date)):
         return obj.isoformat()

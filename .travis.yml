@@ -8,7 +8,7 @@ notifications:
   email:
     - thierryschellenbach@gmail.com
 install:
-  - pip install pep8 --use-mirrors
+  - pip install pep8==1.5.7 --use-mirrors
   - pip install python-coveralls --use-mirrors
   - pip install -e .
 before_script:
