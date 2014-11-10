@@ -18,12 +18,19 @@ def connect_debug():
 
 random_postfix = str(random.randint(0, 1000000))
 client = connect_debug()
-user1 = client.feed('user', '1' + random_postfix)
-user2 = client.feed('user', '2' + random_postfix)
-aggregated2 = client.feed('aggregated', '2' + random_postfix)
-aggregated3 = client.feed('aggregated', '3' + random_postfix)
-topic1 = client.feed('topic', '1' + random_postfix)
-flat3 = client.feed('flat', '3' + random_postfix)
+
+def getfeed(feed_slug, user_id):
+    '''
+    Adds the random postfix to the user id
+    '''
+    return client.feed(feed_slug, user_id + random_postfix)
+
+user1 = getfeed('user', '1')
+user2 = getfeed('user', '2')
+aggregated2 = getfeed('aggregated', '2')
+aggregated3 = getfeed('aggregated', '3')
+topic1 = getfeed('topic', '1')
+flat3 = getfeed('flat', '3')
 
 
 class ClientTest(TestCase):
@@ -39,7 +46,7 @@ class ClientTest(TestCase):
         self.flat3 = flat3
 
     def test_heroku(self):
-        url = 'https://thierry:pass@getstream.io/?app=1'
+        url = 'https://thierry:pass@getstream.io/?app_id=1'
         os.environ['STREAM_URL'] = url
         client = stream.connect()
         self.assertEqual(client.api_key, 'thierry')
@@ -47,7 +54,7 @@ class ClientTest(TestCase):
         self.assertEqual(client.app_id, '1')
 
     def test_heroku_real(self):
-        url = 'https://bvt88g4kvc63:twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd@getstream.io/?app=669'
+        url = 'https://bvt88g4kvc63:twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd@getstream.io/?app_id=669'
         os.environ['STREAM_URL'] = url
         client = stream.connect()
         self.assertEqual(client.api_key, 'bvt88g4kvc63')
@@ -56,7 +63,7 @@ class ClientTest(TestCase):
         self.assertEqual(client.app_id, '669')
 
     def test_heroku_overwrite(self):
-        url = 'https://thierry:pass@getstream.io/?app=1'
+        url = 'https://thierry:pass@getstream.io/?app_id=1'
         os.environ['STREAM_URL'] = url
         client = stream.connect('a', 'b', 'c')
         self.assertEqual(client.api_key, 'a')
@@ -67,7 +74,7 @@ class ClientTest(TestCase):
         self.user1.token
 
     def test_add_activity(self):
-        feed = client.feed('user', 'py1')
+        feed = getfeed('user', 'py1')
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
         response = feed.add_activity(activity_data)
         activity_id = response['id']
@@ -77,10 +84,10 @@ class ClientTest(TestCase):
     def test_add_activity_to(self):
         activity_data = {
             'actor': 1, 'verb': 'tweet', 'object': 1,
-            'to': ['user:pyto1']
+            'to': [getfeed('user', 'pyto1').id]
         }
         response = self.user1.add_activity(activity_data)
-        feed = client.feed('user', 'pyto1')
+        feed = getfeed('user', 'pyto1')
         activity_id = response['id']
         activities = feed.get(limit=1)['results']
         self.assertEqual(activities[0]['id'], activity_id)
@@ -114,7 +121,7 @@ class ClientTest(TestCase):
         self.assertEqual(get_activity_ids, activity_ids[::-1])
 
     def test_add_activities_to(self):
-        to = ['user:pyto2', 'user:pyto3']
+        to = [getfeed('user', 'pyto2').id, getfeed('user', 'pyto3').id]
         activity_data = [
             {'actor': 1, 'verb': 'tweet', 'object': 1, 'to': to},
             {'actor': 2, 'verb': 'watch', 'object': 2, 'to': to},
@@ -125,23 +132,23 @@ class ClientTest(TestCase):
         get_activity_ids = [a['id'] for a in activities]
         self.assertEqual(get_activity_ids, activity_ids[::-1])
         # test first target
-        feed = client.feed('user', 'pyto2')
+        feed = getfeed('user', 'pyto2')
         activities = feed.get(limit=2)['results']
         get_activity_ids = [a['id'] for a in activities]
         self.assertEqual(get_activity_ids, activity_ids[::-1])
         # test second target
-        feed = client.feed('user', 'pyto3')
+        feed = getfeed('user', 'pyto3')
         activities = feed.get(limit=2)['results']
         get_activity_ids = [a['id'] for a in activities]
         self.assertEqual(get_activity_ids, activity_ids[::-1])
 
     def test_follow(self):
-        feed = client.feed('user', 'test_follow')
-        agg_feed = client.feed('aggregated', 'test_follow')
+        feed = getfeed('user', 'test_follow')
+        agg_feed = getfeed('aggregated', 'test_follow')
         actor_id = random.randint(10, 100000)
         activity_data = {'actor': actor_id, 'verb': 'tweet', 'object': 1}
         activity_id = feed.add_activity(activity_data)['id']
-        agg_feed.follow('user', 'test_follow')
+        agg_feed.follow(feed.slug, feed.user_id)
         time.sleep(10)
         activities = agg_feed.get(limit=3)['results']
         activity = self._get_first_aggregated_activity(activities)
@@ -149,12 +156,12 @@ class ClientTest(TestCase):
         self.assertEqual(activity_id_found, activity_id)
 
     def test_follow_private(self):
-        feed = client.feed('secret', 'py1')
-        agg_feed = client.feed('aggregated', 'test_follow_private')
+        feed = getfeed('secret', 'py1')
+        agg_feed = getfeed('aggregated', 'test_follow_private')
         actor_id = random.randint(10, 100000)
         activity_data = {'actor': actor_id, 'verb': 'tweet', 'object': 1}
         activity_id = feed.add_activity(activity_data)['id']
-        agg_feed.follow('secret', 'py1')
+        agg_feed.follow(feed.slug, feed.user_id)
         time.sleep(10)
         activities = agg_feed.get(limit=3)['results']
         activity = self._get_first_aggregated_activity(activities)
@@ -162,10 +169,10 @@ class ClientTest(TestCase):
         self.assertEqual(activity_id_found, activity_id)
 
     def test_flat_follow(self):
-        feed = client.feed('user', 'test_flat_follow' + random_postfix)
+        feed = getfeed('user', 'test_flat_follow')
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
         activity_id = feed.add_activity(activity_data)['id']
-        self.flat3.follow('user', 'test_flat_follow' + random_postfix)
+        self.flat3.follow(feed.slug, feed.user_id)
         time.sleep(10)
         activities = self.flat3.get(limit=3)['results']
         activity = self._get_first_activity(activities)
@@ -196,46 +203,48 @@ class ClientTest(TestCase):
         self.assertNotEqual(activity_id_found, activity_id)
 
     def test_empty_followings(self):
-        asocial = client.feed('user', 'asocialpython')
+        asocial = getfeed('user', 'asocialpython')
         followings = asocial.following()
         self.assertEqual(followings['results'], [])
 
     def test_get_followings(self):
-        social = client.feed('user', 'psocial')
+        social = getfeed('user', 'psocial')
         social.follow('user', 'apy')
         social.follow('user', 'bpy')
         social.follow('user', 'cpy')
         followings = social.following(offset=0, limit=2)
         self.assertEqual(len(followings['results']), 2)
-        self.assertEqual(followings['results'][0]['feed_id'], 'user:psocial')
+        self.assertEqual(followings['results'][0]['feed_id'], social.id)
         self.assertEqual(followings['results'][0]['target_id'], 'user:cpy')
         followings = social.following(offset=1, limit=2)
         self.assertEqual(len(followings['results']), 2)
-        self.assertEqual(followings['results'][0]['feed_id'], 'user:psocial')
+        self.assertEqual(followings['results'][0]['feed_id'], social.id)
         self.assertEqual(followings['results'][0]['target_id'], 'user:bpy')
 
     def test_empty_followers(self):
-        asocial = client.feed('user', 'asocialpython')
+        asocial = getfeed('user', 'asocialpython')
         followers = asocial.followers()
         self.assertEqual(len(followers['results']), 0)
         self.assertEqual(followers['results'], [])
 
     def test_get_followers(self):
-        social = client.feed('user', 'psocial')
-        client.feed('user', 'spammy1').follow('user', 'psocial')
-        client.feed('user', 'spammy2').follow('user', 'psocial')
-        client.feed('user', 'spammy3').follow('user', 'psocial')
+        social = getfeed('user', 'psocial')
+        spammy1 = getfeed('user', 'spammy1')
+        spammy2 = getfeed('user', 'spammy2')
+        spammy3 = getfeed('user', 'spammy3')
+        for feed in [spammy1, spammy2, spammy3]:
+            feed.follow('user', social.user_id)
         followers = social.followers(offset=0, limit=2)
         self.assertEqual(len(followers['results']), 2)
-        self.assertEqual(followers['results'][0]['feed_id'], 'user:spammy3')
-        self.assertEqual(followers['results'][0]['target_id'], 'user:psocial')
+        self.assertEqual(followers['results'][0]['feed_id'], spammy3.id)
+        self.assertEqual(followers['results'][0]['target_id'], social.id)
         followers = social.followers(offset=1, limit=2)
         self.assertEqual(len(followers['results']), 2)
-        self.assertEqual(followers['results'][0]['feed_id'], 'user:spammy2')
-        self.assertEqual(followers['results'][0]['target_id'], 'user:psocial')
+        self.assertEqual(followers['results'][0]['feed_id'], spammy2.id)
+        self.assertEqual(followers['results'][0]['target_id'], social.id)
 
     def test_empty_do_i_follow(self):
-        social = client.feed('user', 'psocial')
+        social = getfeed('user', 'psocial')
         social.follow('user', 'apy')
         social.follow('user', 'bpy')
         followings = social.following(feeds=['user:missingpy'])
@@ -243,12 +252,12 @@ class ClientTest(TestCase):
         self.assertEqual(followings['results'], [])
 
     def test_do_i_follow(self):
-        social = client.feed('user', 'psocial')
+        social = getfeed('user', 'psocial')
         social.follow('user', 'apy')
         social.follow('user', 'bpy')
         followings = social.following(feeds=['user:apy'])
         self.assertEqual(len(followings['results']), 1)
-        self.assertEqual(followings['results'][0]['feed_id'], 'user:psocial')
+        self.assertEqual(followings['results'][0]['feed_id'], social.id)
         self.assertEqual(followings['results'][0]['target_id'], 'user:apy')
 
     def test_get(self):
@@ -271,7 +280,7 @@ class ClientTest(TestCase):
         self.assertEqual(activities[0]['id'], activity_id)
 
     def test_mark_read(self):
-        notification_feed = client.feed('notification', 'py3')
+        notification_feed = getfeed('notification', 'py3')
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
         notification_feed.add_activity(activity_data)
         activity_data = {'actor': 2, 'verb': 'add', 'object': 2}
@@ -287,7 +296,7 @@ class ClientTest(TestCase):
             self.assertTrue(activity['is_read'])
 
     def test_mark_read_by_id(self):
-        notification_feed = client.feed('notification', 'py2')
+        notification_feed = getfeed('notification', 'py2')
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
         notification_feed.add_activity(activity_data)['id']
         activity_data = {'actor': 2, 'verb': 'add', 'object': 2}
@@ -432,7 +441,7 @@ class ClientTest(TestCase):
             '5crf3bhfzesnMISSING',
             'tfq2sdqpj9g446sbv653x3aqmgn33hsn8uzdc9jpskaw8mj6vsnhzswuwptuj9su'
         )
-        self.assertRaises(TypeError, lambda: self.c.feed('user1'))
+        self.assertRaises(TypeError, lambda: getfeed('user1'))
 
     def test_serialization(self):
         today = datetime.date.today()
