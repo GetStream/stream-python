@@ -16,13 +16,14 @@ def connect_debug():
         u'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy'
     )
 
+random_postfix = str(random.randint(0, 1000000))
 client = connect_debug()
-user1 = client.feed('user', '1')
-user2 = client.feed('user', '2')
-aggregated2 = client.feed('aggregated', '2')
-aggregated3 = client.feed('aggregated', '3')
-topic1 = client.feed('topic', '1')
-flat3 = client.feed('flat', '3')
+user1 = client.feed('user', '1' + random_postfix)
+user2 = client.feed('user', '2' + random_postfix)
+aggregated2 = client.feed('aggregated', '2' + random_postfix)
+aggregated3 = client.feed('aggregated', '3' + random_postfix)
+topic1 = client.feed('topic', '1' + random_postfix)
+flat3 = client.feed('flat', '3' + random_postfix)
 
 
 class ClientTest(TestCase):
@@ -43,7 +44,7 @@ class ClientTest(TestCase):
         client = stream.connect()
         self.assertEqual(client.api_key, 'thierry')
         self.assertEqual(client.api_secret, 'pass')
-        self.assertEqual(client.site_id, '1')
+        self.assertEqual(client.app_id, '1')
 
     def test_heroku_real(self):
         url = 'https://bvt88g4kvc63:twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd@getstream.io/?app=669'
@@ -52,7 +53,7 @@ class ClientTest(TestCase):
         self.assertEqual(client.api_key, 'bvt88g4kvc63')
         self.assertEqual(
             client.api_secret, 'twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd')
-        self.assertEqual(client.site_id, '669')
+        self.assertEqual(client.app_id, '669')
 
     def test_heroku_overwrite(self):
         url = 'https://thierry:pass@getstream.io/?app=1'
@@ -60,7 +61,7 @@ class ClientTest(TestCase):
         client = stream.connect('a', 'b', 'c')
         self.assertEqual(client.api_key, 'a')
         self.assertEqual(client.api_secret, 'b')
-        self.assertEqual(client.site_id, 'c')
+        self.assertEqual(client.app_id, 'c')
 
     def test_token_retrieval(self):
         self.user1.token

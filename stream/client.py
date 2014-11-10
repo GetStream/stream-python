@@ -39,7 +39,7 @@ class StreamClient(object):
         '''
         self.api_key = api_key
         self.api_secret = api_secret
-        self.site_id = app_id
+        self.app_id = app_id
         self.version = version
         self.timeout = timeout
         if base_url is not None:
@@ -57,6 +57,8 @@ class StreamClient(object):
         :param user_id: the user id
         '''
         from stream.feed import Feed
+        user_id = str(user_id)
+        feed_slug = str(feed_slug)
 
         # generate the token
         feed_id = '%s%s' % (feed_slug, user_id)

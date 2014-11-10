@@ -8,13 +8,13 @@ class Feed(object):
         Initializes the Feed class
 
         :param client: the api client
-        :param feed_slug: the slug of the feed, ie user, flat, notification
+        :param slug: the slug of the feed, ie user, flat, notification
         :param user_id: the id of the user
         :param token: the token
         '''
         self.client = client
-        self.feed_slug = feed_slug
-        self.user_id = user_id
+        self.slug = feed_slug
+        self.user_id = str(user_id)
         self.id = '%s:%s' % (feed_slug, user_id)
         self.token = token
 
