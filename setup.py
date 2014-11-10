@@ -23,7 +23,7 @@ Documentation
 -------------
 Full documentation is available on `Github`_.
 
-.. _`Github`: https://github.com/tschellenbach/stream-python
+.. _`Github`: https://github.com/getstream/stream-python
 '''
 
 install_requires = [
