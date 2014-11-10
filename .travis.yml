@@ -11,9 +11,10 @@ install:
   - pip install pep8==1.5.7 --use-mirrors
   - pip install python-coveralls --use-mirrors
   - pip install python-dateutil --use-mirrors
+  - pip install pytest-cov==1.8.1 --use-mirrors
   - pip install -e .
 script:
-  - py.test stream/tests.py -sl
+  - py.test stream/tests.py -slv --cov stream --cov-report term-missing
 after_script:
   # ensure we validate against pep standards
   - "pep8 --exclude=migrations --ignore=E501,E225,W293 stream"
