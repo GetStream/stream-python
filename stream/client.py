@@ -12,13 +12,13 @@ logger = logging.getLogger(__name__)
 class StreamClient(object):
     base_url = 'https://getstream.io/api/'
 
-    def __init__(self, api_key, api_secret, site_id, version='v1.0', timeout=3.0, base_url=None):
+    def __init__(self, api_key, api_secret, app_id, version='v1.0', timeout=3.0, base_url=None):
         '''
         Initialize the client with the given api key and secret
 
         :param api_key: the api key
         :param api_secret: the api secret
-        :param base_url: (optionally overwrite the api base url)
+        :param app_id: the app id
 
         **Example usage**::
 
@@ -39,7 +39,7 @@ class StreamClient(object):
         '''
         self.api_key = api_key
         self.api_secret = api_secret
-        self.site_id = site_id
+        self.site_id = app_id
         self.version = version
         self.timeout = timeout
         if base_url is not None:
@@ -53,7 +53,8 @@ class StreamClient(object):
         '''
         Returns a Feed object
 
-        :param feed_id: the feed object
+        :param feed_slug: the slug of the feed
+        :param user_id: the user id
         '''
         from stream.feed import Feed
 

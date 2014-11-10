@@ -1,11 +1,12 @@
 import datetime
 import json
+import six
 
 '''
 Adds the ability to send date and datetime objects to the API
 The date and datetime formats from the API are automatically supported and parsed
 '''
-import six
+
 
 
 def _datetime_encoder(obj):

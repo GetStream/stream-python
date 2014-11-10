@@ -11,15 +11,15 @@ def sign(api_secret, feed_id):
     '''
     Base64 encoded sha1 signature
 
-    :param secret: the secret
-    :param feed_id: the feed_id to sign (commonly a feed id such as user:1)
+    :param api_secret: the api secret
+    :param feed_id: the feed_id to sign (commonly a feed id such as user1)
 
     **Example**::
-        signature = sign('secret', 'user:1')
+        signature = sign('secret', 'user1')
 
     '''
-    key = hashlib.sha1((api_secret).encode('utf-8')).digest()
-    signed = hmac.new(key, msg=feed_id.encode('utf8'), digestmod=hashlib.sha1)
+    hashed_secret = hashlib.sha1((api_secret).encode('utf-8')).digest()
+    signed = hmac.new(hashed_secret, msg=feed_id.encode('utf8'), digestmod=hashlib.sha1)
     digest = signed.digest()
     urlsafe_digest = b64_encode(digest)
     token = urlsafe_digest.decode('ascii')
