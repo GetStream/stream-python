@@ -237,7 +237,7 @@ class ClientTest(TestCase):
         social = client.feed('user', 'psocial')
         social.follow('user', 'apy')
         social.follow('user', 'bpy')
-        followings = social.following(filter=['user:missingpy'])
+        followings = social.following(feeds=['user:missingpy'])
         self.assertEqual(len(followings['results']), 0)
         self.assertEqual(followings['results'], [])
 
@@ -245,7 +245,7 @@ class ClientTest(TestCase):
         social = client.feed('user', 'psocial')
         social.follow('user', 'apy')
         social.follow('user', 'bpy')
-        followings = social.following(filter=['user:apy'])
+        followings = social.following(feeds=['user:apy'])
         self.assertEqual(len(followings['results']), 1)
         self.assertEqual(followings['results'][0]['feed_id'], 'user:psocial')
         self.assertEqual(followings['results'][0]['target_id'], 'user:apy')
