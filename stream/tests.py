@@ -162,10 +162,10 @@ class ClientTest(TestCase):
         self.assertEqual(activity_id_found, activity_id)
 
     def test_flat_follow(self):
-        feed = client.feed('user', 'test_flat_follow')
+        feed = client.feed('user', 'test_flat_follow' + random_postfix)
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
         activity_id = feed.add_activity(activity_data)['id']
-        self.flat3.follow('user', 'test_flat_follow')
+        self.flat3.follow('user', 'test_flat_follow' + random_postfix)
         time.sleep(10)
         activities = self.flat3.get(limit=3)['results']
         activity = self._get_first_activity(activities)

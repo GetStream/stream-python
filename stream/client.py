@@ -47,6 +47,7 @@ class StreamClient(object):
         if os.environ.get('LOCAL'):
             self.base_url = 'http://localhost:8000/api/'
         self.session = requests.Session()
+        # TODO: turn this back on after we verify it doesnt retry on slower requests
         self.session.mount(self.base_url, HTTPAdapter(max_retries=0))
 
     def feed(self, feed_slug, user_id):
