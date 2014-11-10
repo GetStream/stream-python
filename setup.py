@@ -28,6 +28,7 @@ Full documentation is available on `Github`_.
 
 install_requires = [
     'requests>=2.3.0',
+    'six>=1.8.0'
 ]
 
 
@@ -68,8 +69,11 @@ setup(
         'Development Status :: 5 - Production/Stable',
         'License :: OSI Approved :: GNU General Public License (GPL)',
         'Natural Language :: English',
-        'Programming Language :: Python',
-        'Topic :: Scientific/Engineering :: Mathematics',
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
 )

@@ -5,6 +5,7 @@ import json
 Adds the ability to send date and datetime objects to the API
 The date and datetime formats from the API are automatically supported and parsed
 '''
+import six
 
 
 def _datetime_encoder(obj):
@@ -13,7 +14,7 @@ def _datetime_encoder(obj):
 
 
 def _datetime_decoder(dict_):
-    for key, value in dict_.iteritems():
+    for key, value in dict_.items():
         # The built-in `json` library will `unicode` strings, except for empty
         # strings which are of type `str`. `jsondate` patches this for
         # consistency so that `unicode` is always returned.
@@ -21,7 +22,7 @@ def _datetime_decoder(dict_):
             dict_[key] = u''
             continue
 
-        if value is not None and isinstance(value, basestring):
+        if value is not None and isinstance(value, six.string_types):
             try:
                 # The api always returns times like this
                 # 2014-07-25T09:12:24.735
