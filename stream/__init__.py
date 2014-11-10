@@ -17,7 +17,7 @@ def connect(api_key=None, api_secret=None, app_id=None, version='v1.0', timeout=
 
     :param api_key: your api key or heroku url
     :param api_secret: the api secret
-    :param app_id: the site id (used for listening to feed changes)
+    :param app_id: the app id (used for listening to feed changes)
     '''
     from stream.client import StreamClient
     stream_url = os.environ.get('STREAM_URL')

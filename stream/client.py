@@ -69,11 +69,11 @@ class StreamClient(object):
         '''
         params = dict(api_key=self.api_key)
         return params
-    
+
     def get_full_url(self, relative_url):
         url = self.base_url + self.version + '/' + relative_url
         return url
-    
+
     def get_user_agent(self):
         from stream import __version__
         agent = 'stream-javascript-client-%s' % __version__
@@ -108,7 +108,7 @@ class StreamClient(object):
         if exception_fields is not None:
             errors = []
             for field, errors in exception_fields.items():
-                errors.append('Field "%s" errors: %s' % 
+                errors.append('Field "%s" errors: %s' %
                               (field, repr(errors)))
             error_message = '\n'.join(errors)
         error_code = result.get('code')

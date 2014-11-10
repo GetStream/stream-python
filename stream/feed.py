@@ -17,7 +17,7 @@ class Feed(object):
         self.user_id = user_id
         self.id = '%s:%s' % (feed_slug, user_id)
         self.token = token
-        
+
         self.feed_url = 'feed/%s/' % self.id.replace(':', '/')
         self.feed_together = self.id.replace(':', '')
         self.signature = self.feed_together + ' ' + self.token
@@ -83,7 +83,7 @@ class Feed(object):
         result = self.client.delete(
             url, signature=self.signature, params=params)
         return result
-    
+
     def get(self, **params):
         '''
         Get the activities in this feed
@@ -119,7 +119,7 @@ class Feed(object):
         response = self.client.post(
             url, data=data, signature=self.signature)
         return response
-    
+
     def unfollow(self, target_feed_slug, target_user_id):
         '''
         Unfollow the given feed

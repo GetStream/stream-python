@@ -2,8 +2,10 @@ import hmac
 import hashlib
 import base64
 
+
 def b64_encode(s):
     return base64.urlsafe_b64encode(s).strip(b'=')
+
 
 def sign(api_secret, feed_id):
     '''
