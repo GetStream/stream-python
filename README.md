@@ -37,17 +37,17 @@ result = user_feed_1.get(limit=5, id_lt="e561de8f-00f1-11e4-b400-0cc47a024be0")
 activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:1'}
 activity_response = user_feed_1.add_activity(activity_data)
 # Create a bit more complex activity
-activity_data = {'actor': 1, 'verb': 'run', 'object': 1, 'foreign_id': 'run', '1', 
+activity_data = {'actor': 1, 'verb': 'run', 'object': 1, 'foreign_id': 'run:1', 
 	'course': {'name': 'Golden Gate park', 'distance': 10},
 	'participants': ['Thierry', 'Tommaso'],
 	'started_at': datetime.datetime.now()
-};
+}
 user_feed_1.add_activity(activity_data)
 
 # Remove an activity by its id
-user_feed_1.remove("e561de8f-00f1-11e4-b400-0cc47a024be0")
+user_feed_1.remove_activity("e561de8f-00f1-11e4-b400-0cc47a024be0")
 # or by foreign id
-user_feed_1.remove(foreign_id='tweet:1')
+user_feed_1.remove_activity(foreign_id='tweet:1')
 
 # Follow another feed
 user_feed_1.follow('flat', '42')
@@ -68,12 +68,12 @@ user_feed_1.add_activities(activities)
 
 # Add an activity and push it to other feeds too using the `to` field
 activity = {
-    "actor_id":"1",
+    "actor":"1",
     "verb":"like",
-    "object_id":"3",
+    "object":"3",
     "to":["user:44", "user:45"]
-];
-user_feed_1.add_activity(activity);
+}
+user_feed_1.add_activity(activity)
 
 # Generating tokens for client side usage
 token = user_feed_1.token
