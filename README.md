@@ -6,6 +6,7 @@ stream-python
 [![Coverage Status](https://coveralls.io/repos/tschellenbach/stream-python/badge.png?branch=master)](https://coveralls.io/r/tschellenbach/stream-python?branch=master)
 
 stream-python is a Python client for [Stream](https://getstream.io/).
+The full documentation is available on [GetStream.io/docs](http://getstream.io/docs/).
 
 ### Installation
 
@@ -80,7 +81,7 @@ token = user_feed_1.token
 # user1 = client.feed('user', '1', '{{ token }}');
 ```
 
-Docs are available on [GetStream.io](http://getstream.io/docs/).
+
 
 API docs are on [Read the
 docs](http://stream-python.readthedocs.org/en/latest/).
