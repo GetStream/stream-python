@@ -1,9 +1,7 @@
 stream-python
 =============
 
-[![Build Status](https://travis-ci.org/GetStream/stream-python.svg?branch=master)](https://travis-ci.org/GetStream/stream-python)
-
-[![Coverage Status](https://coveralls.io/repos/tschellenbach/stream-python/badge.png?branch=master)](https://coveralls.io/r/tschellenbach/stream-python?branch=master)
+[![Build Status](https://travis-ci.org/GetStream/stream-python.svg?branch=master)](https://travis-ci.org/GetStream/stream-python) [![Coverage Status](https://coveralls.io/repos/tschellenbach/stream-python/badge.png?branch=master)](https://coveralls.io/r/tschellenbach/stream-python?branch=master) [![PyPI version](https://badge.fury.io/py/stream-python.svg)](http://badge.fury.io/py/stream-python)
 
 stream-python is a Python client for [Stream](https://getstream.io/).
 The full documentation is available on [GetStream.io/docs](http://getstream.io/docs/).
