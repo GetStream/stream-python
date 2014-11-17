@@ -80,7 +80,7 @@ class StreamClient(object):
 
     def get_user_agent(self):
         from stream import __version__
-        agent = 'stream-javascript-client-%s' % __version__
+        agent = 'stream-python-client-%s' % __version__
         return agent
 
     def _make_request(self, method, relative_url, signature, params=None, data=None):
