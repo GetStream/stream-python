@@ -70,6 +70,23 @@ class ClientTest(TestCase):
         self.assertEqual(client.api_key, 'a')
         self.assertEqual(client.api_secret, 'b')
         self.assertEqual(client.app_id, 'c')
+        
+    def test_invalid_feed_values(self):
+        def invalid_feed_slug():
+            client.feed('user:', '1')
+        self.assertRaises(ValueError, invalid_feed_slug)
+        
+        def invalid_user_id():
+            client.feed('user:', '1-a')
+        self.assertRaises(ValueError, invalid_user_id)
+            
+        def invalid_follow_feed_slug():
+            self.user1.follow('user:', '1')
+        self.assertRaises(ValueError, invalid_follow_feed_slug)
+            
+        def invalid_follow_user_id():
+            self.user1.follow('user', '1-:a')
+        self.assertRaises(ValueError, invalid_follow_user_id)
 
     def test_token_retrieval(self):
         self.user1.token

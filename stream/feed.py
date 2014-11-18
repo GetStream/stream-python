@@ -1,4 +1,4 @@
-from stream.utils import validate_feed
+from stream.utils import validate_feed_id, validate_user_id, validate_feed_slug
 
 
 class Feed(object):
@@ -110,6 +110,8 @@ class Feed(object):
         :param target_feed_slug: the slug of the target feed
         :param target_user_id: the user id
         '''
+        target_feed_slug = validate_feed_slug(target_feed_slug)
+        target_user_id = validate_user_id(target_user_id)
         target_feed_id = '%s:%s' % (target_feed_slug, target_user_id)
         url = self.feed_url + 'follows/'
         data = {
@@ -167,7 +169,7 @@ class Feed(object):
         '''
         data = []
         for recipient in recipients:
-            validate_feed(recipient)
+            validate_feed_id(recipient)
             feed_slug, user_id = recipient.split(':')
             feed = self.client.feed(feed_slug, user_id)
             data.append("%s %s" % (recipient, feed.token))

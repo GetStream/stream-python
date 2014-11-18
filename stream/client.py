@@ -4,6 +4,7 @@ from stream.signing import sign
 import logging
 import os
 import requests
+from stream.utils import validate_feed_slug, validate_user_id
 
 
 logger = logging.getLogger(__name__)
@@ -58,8 +59,8 @@ class StreamClient(object):
         :param user_id: the user id
         '''
         from stream.feed import Feed
-        user_id = str(user_id)
-        feed_slug = str(feed_slug)
+        feed_slug = validate_feed_slug(feed_slug)
+        user_id = validate_user_id(user_id)
 
         # generate the token
         feed_id = '%s%s' % (feed_slug, user_id)
