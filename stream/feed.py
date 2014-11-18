@@ -126,6 +126,8 @@ class Feed(object):
         '''
         Unfollow the given feed
         '''
+        target_feed_slug = validate_feed_slug(target_feed_slug)
+        target_user_id = validate_user_id(target_user_id)
         target_feed_id = '%s:%s' % (target_feed_slug, target_user_id)
         url = self.feed_url + 'follows/%s/' % target_feed_id
         response = self.client.delete(url, signature=self.signature)
