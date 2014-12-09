@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class StreamClient(object):
-    base_url = 'https://getstream.io/api/'
+    base_url = 'https://api.getstream.io/api/'
 
     def __init__(self, api_key, api_secret, app_id, version='v1.0', timeout=3.0, base_url=None):
         '''
