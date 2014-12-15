@@ -119,13 +119,25 @@ class ClientTest(TestCase):
         self.assertEqual(activities[0]['id'], activity_id)
         self.assertEqual(activities[0]['origin'], team_feed.id)
         # and validate removing also works
-        self.user1.remove_activity(response['id'])
+        user_feed.remove_activity(response['id'])
         # check the user pyto feed
         activities = team_feed.get(limit=1)['results']
-        self.assertNotEqual(activities[0]['id'], activity_id)
+        self.assertFirstActivityIDNotEqual(activities, activity_id)
         # and the flat feed
         activities = team_follower_feed.get(limit=1)['results']
-        self.assertNotEqual(activities[0]['id'], activity_id)
+        self.assertFirstActivityIDNotEqual(activities, activity_id)
+        
+    def assertFirstActivityIDEqual(self, activities, correct_activity_id):
+        activity_id = None
+        if activities:
+            activity_id = activities[0]['id']
+        self.assertEqual(activity_id, correct_activity_id)
+    
+    def assertFirstActivityIDNotEqual(self, activities, correct_activity_id):
+        activity_id = None
+        if activities:
+            activity_id = activities[0]['id']
+        self.assertNotEqual(activity_id, correct_activity_id)
         
     def test_remove_activity(self):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
