@@ -113,7 +113,7 @@ class ClientTest(TestCase):
         # see if the new activity is also in the team feed
         activities = team_feed.get(limit=1)['results']
         self.assertEqual(activities[0]['id'], activity_id)
-        self.assertEqual(activities[0]['origin'], team_feed.id)
+        self.assertEqual(activities[0]['origin'], None)
         # see if the fanout process also works
         activities = team_follower_feed.get(limit=1)['results']
         self.assertEqual(activities[0]['id'], activity_id)
