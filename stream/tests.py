@@ -100,16 +100,33 @@ class ClientTest(TestCase):
         self.assertEqual(activities[0]['id'], activity_id)
 
     def test_add_activity_to(self):
+        # test for sending an activities to the team feed using to
+        feeds = ['user', 'team', 'team_follower']
+        user_feed, team_feed, team_follower_feed = map(lambda x: getfeed('user', x), feeds)
+        team_follower_feed.follow(team_feed.slug, team_feed.user_id)
         activity_data = {
             'actor': 1, 'verb': 'tweet', 'object': 1,
-            'to': [getfeed('user', 'pyto1').id]
+            'to': [team_feed.id]
         }
-        response = self.user1.add_activity(activity_data)
-        feed = getfeed('user', 'pyto1')
+        response = user_feed.add_activity(activity_data)
         activity_id = response['id']
-        activities = feed.get(limit=1)['results']
+        # see if the new activity is also in the team feed
+        activities = team_feed.get(limit=1)['results']
         self.assertEqual(activities[0]['id'], activity_id)
-
+        self.assertEqual(activities[0]['origin'], team_feed.id)
+        # see if the fanout process also works
+        activities = team_follower_feed.get(limit=1)['results']
+        self.assertEqual(activities[0]['id'], activity_id)
+        self.assertEqual(activities[0]['origin'], team_feed.id)
+        # and validate removing also works
+        self.user1.remove_activity(response['id'])
+        # check the user pyto feed
+        activities = team_feed.get(limit=1)['results']
+        self.assertNotEqual(activities[0]['id'], activity_id)
+        # and the flat feed
+        activities = team_follower_feed.get(limit=1)['results']
+        self.assertNotEqual(activities[0]['id'], activity_id)
+        
     def test_remove_activity(self):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
         activity_id = self.user1.add_activity(activity_data)['id']
@@ -160,7 +177,7 @@ class ClientTest(TestCase):
         get_activity_ids = [a['id'] for a in activities]
         self.assertEqual(get_activity_ids, activity_ids[::-1])
 
-    def test_follow(self):
+    def test_follow_and_source(self):
         feed = getfeed('user', 'test_follow')
         agg_feed = getfeed('aggregated', 'test_follow')
         actor_id = random.randint(10, 100000)
@@ -171,6 +188,7 @@ class ClientTest(TestCase):
         activities = agg_feed.get(limit=3)['results']
         activity = self._get_first_aggregated_activity(activities)
         activity_id_found = activity['id'] if activity is not None else None
+        self.assertEqual(activity['origin'], feed.id)
         self.assertEqual(activity_id_found, activity_id)
 
     def test_follow_private(self):

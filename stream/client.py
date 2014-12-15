@@ -47,6 +47,7 @@ class StreamClient(object):
             self.base_url = base_url
         if os.environ.get('LOCAL'):
             self.base_url = 'http://localhost:8000/api/'
+            self.timeout = 20
         self.session = requests.Session()
         # TODO: turn this back on after we verify it doesnt retry on slower requests
         self.session.mount(self.base_url, HTTPAdapter(max_retries=0))
@@ -102,7 +103,7 @@ class StreamClient(object):
             parsed_result = serializer.loads(response.text)
         except ValueError:
             parsed_result = None
-        if parsed_result.get('exception') or response.status_code >= 500:
+        if parsed_result is None or parsed_result.get('exception') or response.status_code >= 500:
             self.raise_exception(parsed_result, status_code=response.status_code)
         return parsed_result
 
