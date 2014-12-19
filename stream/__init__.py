@@ -5,13 +5,13 @@ __author__ = 'Thierry Schellenbach'
 __copyright__ = 'Copyright 2014, Thierry Schellenbach'
 __credits__ = ['Thierry Schellenbach, mellowmorning.com, @tschellenbach']
 __license__ = 'BSD'
-__version__ = '2.0.3'
+__version__ = '2.1.0'
 __maintainer__ = 'Thierry Schellenbach'
 __email__ = 'thierryschellenbach@gmail.com'
 __status__ = 'Production'
 
 
-def connect(api_key=None, api_secret=None, app_id=None, version='v1.0', timeout=3.0):
+def connect(api_key=None, api_secret=None, app_id=None, version='v1.0', timeout=3.0, location=None):
     '''
     Returns a Client object
 
@@ -31,4 +31,4 @@ def connect(api_key=None, api_secret=None, app_id=None, version='v1.0', timeout=
         else:
             raise ValueError('Invalid api key or heroku url')
 
-    return StreamClient(api_key, api_secret, app_id, version, timeout)
+    return StreamClient(api_key, api_secret, app_id, version, timeout, location=location)

@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class StreamClient(object):
     base_url = 'https://api.getstream.io/api/'
 
-    def __init__(self, api_key, api_secret, app_id, version='v1.0', timeout=3.0, base_url=None):
+    def __init__(self, api_key, api_secret, app_id, version='v1.0', timeout=3.0, base_url=None, location=None):
         '''
         Initialize the client with the given api key and secret
 
@@ -43,11 +43,16 @@ class StreamClient(object):
         self.app_id = app_id
         self.version = version
         self.timeout = timeout
+        self.location = location
+        
         if base_url is not None:
             self.base_url = base_url
-        if os.environ.get('LOCAL'):
+        elif location is not None:
+            self.base_url = 'https://%s-api.getstream.io/api/' % location
+        elif os.environ.get('LOCAL'):
             self.base_url = 'http://localhost:8000/api/'
             self.timeout = 20
+            
         self.session = requests.Session()
         # TODO: turn this back on after we verify it doesnt retry on slower requests
         self.session.mount(self.base_url, HTTPAdapter(max_retries=0))

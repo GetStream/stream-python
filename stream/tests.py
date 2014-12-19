@@ -8,6 +8,7 @@ from unittest.case import TestCase
 import os
 import datetime
 from stream import serializer
+from requests.exceptions import ConnectionError
 
 
 def connect_debug():
@@ -70,6 +71,17 @@ class ClientTest(TestCase):
         self.assertEqual(client.api_key, 'a')
         self.assertEqual(client.api_secret, 'b')
         self.assertEqual(client.app_id, 'c')
+        
+    def test_location_support(self):
+        client = stream.connect('a', 'b', 'c', location='us-east')
+        full_location = 'https://us-east-api.getstream.io/api/'
+        self.assertEqual(client.location, 'us-east')
+        self.assertEqual(client.base_url, full_location)
+        # test a wrong location
+        client = stream.connect('a', 'b', 'c', location='nonexistant')
+        def get_feed():
+            client.feed('user', '1').get()
+        self.assertRaises(ConnectionError, get_feed)
         
     def test_invalid_feed_values(self):
         def invalid_feed_slug():
