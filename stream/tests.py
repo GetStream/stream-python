@@ -113,7 +113,7 @@ class ClientTest(TestCase):
 
     def test_add_activity_to(self):
         # test for sending an activities to the team feed using to
-        feeds = ['user', 'team', 'team_follower']
+        feeds = ['user', 'teamy', 'team_follower']
         user_feed, team_feed, team_follower_feed = map(lambda x: getfeed('user', x), feeds)
         team_follower_feed.follow(team_feed.slug, team_feed.user_id)
         activity_data = {
