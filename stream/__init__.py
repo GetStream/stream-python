@@ -5,7 +5,7 @@ __author__ = 'Thierry Schellenbach'
 __copyright__ = 'Copyright 2014, Thierry Schellenbach'
 __credits__ = ['Thierry Schellenbach, mellowmorning.com, @tschellenbach']
 __license__ = 'BSD'
-__version__ = '2.1.0'
+__version__ = '2.1.2'
 __maintainer__ = 'Thierry Schellenbach'
 __email__ = 'thierryschellenbach@gmail.com'
 __status__ = 'Production'
@@ -24,10 +24,11 @@ def connect(api_key=None, api_secret=None, app_id=None, version='v1.0', timeout=
     # support for the heroku STREAM_URL syntax
     if stream_url and not api_key:
         pattern = re.compile(
-            'https\:\/\/(\w+)\:(\w+).*app_id=(\d+)', re.IGNORECASE)
+            'https\:\/\/(\w+)\:(\w+)\@([\w-]*).*\?app_id=(\d+)', re.IGNORECASE)
         result = pattern.match(stream_url)
-        if result and len(result.groups()) == 3:
-            api_key, api_secret, app_id = result.groups()
+        if result and len(result.groups()) == 4:
+            api_key, api_secret, location, app_id = result.groups()
+            location = None if location == 'getstream' else location
         else:
             raise ValueError('Invalid api key or heroku url')
 
