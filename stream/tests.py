@@ -13,8 +13,9 @@ from requests.exceptions import ConnectionError
 
 def connect_debug():
     return stream.connect(
-        u'ahj2ndz7gsan',
-        u'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy'
+        'ahj2ndz7gsan',
+        'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy',
+        location='us-east'
     )
 
 random_postfix = str(random.randint(0, 1000000))
