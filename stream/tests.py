@@ -388,6 +388,12 @@ class ClientTest(TestCase):
         self.assertTrue(activities[0]['is_seen'])
         self.assertTrue(activities[1]['is_seen'])
         self.assertFalse(activities[2]['is_seen'])
+        # see if the state properly resets after we add another activity
+        activity_data = {'actor': 3, 'verb': 'watch', 'object': 3}
+        activity_id_four = notification_feed.add_activity(activity_data)['id']
+        activities = notification_feed.get(limit=3)['results']
+        self.assertFalse(activities[0]['is_seen'])
+        self.assertEqual(len(activities[0]['activities']), 2)
 
     def test_mark_read_by_id(self):
         notification_feed = getfeed('notification', 'py2')
