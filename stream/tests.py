@@ -365,9 +365,29 @@ class ClientTest(TestCase):
         for activity in activities:
             self.assertFalse(activity['is_read'])
         activities = notification_feed.get(mark_read=True)['results']
+        activities = notification_feed.get(limit=2)['results']
+        self.assertTrue(activities[0]['is_read'])
+        self.assertTrue(activities[1]['is_read'])
+            
+    def test_mark_seen(self):
+        notification_feed = getfeed('notification', 'py3')
+        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
+        activity_id = notification_feed.add_activity(activity_data)['id']
+        activity_data = {'actor': 2, 'verb': 'add', 'object': 2}
+        activity_id_two = notification_feed.add_activity(activity_data)['id']
+        activity_data = {'actor': 3, 'verb': 'watch', 'object': 3}
+        activity_id_three = notification_feed.add_activity(activity_data)['id']
         activities = notification_feed.get(limit=3)['results']
         for activity in activities:
-            self.assertTrue(activity['is_read'])
+            self.assertFalse(activity['is_seen'])
+            
+        activities = notification_feed.get(limit=3)['results']
+        activities = notification_feed.get(mark_seen=[activities[0]['id'], activities[1]['id']])['results']
+        activities = notification_feed.get(limit=3)['results']
+        # is the seen state correct
+        self.assertTrue(activities[0]['is_seen'])
+        self.assertTrue(activities[1]['is_seen'])
+        self.assertFalse(activities[2]['is_seen'])
 
     def test_mark_read_by_id(self):
         notification_feed = getfeed('notification', 'py2')

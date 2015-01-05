@@ -96,9 +96,10 @@ class Feed(object):
             # slow pagination using offset
             feed.get(limit=10, offset=10)
         '''
-        mark_read = params.get('mark_read')
-        if isinstance(mark_read, (list, tuple)):
-            params['mark_read'] = ','.join(mark_read)
+        for field in ['mark_read', 'mark_seen']:
+            value = params.get(field)
+            if isinstance(value, (list, tuple)):
+                params[field] = ','.join(value)
         response = self.client.get(
             self.feed_url, params=params, signature=self.signature)
         return response
