@@ -228,6 +228,22 @@ class ClientTest(TestCase):
         activity_id_found = activity['id'] if activity is not None else None
         self.assertEqual(activity['origin'], feed.id)
         self.assertEqual(activity_id_found, activity_id)
+        
+    def test_follow_and_delete(self):
+        user_feed = getfeed('user', 'test_follow')
+        agg_feed = getfeed('aggregated', 'test_follow')
+        actor_id = random.randint(10, 100000)
+        activity_data = {'actor': actor_id, 'verb': 'tweet', 'object': 1}
+        activity_id = user_feed.add_activity(activity_data)['id']
+        agg_feed.follow(user_feed.slug, user_feed.user_id)
+        time.sleep(2)
+        user_feed.remove_activity(activity_id)
+        for x in range(5):
+            activities = agg_feed.get(limit=3)['results']
+            activity = self._get_first_aggregated_activity(activities)
+            activity_id_found = activity['id'] if activity is not None else None
+            self.assertNotEqual(activity_id_found, activity_id)
+            time.sleep(1)
 
     def test_follow_private(self):
         feed = getfeed('secret', 'py1')
