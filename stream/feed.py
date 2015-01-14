@@ -104,7 +104,7 @@ class Feed(object):
             self.feed_url, params=params, signature=self.signature)
         return response
 
-    def follow(self, target_feed_slug, target_user_id):
+    def follow(self, target_feed_slug, target_user_id, **extra_data):
         '''
         Follows the given feed
 
@@ -119,6 +119,7 @@ class Feed(object):
             'target': target_feed_id,
             'target_token': self.client.feed(target_feed_slug, target_user_id).token
         }
+        data.update(extra_data)
         response = self.client.post(
             url, data=data, signature=self.signature)
         return response
@@ -149,11 +150,12 @@ class Feed(object):
             url, params=params, signature=self.signature)
         return response
 
-    def following(self, offset=0, limit=25, feeds=None):
+    def following(self, offset=0, limit=25, feeds=None, filter=None):
         '''
         List the feeds which this feed is following
         '''
-        feeds = feeds is not None and ','.join(feeds) or ''
+        if feeds is not None:
+            feeds = feeds is not None and ','.join(feeds) or ''
         params = {
             'offset': offset,
             'limit': limit,

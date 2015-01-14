@@ -269,6 +269,16 @@ class ClientTest(TestCase):
         activity_id_found = activity['id'] if activity is not None else None
         self.assertEqual(activity_id_found, activity_id)
 
+    def test_flat_follow_no_copy(self):
+        feed = getfeed('user', 'test_flat_follow_no_copy')
+        follower = getfeed('flat', 'test_flat_follow_no_copy')
+        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
+        feed.add_activity(activity_data)['id']
+        follower.follow(feed.slug, feed.user_id, activity_copy_limit=0)
+        time.sleep(10)
+        activities = follower.get(limit=3)['results']
+        self.assertEqual(activities, [])
+
     def _get_first_aggregated_activity(self, activities):
         try:
             return activities[0]['activities'][0]
