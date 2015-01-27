@@ -2,6 +2,11 @@
  Change history
 ================
 
+* Add HTTP Signature auth method (for application auth resources)
+* Add support for follow_many batch operation
+* Add support for add_to_many batch operation
+
+
 2.1.4
 =====
 :release-date: 2015-01-14
