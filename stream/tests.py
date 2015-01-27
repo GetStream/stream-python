@@ -136,6 +136,7 @@ class ClientTest(TestCase):
         }
         response = user_feed.add_activity(activity_data)
         activity_id = response['id']
+        time.sleep(2)
         # see if the new activity is also in the team feed
         activities = team_feed.get(limit=1)['results']
         self.assertEqual(activities[0]['id'], activity_id)
@@ -236,8 +237,8 @@ class ClientTest(TestCase):
         activity_data = {'actor': actor_id, 'verb': 'tweet', 'object': 1}
         activity_id = user_feed.add_activity(activity_data)['id']
         agg_feed.follow(user_feed.slug, user_feed.user_id)
-        time.sleep(2)
         user_feed.remove_activity(activity_id)
+        time.sleep(2)
         for x in range(5):
             activities = agg_feed.get(limit=3)['results']
             activity = self._get_first_aggregated_activity(activities)
@@ -396,19 +397,20 @@ class ClientTest(TestCase):
         self.assertTrue(activities[1]['is_read'])
             
     def test_mark_seen(self):
-        notification_feed = getfeed('notification', 'py3')
+        notification_feed = getfeed('notification', 'test_mark_seen')
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
-        activity_id = notification_feed.add_activity(activity_data)['id']
+        notification_feed.add_activity(activity_data)
         activity_data = {'actor': 2, 'verb': 'add', 'object': 2}
-        activity_id_two = notification_feed.add_activity(activity_data)['id']
+        notification_feed.add_activity(activity_data)
         activity_data = {'actor': 3, 'verb': 'watch', 'object': 3}
-        activity_id_three = notification_feed.add_activity(activity_data)['id']
+        notification_feed.add_activity(activity_data)
+
         activities = notification_feed.get(limit=3)['results']
         for activity in activities:
             self.assertFalse(activity['is_seen'])
             
         activities = notification_feed.get(limit=3)['results']
-        activities = notification_feed.get(mark_seen=[activities[0]['id'], activities[1]['id']])['results']
+        notification_feed.get(mark_seen=[activities[0]['id'], activities[1]['id']])['results']
         activities = notification_feed.get(limit=3)['results']
         # is the seen state correct
         self.assertTrue(activities[0]['is_seen'])
@@ -416,7 +418,7 @@ class ClientTest(TestCase):
         self.assertFalse(activities[2]['is_seen'])
         # see if the state properly resets after we add another activity
         activity_data = {'actor': 3, 'verb': 'watch', 'object': 3}
-        activity_id_four = notification_feed.add_activity(activity_data)['id']
+        notification_feed.add_activity(activity_data)['id']
         activities = notification_feed.get(limit=3)['results']
         self.assertFalse(activities[0]['is_seen'])
         self.assertEqual(len(activities[0]['activities']), 2)
