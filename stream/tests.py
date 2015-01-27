@@ -18,7 +18,7 @@ def connect_debug():
         location='us-east'
     )
 
-random_postfix = str(int(time.time()))
+random_postfix = str(int(time.time())) + str(random.randint(0, 1000))
 client = connect_debug()
 
 
