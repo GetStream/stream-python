@@ -1,3 +1,4 @@
+from datetime import datetime
 from requests.adapters import HTTPAdapter
 from stream import exceptions, serializer
 from stream.signing import sign
@@ -5,6 +6,7 @@ import logging
 import os
 import requests
 from stream.utils import validate_feed_slug, validate_user_id
+from httpsig.requests_auth import HTTPSignatureAuth
 
 
 logger = logging.getLogger(__name__)
@@ -13,7 +15,7 @@ logger = logging.getLogger(__name__)
 class StreamClient(object):
     base_url = 'https://api.getstream.io/api/'
 
-    def __init__(self, api_key, api_secret, app_id, version='v1.0', timeout=3.0, base_url=None, location=None):
+    def __init__(self, api_key, api_secret, app_id, version='v1.0', timeout=6.0, base_url=None, location=None):
         '''
         Initialize the client with the given api key and secret
 
@@ -45,17 +47,18 @@ class StreamClient(object):
         self.timeout = timeout
         self.location = location
         
-        if base_url is not None:
+        if os.environ.get('LOCAL'):
+            self.base_url = 'http://localhost:8000/api/'
+            self.timeout = 20
+        elif base_url is not None:
             self.base_url = base_url
         elif location is not None:
             self.base_url = 'https://%s-api.getstream.io/api/' % location
-        elif os.environ.get('LOCAL'):
-            self.base_url = 'http://localhost:8000/api/'
-            self.timeout = 20
-            
+
         self.session = requests.Session()
         # TODO: turn this back on after we verify it doesnt retry on slower requests
         self.session.mount(self.base_url, HTTPAdapter(max_retries=0))
+        self.auth = HTTPSignatureAuth(api_key, secret=api_secret)
 
     def feed(self, feed_slug, user_id):
         '''
@@ -81,6 +84,13 @@ class StreamClient(object):
         params = dict(api_key=self.api_key)
         return params
 
+    def get_default_header(self):
+        base_headers = {
+            'Content-type': 'application/json',
+            'User-Agent': self.get_user_agent()
+        }
+        return base_headers
+
     def get_full_url(self, relative_url):
         url = self.base_url + self.version + '/' + relative_url
         return url
@@ -90,20 +100,7 @@ class StreamClient(object):
         agent = 'stream-python-client-%s' % __version__
         return agent
 
-    def _make_request(self, method, relative_url, signature, params=None, data=None):
-        params = params or {}
-        data = data or {}
-        default_params = self.get_default_params()
-        default_params.update(params)
-        headers = {'Authorization': signature}
-        headers['Content-type'] = 'application/json'
-        headers['User-Agent'] = self.get_user_agent()
-        url = self.get_full_url(relative_url)
-        serialized = serializer.dumps(data)
-        response = method(url, data=serialized, headers=headers,
-                          params=default_params, timeout=self.timeout)
-        logger.debug('stream api call %s, headers %s data %s',
-                     response.url, headers, data)
+    def _parse_response(self, response):
         try:
             parsed_result = serializer.loads(response.text)
         except ValueError:
@@ -111,6 +108,39 @@ class StreamClient(object):
         if parsed_result is None or parsed_result.get('exception') or response.status_code >= 500:
             self.raise_exception(parsed_result, status_code=response.status_code)
         return parsed_result
+
+    def _make_signed_request(self, method_name, relative_url, params=None, data=None):
+        params = params or {}
+        data = data or {}
+        headers = self.get_default_header()
+        headers['X-Api-Key'] = self.api_key
+        date_header = datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
+        headers['Date'] = date_header
+        default_params = self.get_default_params()
+        default_params.update(params)
+        url = self.get_full_url(relative_url)
+        serialized = serializer.dumps(data)
+        method = getattr(self.session, method_name)
+        response = method(url, auth=self.auth, data=serialized, headers=headers,
+                          params=default_params, timeout=self.timeout)
+        logger.debug('stream api call %s, headers %s data %s',
+                     response.url, headers, data)
+        return self._parse_response(response)
+
+    def _make_request(self, method, relative_url, signature, params=None, data=None):
+        params = params or {}
+        data = data or {}
+        default_params = self.get_default_params()
+        default_params.update(params)
+        headers = self.get_default_header()
+        headers['Authorization'] = signature
+        url = self.get_full_url(relative_url)
+        serialized = serializer.dumps(data)
+        response = method(url, data=serialized, headers=headers,
+                          params=default_params, timeout=self.timeout)
+        logger.debug('stream api call %s, headers %s data %s',
+                     response.url, headers, data)
+        return self._parse_response(response)
 
     def raise_exception(self, result, status_code):
         '''
@@ -157,3 +187,24 @@ class StreamClient(object):
         Shortcut for make request
         '''
         return self._make_request(self.session.delete, *args, **kwargs)
+
+    def add_to_many(self, activity, feeds):
+        '''
+        Adds an activity to many feeds
+
+        :param activity: the activity data
+        :param feeds: the list of follows (eg. ['feed:1', 'feed:2'])
+
+        '''
+        data = {'activity': activity, 'feeds': feeds}
+        self._make_signed_request('post', 'feed/add_to_many/', data=data)
+
+    def follow_many(self, follows):
+        '''
+        Creates many follows
+        :param follows: the list of follow relations
+
+        eg. [{'source': source, 'target': target}]
+
+        '''
+        self._make_signed_request('post', 'follow_many/', data=follows)

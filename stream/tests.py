@@ -18,7 +18,7 @@ def connect_debug():
         location='us-east'
     )
 
-random_postfix = str(random.randint(0, 1000000))
+random_postfix = str(int(time.time()))
 client = connect_debug()
 
 
@@ -577,3 +577,36 @@ class ClientTest(TestCase):
         serialized = serializer.dumps(data)
         loaded = serializer.loads(serialized)
         self.assertEqual(data, loaded)
+
+    def test_signed_request_post(self):
+        self.c._make_signed_request('post', 'test/auth/digest/', {}, {})
+
+    def test_signed_request_get(self):
+        self.c._make_signed_request('post', 'test/auth/digest/', {}, {})
+
+    def test_follow_many(self):
+        sources = [getfeed('user', str(i)).id for i in range(10)]
+        targets = [getfeed('flat', str(i)).id for i in range(10)]
+        feeds = [{'source': s, 'target': t} for s,t in zip(sources, targets)]
+        self.c.follow_many(feeds)
+
+        for target in targets:
+            follows = self.c.feed(*target.split(':')).followers()['results']
+            self.assertEqual(len(follows), 1)
+            self.assertIn(follows[0]['feed_id'], sources)
+            self.assertEqual(follows[0]['target_id'], target)
+
+        for source in sources:
+            follows = self.c.feed(*source.split(':')).following()['results']
+            self.assertEqual(len(follows), 1)
+            self.assertEqual(follows[0]['feed_id'], source)
+            self.assertIn(follows[0]['target_id'], targets)
+
+    def test_add_to_many(self):
+        activity = {'actor': 1, 'verb': 'tweet', 'object': 1, 'custom': 'data'}
+        feeds = [getfeed('flat', str(i)).id for i in range(10, 20)]
+        self.c.add_to_many(activity, feeds)
+
+        for feed in feeds:
+            feed = self.c.feed(*feed.split(':'))
+            self.assertEqual(feed.get()['results'][0]['custom'], 'data')

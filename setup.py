@@ -28,7 +28,8 @@ Full documentation is available on `Github`_.
 
 install_requires = [
     'requests>=2.3.0',
-    'six>=1.8.0'
+    'six>=1.8.0',
+    'httpsig==1.1.0'
 ]
 
 
