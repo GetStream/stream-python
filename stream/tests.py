@@ -279,6 +279,19 @@ class ClientTest(TestCase):
         time.sleep(10)
         activities = follower.get(limit=3)['results']
         self.assertEqual(activities, [])
+        
+    def test_flat_follow_copy_one(self):
+        feed = getfeed('user', 'test_flat_follow_copy_one')
+        follower = getfeed('flat', 'test_flat_follow_copy_one')
+        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'test:1'}
+        feed.add_activity(activity_data)['id']
+        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'test:2'}
+        feed.add_activity(activity_data)['id']
+        follower.follow(feed.slug, feed.user_id, activity_copy_limit=1)
+        time.sleep(5)
+        activities = follower.get(limit=3)['results']
+        # verify we get the latest activity
+        self.assertEqual(activities[0]['foreign_id'], 'test:2')
 
     def _get_first_aggregated_activity(self, activities):
         try:
