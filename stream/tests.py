@@ -307,9 +307,9 @@ class ClientTest(TestCase):
 
     def test_unfollow(self):
         f = getfeed('user', 'asocialpython').id.split(':')
-        print self.aggregated3.follow(*f)
-        print self.aggregated3.unfollow(*f)
-        print self.aggregated3.follow(*f)
+        print self.aggregated3.follow(f)
+        print self.aggregated3.unfollow(f)
+        print self.aggregated3.follow(f)
 
 
     def test_empty_followings(self):
