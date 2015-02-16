@@ -57,6 +57,14 @@ user_feed_1.unfollow('flat', '42')
 following = user_feed_1.following(offset=0, limit=2)
 followers = user_feed_1.followers(offset=0, limit=10)
 
+# Creates many follow relationships in one request
+follows = [
+    {'source': 'flat:1', 'target': 'user:1'},
+    {'source': 'flat:1', 'target': 'user:2'},
+    {'source': 'flat:1', 'target': 'user:3'}
+]
+client.follow_many(follows)
+
 # Batch adding activities
 activities = [
 	{'actor': 1, 'verb': 'tweet', 'object': 1},
