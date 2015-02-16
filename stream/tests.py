@@ -293,15 +293,11 @@ class ClientTest(TestCase):
             pass
 
     def test_unfollow(self):
-        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
-        activity_id = self.user1.add_activity(activity_data)['id']
-        self.aggregated3.follow('user', '1')
-        self.aggregated3.unfollow('user', '1')
-        time.sleep(5)
-        activities = self.aggregated3.get(limit=3)['results']
-        activity = self._get_first_aggregated_activity(activities)
-        activity_id_found = activity['id'] if activity is not None else None
-        self.assertNotEqual(activity_id_found, activity_id)
+        f = getfeed('user', 'asocialpython').id.split(':')
+        print self.aggregated3.follow(*f)
+        print self.aggregated3.unfollow(*f)
+        print self.aggregated3.follow(*f)
+
 
     def test_empty_followings(self):
         asocial = getfeed('user', 'asocialpython')
@@ -442,6 +438,7 @@ class ClientTest(TestCase):
         for activity in activities:
             if activity['id'] in ids:
                 self.assertTrue(activity['is_read'])
+                self.assertFalse(activity['is_seen'])
 
     def test_api_key_exception(self):
         self.c = stream.connect(
