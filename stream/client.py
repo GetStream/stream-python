@@ -46,7 +46,7 @@ class StreamClient(object):
         self.version = version
         self.timeout = timeout
         self.location = location
-        
+
         if os.environ.get('LOCAL'):
             self.base_url = 'http://localhost:8000/api/'
             self.timeout = 20
@@ -112,6 +112,7 @@ class StreamClient(object):
     def _make_signed_request(self, method_name, relative_url, params=None, data=None):
         params = params or {}
         data = data or {}
+        serialized = None
         headers = self.get_default_header()
         headers['X-Api-Key'] = self.api_key
         date_header = datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
@@ -121,6 +122,8 @@ class StreamClient(object):
         url = self.get_full_url(relative_url)
         serialized = serializer.dumps(data)
         method = getattr(self.session, method_name)
+        if method_name in ['post', 'put']:
+            serialized = serializer.dumps(data)
         response = method(url, auth=self.auth, data=serialized, headers=headers,
                           params=default_params, timeout=self.timeout)
         logger.debug('stream api call %s, headers %s data %s',
@@ -130,12 +133,14 @@ class StreamClient(object):
     def _make_request(self, method, relative_url, signature, params=None, data=None):
         params = params or {}
         data = data or {}
+        serialized = None
         default_params = self.get_default_params()
         default_params.update(params)
         headers = self.get_default_header()
         headers['Authorization'] = signature
         url = self.get_full_url(relative_url)
-        serialized = serializer.dumps(data)
+        if method.__name__ in ['post', 'put']:
+            serialized = serializer.dumps(data)
         response = method(url, data=serialized, headers=headers,
                           params=default_params, timeout=self.timeout)
         logger.debug('stream api call %s, headers %s data %s',
@@ -150,7 +155,7 @@ class StreamClient(object):
         '''
         from stream.exceptions import get_exception_dict
         exception_class = exceptions.StreamApiException
-        
+
         if result is not None:
             error_message = result['detail']
             exception_fields = result.get('exception_fields')
@@ -166,7 +171,6 @@ class StreamClient(object):
                 error_code, exceptions.StreamApiException)
         else:
             error_message = 'GetStreamAPI%s' % status_code
-            
         exception = exception_class(error_message, status_code=status_code)
         raise exception
 
