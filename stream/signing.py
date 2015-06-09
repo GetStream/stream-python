@@ -1,3 +1,4 @@
+import jwt
 import hmac
 import hashlib
 import base64
@@ -5,7 +6,6 @@ import base64
 
 def b64_encode(s):
     return base64.urlsafe_b64encode(s).strip(b'=')
-
 
 def sign(api_secret, feed_id):
     '''
@@ -25,3 +25,11 @@ def sign(api_secret, feed_id):
     urlsafe_digest = b64_encode(digest)
     token = urlsafe_digest.decode('ascii')
     return token
+
+def jwt_scope_token(api_secret, feed_id, resource, action):
+    payload = {
+        'action': action,
+        'feed_id': feed_id,
+        'resource': resource
+    }
+    return jwt.encode(payload, api_secret)

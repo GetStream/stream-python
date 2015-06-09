@@ -22,6 +22,12 @@ class Feed(object):
         self.feed_together = self.id.replace(':', '')
         self.signature = self.feed_together + ' ' + self.token
 
+    def get_token(self, resource, action):
+        '''
+        creates the JWT token to perform an action on a owned resource
+        '''
+        return self.client.create_feed_jwt_token(self, resource, action)
+
     def add_activity(self, activity_data):
         '''
         Adds an activity to the feed, this will also trigger an update
@@ -37,8 +43,9 @@ class Feed(object):
         if activity_data.get('to'):
             activity_data['to'] = self.add_to_signature(activity_data['to'])
 
+        token = self.get_token('feed', 'write')
         result = self.client.post(
-            self.feed_url, data=activity_data, signature=self.signature)
+            self.feed_url, data=activity_data, signature=token)
         return result
 
     def add_activities(self, activity_list):
@@ -59,10 +66,10 @@ class Feed(object):
             if activity_data.get('to'):
                 activity_data['to'] = self.add_to_signature(
                     activity_data['to'])
-
+        token = self.get_token('feed', 'write')
         data = dict(activities=activity_list)
         result = self.client.post(
-            self.feed_url, data=data, signature=self.signature)
+            self.feed_url, data=data, signature=token)
         return result
 
     def remove_activity(self, activity_id=None, foreign_id=None):
@@ -78,10 +85,11 @@ class Feed(object):
             raise ValueError('please either provide activity_id or foreign_id')
         url = self.feed_url + '%s/' % identifier
         params = dict()
+        token = self.get_token('feed', 'delete')
         if foreign_id is not None:
             params['foreign_id'] = '1'
         result = self.client.delete(
-            url, signature=self.signature, params=params)
+            url, signature=token, params=params)
         return result
 
     def get(self, **params):
@@ -100,8 +108,9 @@ class Feed(object):
             value = params.get(field)
             if isinstance(value, (list, tuple)):
                 params[field] = ','.join(value)
+        token = self.get_token('feed', 'read')
         response = self.client.get(
-            self.feed_url, params=params, signature=self.signature)
+            self.feed_url, params=params, signature=token)
         return response
 
     def follow(self, target_feed_slug, target_user_id, **extra_data):
@@ -119,9 +128,10 @@ class Feed(object):
             'target': target_feed_id,
             'target_token': self.client.feed(target_feed_slug, target_user_id).token
         }
+        token = self.get_token('follower', 'write')
         data.update(extra_data)
         response = self.client.post(
-            url, data=data, signature=self.signature)
+            url, data=data, signature=token)
         return response
 
     def unfollow(self, target_feed_slug, target_user_id):
@@ -131,8 +141,9 @@ class Feed(object):
         target_feed_slug = validate_feed_slug(target_feed_slug)
         target_user_id = validate_user_id(target_user_id)
         target_feed_id = '%s:%s' % (target_feed_slug, target_user_id)
+        token = self.get_token('follower', 'delete')
         url = self.feed_url + 'follows/%s/' % target_feed_id
-        response = self.client.delete(url, signature=self.signature)
+        response = self.client.delete(url, signature=token)
         return response
 
     def followers(self, offset=0, limit=25, feeds=None):
@@ -146,8 +157,9 @@ class Feed(object):
             'filter': feeds
         }
         url = self.feed_url + 'followers/'
+        token = self.get_token('follower', 'read')
         response = self.client.get(
-            url, params=params, signature=self.signature)
+            url, params=params, signature=token)
         return response
 
     def following(self, offset=0, limit=25, feeds=None, filter=None):
@@ -162,8 +174,9 @@ class Feed(object):
             'filter': feeds
         }
         url = self.feed_url + 'follows/'
+        token = self.get_token('follower', 'read')
         response = self.client.get(
-            url, params=params, signature=self.signature)
+            url, params=params, signature=token)
         return response
 
     def add_to_signature(self, recipients):

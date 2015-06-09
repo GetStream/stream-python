@@ -2,6 +2,7 @@ from datetime import datetime
 from requests.adapters import HTTPAdapter
 from stream import exceptions, serializer
 from stream.signing import sign
+from stream.signing import jwt_scope_token
 import logging
 import os
 import requests
@@ -130,6 +131,9 @@ class StreamClient(object):
                      response.url, headers, data)
         return self._parse_response(response)
 
+    def create_feed_jwt_token(self, feed, resource, action):
+        return jwt_scope_token(self.api_secret, feed.feed_together, resource, action)
+
     def _make_request(self, method, relative_url, signature, params=None, data=None):
         params = params or {}
         data = data or {}
@@ -138,6 +142,7 @@ class StreamClient(object):
         default_params.update(params)
         headers = self.get_default_header()
         headers['Authorization'] = signature
+        headers['STREAM_AUTH_TYPE'] = 'jwt'
         url = self.get_full_url(relative_url)
         if method.__name__ in ['post', 'put']:
             serialized = serializer.dumps(data)
