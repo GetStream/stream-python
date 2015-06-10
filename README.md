@@ -81,10 +81,15 @@ activity = {
 }
 user_feed_1.add_activity(activity)
 
-# Generating tokens for client side usage
+# Generating tokens for client side usage (JS client)
 token = user_feed_1.token
 # Javascript client side feed initialization
 # user1 = client.feed('user', '1', '{{ token }}');
+
+# Generate a read-only token for client side usage (JS client)
+readonly_token = user_feed_1.get_readonly_token()
+# Javascript client side feed initialization
+# user1 = client.feed('user', '1', '{{ readonly_token }}');
 ```
 
 
@@ -93,6 +98,7 @@ API docs are on [Read the
 docs](http://stream-python.readthedocs.org/en/latest/).
 
 
+[JS client](http://github.com/getstream/stream-js).
 
 ### Contributing
 
