@@ -142,7 +142,7 @@ class StreamClient(object):
         default_params.update(params)
         headers = self.get_default_header()
         headers['Authorization'] = signature
-        headers['STREAM_AUTH_TYPE'] = 'jwt'
+        headers['stream-auth-type'] = 'jwt'
         url = self.get_full_url(relative_url)
         if method.__name__ in ['post', 'put']:
             serialized = serializer.dumps(data)
