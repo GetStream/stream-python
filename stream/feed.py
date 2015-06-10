@@ -132,7 +132,7 @@ class Feed(object):
         url = self.feed_url + 'follows/'
         data = {
             'target': target_feed_id,
-            'tarcreate_scope_token': self.client.feed(target_feed_slug, target_user_id).token
+            'target_token': self.client.feed(target_feed_slug, target_user_id).token
         }
         token = self.create_scope_token('follower', 'write')
         data.update(extra_data)

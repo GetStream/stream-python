@@ -15,7 +15,8 @@ def connect_debug():
     return stream.connect(
         'ahj2ndz7gsan',
         'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy',
-        location='us-east'
+        location='us-east',
+        timeout=10
     )
 
 random_postfix = str(int(time.time())) + str(random.randint(0, 1000))
