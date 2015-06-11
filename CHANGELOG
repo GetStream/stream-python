@@ -7,6 +7,13 @@
 * Add support for add_to_many batch operation
 
 
+2.3.0
+=====
+:release-date: 2015-06-11
+:by: Tommaso Barbugli
+
+* Added support for read-only tokens
+
 2.1.4
 =====
 :release-date: 2015-01-14
