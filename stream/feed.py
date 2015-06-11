@@ -32,7 +32,7 @@ class Feed(object):
         '''
         creates the JWT token to perform readonly operations
         '''
-        return self.create_scope_token(self, '*', 'read')
+        return self.create_scope_token('*', 'read')
 
     def add_activity(self, activity_data):
         '''
