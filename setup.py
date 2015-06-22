@@ -30,7 +30,7 @@ install_requires = [
     'pyjwt==1.3.0',
     'requests>=2.3.0',
     'six>=1.8.0',
-    'httpsig==1.1.0'
+    'httpsig==1.1.2'
 ]
 
 
