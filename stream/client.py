@@ -88,7 +88,7 @@ class StreamClient(object):
     def get_default_header(self):
         base_headers = {
             'Content-type': 'application/json',
-            'User-Agent': self.get_user_agent()
+            'X-Stream-Client': self.get_user_agent()
         }
         return base_headers
 
