@@ -8,7 +8,8 @@ from unittest.case import TestCase
 import os
 import datetime
 from stream import serializer
-from requests.exceptions import ConnectionError
+from requests.exceptions import ConnectionError, MissingSchema
+from urlparse import urlparse
 
 
 def connect_debug():
@@ -619,3 +620,37 @@ class ClientTest(TestCase):
         for feed in feeds:
             feed = self.c.feed(*feed.split(':'))
             self.assertEqual(feed.get()['results'][0]['custom'], 'data')
+            
+    def test_create_email_redirect(self):
+        expected_parts = ['https://analytics.getstream.io/analytics/redirect/',
+            'auth_type=jwt',
+            'url=http%3A%2F%2Fgoogle.com%2F%3Fa%3Db%26c%3Dd',
+            'api_key=ahj2ndz7gsan',
+            'authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY3Rpb24iOiIqIiwidXNlcl9pZCI6InRvbW1hc28iLCJyZXNvdXJjZSI6InJlZGlyZWN0X2FuZF90cmFjayJ9.pQ2cBmC7l0WGP9LP7RrvLEbtrw8YWcFtjOqSfoSr2s0',
+            'events=%5B%7B%22foreign_ids%22%3A+%5B%22tweet%3A1%22%2C+%22tweet%3A2%22%2C+%22tweet%3A3%22%2C+%22tweet%3A4%22%2C+%22tweet%3A5%22%5D%2C+%22feed_id%22%3A+%22user%3Aglobal%22%2C+%22user_id%22%3A+%22tommaso%22%2C+%22location%22%3A+%22email%22%7D%2C+%7B%22user_id%22%3A+%22tommaso%22%2C+%22label%22%3A+%22click%22%2C+%22feed_id%22%3A+%22user%3Aglobal%22%2C+%22location%22%3A+%22email%22%2C+%22position%22%3A+3%2C+%22foreign_id%22%3A+%22tweet%3A1%22%7D%5D',
+        ]
+        engagement = {'foreign_id': 'tweet:1', 'label': 'click', 'position': 3, 'user_id': 'tommaso', 'location': 'email', 'feed_id': 'user:global'}
+        impression = {'foreign_ids': ['tweet:1', 'tweet:2', 'tweet:3', 'tweet:4', 'tweet:5'], 'user_id':
+                      'tommaso', 'location': 'email', 'feed_id': 'user:global'}
+        events = [impression, engagement]
+        target_url = 'http://google.com/?a=b&c=d'
+        user_id = 'tommaso'
+        redirect_url = self.c.create_redirect_url(target_url, user_id, events)
+
+        for part in expected_parts:
+            if part not in redirect_url:
+                raise ValueError('didnt find %s in url \n %s' % (part, redirect_url))
+            
+    def test_email_redirect_invalid_target(self):
+        engagement = {'foreign_id': 'tweet:1', 'label': 'click', 'position': 3, 'user_id': 'tommaso', 'location': 'email', 'feed_id': 'user:global'}
+        impression = {'foreign_ids': ['tweet:1', 'tweet:2', 'tweet:3', 'tweet:4', 'tweet:5'], 'user_id':
+                      'tommaso', 'location': 'email', 'feed_id': 'user:global'}
+        events = [impression, engagement]
+        # no protocol specified, this should raise an error
+        target_url = 'google.com'
+        user_id = 'tommaso'
+        create_redirect = lambda : self.c.create_redirect_url(target_url, user_id, events)
+        self.assertRaises(MissingSchema, create_redirect)
+        
+        
+        

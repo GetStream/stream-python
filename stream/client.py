@@ -1,13 +1,16 @@
 from datetime import datetime
+import json
+import logging
+import os
+
+from httpsig.requests_auth import HTTPSignatureAuth
+import jwt
+import requests
 from requests.adapters import HTTPAdapter
 from stream import exceptions, serializer
 from stream.signing import sign
-from stream.signing import jwt_scope_token
-import logging
-import os
-import requests
 from stream.utils import validate_feed_slug, validate_user_id
-from httpsig.requests_auth import HTTPSignatureAuth
+from requests import Request
 
 
 logger = logging.getLogger(__name__)
@@ -55,6 +58,8 @@ class StreamClient(object):
             self.base_url = base_url
         elif location is not None:
             self.base_url = 'https://%s-api.getstream.io/api/' % location
+            
+        self.base_analytics_url = 'https://analytics.getstream.io/analytics/'
 
         self.session = requests.Session()
         # TODO: turn this back on after we verify it doesnt retry on slower requests
@@ -131,8 +136,21 @@ class StreamClient(object):
                      response.url, headers, data)
         return self._parse_response(response)
 
-    def create_feed_jwt_token(self, feed, resource, action):
-        return jwt_scope_token(self.api_secret, feed.feed_together, resource, action)
+    def create_jwt_token(self, resource, action, feed_id=None, user_id=None):
+        '''
+        Setup the payload for the given resource, action, feed or user
+        and encode it using jwt
+        '''
+        payload = {
+            'action': action,
+            'resource': resource
+        }
+        if feed_id is not None:
+            payload['feed_id'] = feed_id
+        if user_id is not None:
+            payload['user_id'] = user_id
+        print payload
+        return jwt.encode(payload, self.api_secret)
 
     def _make_request(self, method, relative_url, signature, params=None, data=None):
         params = params or {}
@@ -217,3 +235,24 @@ class StreamClient(object):
 
         '''
         self._make_signed_request('post', 'follow_many/', data=follows)
+        
+    def create_redirect_url(self, target_url, user_id, events):
+        '''
+        Creates a redirect url for tracking the given events in the context
+        of an email using Stream's analytics platform. Learn more at
+        getstream.io/personalization
+        '''
+        # generate the JWT token
+        auth_token = self.create_jwt_token('redirect_and_track', '*', user_id=user_id)
+        # setup the params
+        params = dict(auth_type='jwt', authorization=auth_token, url=target_url)
+        params['api_key'] = self.api_key
+        params['events'] = json.dumps(events)
+        url = self.base_analytics_url + 'redirect/'
+        # we get the url from the prepare request, this skips issues with
+        # python's urlencode implementation
+        request = Request('GET', url, params=params)
+        prepared_request = request.prepare()
+        # validate the target url is valid
+        Request('GET', target_url).prepare()
+        return prepared_request.url

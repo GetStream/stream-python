@@ -26,10 +26,3 @@ def sign(api_secret, feed_id):
     token = urlsafe_digest.decode('ascii')
     return token
 
-def jwt_scope_token(api_secret, feed_id, resource, action):
-    payload = {
-        'action': action,
-        'feed_id': feed_id,
-        'resource': resource
-    }
-    return jwt.encode(payload, api_secret)

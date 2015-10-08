@@ -26,7 +26,7 @@ class Feed(object):
         '''
         creates the JWT token to perform an action on a owned resource
         '''
-        return self.client.create_feed_jwt_token(self, resource, action)
+        return self.client.create_jwt_token(resource, action, feed_id=self.feed_together)
 
     def get_readonly_token(self):
         '''
