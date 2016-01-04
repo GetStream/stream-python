@@ -127,6 +127,24 @@ class ClientTest(TestCase):
         activities = feed.get(limit=1)['results']
         self.assertEqual(activities[0]['id'], activity_id)
 
+    def test_add_activity_to_inplace_change(self):
+        feed = getfeed('user', 'py1')
+        team_feed = getfeed('user', 'teamy')
+        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
+        activity_data['to'] = [team_feed.id]
+        feed.add_activity(activity_data)
+        time.sleep(2)
+        self.assertEqual(activity_data['to'], [team_feed.id])
+
+    def test_add_activities_to_inplace_change(self):
+        feed = getfeed('user', 'py1')
+        team_feed = getfeed('user', 'teamy')
+        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
+        activity_data['to'] = [team_feed.id]
+        feed.add_activities([activity_data])
+        time.sleep(2)
+        self.assertEqual(activity_data['to'], [team_feed.id])
+
     def test_add_activity_to(self):
         # test for sending an activities to the team feed using to
         feeds = ['user', 'teamy', 'team_follower']
