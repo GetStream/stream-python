@@ -47,6 +47,7 @@ class Feed(object):
             activity_id = feed.add_activity(activity_data)
         '''
         if activity_data.get('to'):
+            activity_data = activity_data.copy()
             activity_data['to'] = self.add_to_signature(activity_data['to'])
 
         token = self.create_scope_token('feed', 'write')
@@ -68,12 +69,15 @@ class Feed(object):
             ]
             result = feed.add_activities(activity_data)
         '''
+        activities = []
         for activity_data in activity_list:
+            activity_data = activity_data.copy()
+            activities.append(activity_data)
             if activity_data.get('to'):
                 activity_data['to'] = self.add_to_signature(
                     activity_data['to'])
         token = self.create_scope_token('feed', 'write')
-        data = dict(activities=activity_list)
+        data = dict(activities=activities)
         result = self.client.post(
             self.feed_url, data=data, signature=token)
         return result
