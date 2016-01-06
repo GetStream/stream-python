@@ -10,7 +10,11 @@ import os
 import datetime
 from stream import serializer
 from requests.exceptions import ConnectionError, MissingSchema
-from urlparse import urlparse, parse_qs
+
+try:
+    from urlparse import urlparse, parse_qs
+except ImportError:
+    from urllib.parse import urlparse, parse_qs
 
 def connect_debug():
     return stream.connect(
