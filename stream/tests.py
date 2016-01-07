@@ -3,14 +3,18 @@ import stream
 import time
 from stream.exceptions import ApiKeyException, InputException
 import random
+import jwt
 from unittest.case import TestCase
 
 import os
 import datetime
 from stream import serializer
 from requests.exceptions import ConnectionError, MissingSchema
-from urlparse import urlparse
 
+try:
+    from urlparse import urlparse, parse_qs
+except ImportError:
+    from urllib.parse import urlparse, parse_qs
 
 def connect_debug():
     return stream.connect(
@@ -644,7 +648,6 @@ class ClientTest(TestCase):
             'auth_type=jwt',
             'url=http%3A%2F%2Fgoogle.com%2F%3Fa%3Db%26c%3Dd',
             'api_key=ahj2ndz7gsan',
-            'authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY3Rpb24iOiIqIiwidXNlcl9pZCI6InRvbW1hc28iLCJyZXNvdXJjZSI6InJlZGlyZWN0X2FuZF90cmFjayJ9.pQ2cBmC7l0WGP9LP7RrvLEbtrw8YWcFtjOqSfoSr2s0',
             'events=%5B%7B%22foreign_ids%22%3A+%5B%22tweet%3A1%22%2C+%22tweet%3A2%22%2C+%22tweet%3A3%22%2C+%22tweet%3A4%22%2C+%22tweet%3A5%22%5D%2C+%22feed_id%22%3A+%22user%3Aglobal%22%2C+%22user_id%22%3A+%22tommaso%22%2C+%22location%22%3A+%22email%22%7D%2C+%7B%22user_id%22%3A+%22tommaso%22%2C+%22label%22%3A+%22click%22%2C+%22feed_id%22%3A+%22user%3Aglobal%22%2C+%22location%22%3A+%22email%22%2C+%22position%22%3A+3%2C+%22foreign_id%22%3A+%22tweet%3A1%22%7D%5D',
         ]
         engagement = {'foreign_id': 'tweet:1', 'label': 'click', 'position': 3, 'user_id': 'tommaso', 'location': 'email', 'feed_id': 'user:global'}
@@ -654,6 +657,17 @@ class ClientTest(TestCase):
         target_url = 'http://google.com/?a=b&c=d'
         user_id = 'tommaso'
         redirect_url = self.c.create_redirect_url(target_url, user_id, events)
+
+        parsed_url = urlparse(redirect_url)
+        qs = parse_qs(parsed_url.query)
+
+        decoded = jwt.decode(qs['authorization'][0], 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy')
+
+        self.assertEqual(decoded, {
+            'resource': 'redirect_and_track',
+            'action': '*',
+            'user_id': 'tommaso'
+        })
 
         for part in expected_parts:
             if part not in redirect_url:
