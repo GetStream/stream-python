@@ -46,7 +46,7 @@ class Feed(object):
             activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
             activity_id = feed.add_activity(activity_data)
         '''
-        if activity_data.get('to') and type(activity_data.get('to')) is str:
+        if activity_data.get('to') and not isinstance(activity_data.get('to'), (list, tuple, set)):
             raise TypeError('please provide the activity\'s to field as a list not a string')
 
         if activity_data.get('to'):
