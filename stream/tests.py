@@ -8,6 +8,7 @@ from unittest.case import TestCase
 
 import os
 import datetime
+import copy
 from stream import serializer
 from requests.exceptions import ConnectionError, MissingSchema
 
@@ -18,8 +19,8 @@ except ImportError:
 
 def connect_debug():
     return stream.connect(
-        'ahj2ndz7gsan',
-        'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy',
+        'ata9p5qqy7th',
+        'vskczs6wmuss5svwdkfsntuz486rgetu2w9q4g9f86c2umfrh5pth2vujyg8wvwn',
         location='us-east',
         timeout=10
     )
@@ -41,7 +42,6 @@ aggregated3 = getfeed('aggregated', '3')
 topic1 = getfeed('topic', '1')
 flat3 = getfeed('flat', '3')
 
-
 class ClientTest(TestCase):
 
     def setUp(self):
@@ -53,6 +53,80 @@ class ClientTest(TestCase):
         self.aggregated3 = aggregated3
         self.topic1 = topic1
         self.flat3 = flat3
+
+    def test_update_activities_create(self):
+        activities = [{
+            'actor': 'user:1',
+            'verb': 'do',
+            'object': 'object:1',
+            'foreign_id': 'object:1',
+            'time': datetime.datetime.utcnow().isoformat()
+        }]
+
+        self.c.update_activities(activities)
+
+    def test_update_activities_illegal_argument(self):
+        activities = dict()
+
+        def invalid_activities():
+            self.c.update_activities(activities)
+        self.assertRaises(TypeError, invalid_activities)
+
+    def test_update_activities_update_illegal_change(self):
+        def update_activity(activity):
+            return lambda: self.c.update_activities([activity])
+
+        activity = {
+            'actor': 'user:1',
+            'verb': 'do',
+            'object': 'object:2',
+            'foreign_id': 'object:2',
+            'to': ['notification:1'],
+            'time': datetime.datetime.utcnow().isoformat()
+        }
+        activity_create = user1.add_activity(activity)
+        activity_create.pop('duration')
+
+        activity = copy.deepcopy(activity_create)
+        activity['foreign_id'] = 'object:3'
+
+        self.assertRaises(InputException, update_activity(activity))
+
+        activity = copy.deepcopy(activity_create)
+        activity['time'] = datetime.datetime.utcnow().isoformat()
+
+        self.assertRaises(InputException, update_activity(activity))
+
+        activity = copy.deepcopy(activity)
+        activity['to'] = ['notification:2']
+
+        self.assertRaises(InputException, update_activity(activity))
+
+    def test_update_activities_update(self):
+        activities = []
+        for i in range(0, 10):
+            activities.append({
+                'actor': 'user:1',
+                'verb': 'do',
+                'object': 'object:%s' % i,
+                'foreign_id': 'object:%s' % i,
+                'time': datetime.datetime.utcnow().isoformat()
+            })
+        activities_created = user1.add_activities(activities)['activities']
+        activities = copy.deepcopy(activities_created)
+
+        for activity in activities:
+            activity.pop('id')
+            activity['popularity'] = 100
+
+        self.c.update_activities(activities)
+
+        activities_updated = user1.get(limit=len(activities))['results']
+        activities_updated.reverse()
+
+        for i, activity in enumerate(activities_updated):
+            self.assertEqual(activities_created[i].get('id'), activity.get('id'))
+            self.assertEquals(activity['popularity'], 100)
 
     def test_heroku(self):
         url = 'https://thierry:pass@getstream.io/?app_id=1'

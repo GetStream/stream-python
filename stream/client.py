@@ -178,14 +178,24 @@ class StreamClient(object):
         from stream.exceptions import get_exception_dict
         exception_class = exceptions.StreamApiException
 
+        def errors_from_fields(exception_fields):
+            result = []
+            for field, errors in exception_fields.items():
+                errors.append('Field "%s" errors: %s' % (field, repr(errors)))
+            return result
+
         if result is not None:
             error_message = result['detail']
             exception_fields = result.get('exception_fields')
             if exception_fields is not None:
                 errors = []
-                for field, errors in exception_fields.items():
-                    errors.append('Field "%s" errors: %s' %
-                                  (field, repr(errors)))
+
+                if isinstance(exception_fields, list):
+                    errors = [errors_from_fields(exception_dict) for exception_dict in exception_fields]
+                    errors = [item for sublist in errors for item in sublist]
+                else:
+                    errors = errors_from_fields(exception_fields)
+
                 error_message = '\n'.join(errors)
             error_code = result.get('code')
             exception_dict = get_exception_dict()
@@ -234,6 +244,25 @@ class StreamClient(object):
 
         '''
         self._make_signed_request('post', 'follow_many/', data=follows)
+
+    def update_activities(self, activities):
+        '''
+        Update or create activities
+        '''
+        if not isinstance(activities, (list, tuple, set)):
+            raise TypeError('Activities parameter should be of type list')
+
+        auth_token = self.create_jwt_token('activities', '*', feed_id='*')
+
+        data = dict(activities=activities)
+
+        return self.post('activities/', auth_token, data=data)
+
+    def update_activity(self, activity):
+        '''
+        Update a single activity
+        '''
+        return self.update_activities([activity])
         
     def create_redirect_url(self, target_url, user_id, events):
         '''
