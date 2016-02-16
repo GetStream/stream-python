@@ -177,6 +177,17 @@ class ClientTest(TestCase):
         # and the flat feed
         activities = team_follower_feed.get(limit=1)['results']
         self.assertFirstActivityIDNotEqual(activities, activity_id)
+
+
+    def test_add_activity_to_type_error(self):
+        user_feed = getfeed('user', '1')
+        activity_data = {
+            'actor': 1, 'verb': 'tweet', 'object': 1,
+            'to': 'string'
+        }
+
+        with self.assertRaises(TypeError):
+            user_feed.add_activity(activity_data)
         
     def assertFirstActivityIDEqual(self, activities, correct_activity_id):
         activity_id = None
