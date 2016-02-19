@@ -7,6 +7,14 @@
 * Add support for add_to_many batch operation
 
 
+2.3.5
+=====
+:release-date: 2015-10-07
+:by: Thierry Schellenbach
+
+* Added support for activity update
+
+
 2.3.3
 =====
 :release-date: 2015-10-07
