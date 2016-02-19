@@ -19,8 +19,8 @@ except ImportError:
 
 def connect_debug():
     return stream.connect(
-        'ata9p5qqy7th',
-        'vskczs6wmuss5svwdkfsntuz486rgetu2w9q4g9f86c2umfrh5pth2vujyg8wvwn',
+        'gav9ygr75by3',
+        '5ws2hnua79n9qga6e2dy572qdfapwgdc83853mjm3mjp66czyb2xkahbdhs98an8',
         location='us-east',
         timeout=10
     )
@@ -72,36 +72,6 @@ class ClientTest(TestCase):
             self.c.update_activities(activities)
         self.assertRaises(TypeError, invalid_activities)
 
-    def test_update_activities_update_illegal_change(self):
-        def update_activity(activity):
-            return lambda: self.c.update_activities([activity])
-
-        activity = {
-            'actor': 'user:1',
-            'verb': 'do',
-            'object': 'object:2',
-            'foreign_id': 'object:2',
-            'to': ['notification:1'],
-            'time': datetime.datetime.utcnow().isoformat()
-        }
-        activity_create = user1.add_activity(activity)
-        activity_create.pop('duration')
-
-        activity = copy.deepcopy(activity_create)
-        activity['foreign_id'] = 'object:3'
-
-        self.assertRaises(InputException, update_activity(activity))
-
-        activity = copy.deepcopy(activity_create)
-        activity['time'] = datetime.datetime.utcnow().isoformat()
-
-        self.assertRaises(InputException, update_activity(activity))
-
-        activity = copy.deepcopy(activity)
-        activity['to'] = ['notification:2']
-
-        self.assertRaises(InputException, update_activity(activity))
-
     def test_update_activities_update(self):
         activities = []
         for i in range(0, 10):
@@ -115,6 +85,7 @@ class ClientTest(TestCase):
         activities_created = user1.add_activities(activities)['activities']
         activities = copy.deepcopy(activities_created)
 
+        time.sleep(3)
         for activity in activities:
             activity.pop('id')
             activity['popularity'] = 100
@@ -344,18 +315,18 @@ class ClientTest(TestCase):
             self.assertNotEqual(activity_id_found, activity_id)
             time.sleep(1)
 
-    def test_follow_private(self):
-        feed = getfeed('secret', 'py1')
-        agg_feed = getfeed('aggregated', 'test_follow_private')
-        actor_id = random.randint(10, 100000)
-        activity_data = {'actor': actor_id, 'verb': 'tweet', 'object': 1}
-        activity_id = feed.add_activity(activity_data)['id']
-        agg_feed.follow(feed.slug, feed.user_id)
-        time.sleep(10)
-        activities = agg_feed.get(limit=3)['results']
-        activity = self._get_first_aggregated_activity(activities)
-        activity_id_found = activity['id'] if activity is not None else None
-        self.assertEqual(activity_id_found, activity_id)
+    # def test_follow_private(self):
+    #     feed = getfeed('secret', 'py1')
+    #     agg_feed = getfeed('aggregated', 'test_follow_private')
+    #     actor_id = random.randint(10, 100000)
+    #     activity_data = {'actor': actor_id, 'verb': 'tweet', 'object': 1}
+    #     activity_id = feed.add_activity(activity_data)['id']
+    #     agg_feed.follow(feed.slug, feed.user_id)
+    #     time.sleep(10)
+    #     activities = agg_feed.get(limit=3)['results']
+    #     activity = self._get_first_aggregated_activity(activities)
+    #     activity_id_found = activity['id'] if activity is not None else None
+    #     self.assertEqual(activity_id_found, activity_id)
 
     def test_flat_follow(self):
         feed = getfeed('user', 'test_flat_follow')
