@@ -21,6 +21,9 @@ pip install stream-python
 # Instantiate a new client
 import stream
 client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET')
+
+# INstantiate a new client specifying datacenter location
+client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', location='us-east')
 # Find your API keys here https://getstream.io/dashboard/
 
 # Instantiate a feed object
