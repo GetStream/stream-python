@@ -701,6 +701,22 @@ class ClientTest(TestCase):
             self.assertEqual(follows[0]['feed_id'], source)
             self.assertIn(follows[0]['target_id'], targets)
 
+    def test_follow_many_acl(self):
+        sources = [getfeed('user', str(i)) for i in range(10)]
+        targets = [getfeed('flat', str(i)) for i in range(10)]
+        sources_id = [source.id for source in sources]
+        targets_id = [target.id for target in targets]
+        feeds = [{'source': s, 'target': t} for s,t in zip(sources_id, targets_id)]
+
+        for target in targets:
+            target.add_activity({ 'actor': 'barry', 'object': '09', 'verb': 'tweet' })
+
+        self.c.follow_many(feeds, activity_copy_limit=0)
+
+        for source in sources:
+            activities = source.get(limit=5)['results']
+            self.assertEqual(len(activities), 0)
+
     def test_add_to_many(self):
         activity = {'actor': 1, 'verb': 'tweet', 'object': 1, 'custom': 'data'}
         feeds = [getfeed('flat', str(i)).id for i in range(10, 20)]
