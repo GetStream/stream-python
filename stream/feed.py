@@ -126,7 +126,7 @@ class Feed(object):
             self.feed_url, params=params, signature=token)
         return response
 
-    def follow(self, target_feed_slug, target_user_id, **extra_data):
+    def follow(self, target_feed_slug, target_user_id, activity_copy_limit, **extra_data):
         '''
         Follows the given feed
 
@@ -141,6 +141,8 @@ class Feed(object):
             'target': target_feed_id,
             'target_token': self.client.feed(target_feed_slug, target_user_id).token
         }
+        if activity_copy_limit != None:
+            data['activity_copy_limit'] = activity_copy_limit
         token = self.create_scope_token('follower', 'write')
         data.update(extra_data)
         response = self.client.post(
