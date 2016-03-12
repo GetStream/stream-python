@@ -19,8 +19,8 @@ except ImportError:
 
 def connect_debug():
     return stream.connect(
-        'gav9ygr75by3',
-        '5ws2hnua79n9qga6e2dy572qdfapwgdc83853mjm3mjp66czyb2xkahbdhs98an8',
+        '2a7ug7h97y6v',
+        'rg24qz8qtqq2dqqejushqt7m8v7fzrnkad6xmu2b9e3ejrjb7wabktyvgenu3car',
         location='us-east',
         timeout=10
     )
@@ -309,6 +309,17 @@ class ClientTest(TestCase):
         activity_id_found = activity['id'] if activity is not None else None
         self.assertEqual(activity['origin'], feed.id)
         self.assertEqual(activity_id_found, activity_id)
+
+    def test_follow_activity_copy_limit(self):
+        feed = getfeed('user', 'test_follow_acl')
+        feed1 = getfeed('user', 'test_follow_acl1')
+        actor_id = random.randint(10, 100000)
+        feed1.add_activity({ 'actor': actor_id, 'verb': 'tweet', 'object': 1 })
+        feed.follow(feed1.slug, feed1.user_id, activity_copy_limit=0)
+        time.sleep(10)
+        activities = feed.get(limit=5)['results']
+
+        self.assertEqual(len(activities), 0)
         
     def test_follow_and_delete(self):
         user_feed = getfeed('user', 'test_follow')
@@ -689,6 +700,22 @@ class ClientTest(TestCase):
             self.assertEqual(len(follows), 1)
             self.assertEqual(follows[0]['feed_id'], source)
             self.assertIn(follows[0]['target_id'], targets)
+
+    def test_follow_many_acl(self):
+        sources = [getfeed('user', str(i)) for i in range(10)]
+        targets = [getfeed('flat', str(i)) for i in range(10)]
+        sources_id = [source.id for source in sources]
+        targets_id = [target.id for target in targets]
+        feeds = [{'source': s, 'target': t} for s,t in zip(sources_id, targets_id)]
+
+        for target in targets:
+            target.add_activity({ 'actor': 'barry', 'object': '09', 'verb': 'tweet' })
+
+        self.c.follow_many(feeds, activity_copy_limit=0)
+
+        for source in sources:
+            activities = source.get(limit=5)['results']
+            self.assertEqual(len(activities), 0)
 
     def test_add_to_many(self):
         activity = {'actor': 1, 'verb': 'tweet', 'object': 1, 'custom': 'data'}

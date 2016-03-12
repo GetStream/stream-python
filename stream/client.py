@@ -235,7 +235,7 @@ class StreamClient(object):
         data = {'activity': activity, 'feeds': feeds}
         self._make_signed_request('post', 'feed/add_to_many/', data=data)
 
-    def follow_many(self, follows):
+    def follow_many(self, follows, activity_copy_limit=None):
         '''
         Creates many follows
         :param follows: the list of follow relations
@@ -243,7 +243,12 @@ class StreamClient(object):
         eg. [{'source': source, 'target': target}]
 
         '''
-        self._make_signed_request('post', 'follow_many/', data=follows)
+        params = None
+
+        if activity_copy_limit != None:
+            params = dict(activity_copy_limit=activity_copy_limit)
+
+        self._make_signed_request('post', 'follow_many/', params=params, data=follows)
 
     def update_activities(self, activities):
         '''
