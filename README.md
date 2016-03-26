@@ -93,6 +93,29 @@ token = user_feed_1.token
 readonly_token = user_feed_1.get_readonly_token()
 # Javascript client side feed initialization
 # user1 = client.feed('user', '1', '{{ readonly_token }}');
+
+# Generate a redirect url for the Stream Analytics platform to track
+# events/impressions on url clicks
+impression = {
+    'content_list': ['tweet:1', 'tweet:2', 'tweet:3'], 
+    'user_data': 'tommaso', 
+    'location': 'email',
+    'feed_id': 'user:global'
+}
+
+engagement = {
+    'content': 'tweet:2', 
+    'label': 'click',
+    'position': 1, 
+    'user_data': 'tommaso', 
+    'location': 'email',
+    'feed_id': 
+    'user:global'
+}
+
+events = [impression, engagement]
+
+redirect_url = client.create_redirect_url('http://google.com/', 'user_id', events)
 ```
 
 
