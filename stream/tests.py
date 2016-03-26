@@ -19,8 +19,8 @@ except ImportError:
 
 def connect_debug():
     return stream.connect(
-        '2a7ug7h97y6v',
-        'rg24qz8qtqq2dqqejushqt7m8v7fzrnkad6xmu2b9e3ejrjb7wabktyvgenu3car',
+        'q56mdvdzreye',
+        'spmf6x2b2v2tqg93sfp5t393wfcxru58zm7jr3ynf7dmmndw5y8chux25hs63znf',
         location='us-east',
         timeout=10
     )
@@ -730,7 +730,7 @@ class ClientTest(TestCase):
         expected_parts = ['https://analytics.getstream.io/analytics/redirect/',
             'auth_type=jwt',
             'url=http%3A%2F%2Fgoogle.com%2F%3Fa%3Db%26c%3Dd',
-            'api_key=ahj2ndz7gsan',
+            'api_key=%s' % self.c.api_key,
             'events=%5B%7B%22foreign_ids%22%3A+%5B%22tweet%3A1%22%2C+%22tweet%3A2%22%2C+%22tweet%3A3%22%2C+%22tweet%3A4%22%2C+%22tweet%3A5%22%5D%2C+%22feed_id%22%3A+%22user%3Aglobal%22%2C+%22user_id%22%3A+%22tommaso%22%2C+%22location%22%3A+%22email%22%7D%2C+%7B%22user_id%22%3A+%22tommaso%22%2C+%22label%22%3A+%22click%22%2C+%22feed_id%22%3A+%22user%3Aglobal%22%2C+%22location%22%3A+%22email%22%2C+%22position%22%3A+3%2C+%22foreign_id%22%3A+%22tweet%3A1%22%7D%5D',
         ]
         engagement = {'foreign_id': 'tweet:1', 'label': 'click', 'position': 3, 'user_id': 'tommaso', 'location': 'email', 'feed_id': 'user:global'}
@@ -744,7 +744,9 @@ class ClientTest(TestCase):
         parsed_url = urlparse(redirect_url)
         qs = parse_qs(parsed_url.query)
 
-        decoded = jwt.decode(qs['authorization'][0], 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy')
+        import pdb; pdb.set_trace()
+
+        decoded = jwt.decode(qs['authorization'][0], self.c.api_secret)
 
         self.assertEqual(decoded, {
             'resource': 'redirect_and_track',
