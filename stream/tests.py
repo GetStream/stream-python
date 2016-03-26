@@ -9,6 +9,7 @@ from unittest.case import TestCase
 import os
 import datetime
 import copy
+import requests
 from stream import serializer
 from requests.exceptions import ConnectionError, MissingSchema
 
@@ -744,8 +745,6 @@ class ClientTest(TestCase):
         parsed_url = urlparse(redirect_url)
         qs = parse_qs(parsed_url.query)
 
-        import pdb; pdb.set_trace()
-
         decoded = jwt.decode(qs['authorization'][0], self.c.api_secret)
 
         self.assertEqual(decoded, {
@@ -768,6 +767,16 @@ class ClientTest(TestCase):
         user_id = 'tommaso'
         create_redirect = lambda : self.c.create_redirect_url(target_url, user_id, events)
         self.assertRaises(MissingSchema, create_redirect)
+
+    def test_follow_redirect_url(self):
+        target_url = 'http://google.com/?a=b&c=d'
+        events = []
+        user_id = 'tommaso'
+        redirect_url = self.c.create_redirect_url(target_url, user_id, events)
+
+        res = requests.get(redirect_url)
+        res.raise_for_status()
+        self.assertTrue('google' in res.url)
         
         
         
