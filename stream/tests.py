@@ -405,13 +405,16 @@ class ClientTest(TestCase):
         f2 = getfeed('user', 'socialpython')
         activity = f1.add_activity({ 'actor': '1', 'object': 'null', 'verb': 'tweet' })
         activityId = activity['id']
-        f2.follow('user', 'asocialpython', 300)
         time.sleep(1)
-        f2.unfollow('user', 'asocialpython', keep_history=True)
+        f1slug, f1id = f1.id.split(':')
+
+        f2.follow(f1slug, f1id, activity_copy_limit=300)
+        f2.unfollow(f1slug, f1id, keep_history=True)
         time.sleep(5)
-        results = f2.get(limit=1)
-        self.assertGreater(len(results['results']), 0)
-        activity = results['results'][0]
+        activities = f2.get(limit=1)['results']
+        print activities
+        self.assertGreater(len(activities), 0)
+        activity = activities[0]
         self.assertEqual(activity['id'], activityId)
 
     def test_empty_followings(self):
