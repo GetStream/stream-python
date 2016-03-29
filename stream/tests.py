@@ -400,6 +400,20 @@ class ClientTest(TestCase):
     def test_unfollow(self):
         f = getfeed('user', 'asocialpython').id.split(':')
 
+    def test_unfollow_keep_history(self):
+        f1 = getfeed('user', 'asocialpython')
+        f2 = getfeed('user', 'socialpython')
+        activity = f1.add_activity({ 'actor': '1', 'object': 'null', 'verb': 'tweet' })
+        activityId = activity['id']
+        f2.follow('user', 'asocialpython', 300)
+        time.sleep(1)
+        f2.unfollow('user', 'asocialpython', keep_history=True)
+        time.sleep(5)
+        results = f2.get(limit=1)
+        self.assertGreater(len(results['results']), 0)
+        activity = results['results'][0]
+        self.assertEqual(activity['id'], activityId)
+
     def test_empty_followings(self):
         asocial = getfeed('user', 'asocialpython')
         followings = asocial.following()

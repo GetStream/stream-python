@@ -149,16 +149,21 @@ class Feed(object):
             url, data=data, signature=token)
         return response
 
-    def unfollow(self, target_feed_slug, target_user_id):
+    def unfollow(self, target_feed_slug, target_user_id, keep_history=None):
         '''
         Unfollow the given feed
         '''
+        qs = dict()
+
+        if keep_history != None and bool(keep_history):
+            qs['keep_history'] = '1'
+
         target_feed_slug = validate_feed_slug(target_feed_slug)
         target_user_id = validate_user_id(target_user_id)
         target_feed_id = '%s:%s' % (target_feed_slug, target_user_id)
         token = self.create_scope_token('follower', 'delete')
         url = self.feed_url + 'follows/%s/' % target_feed_id
-        response = self.client.delete(url, signature=token)
+        response = self.client.delete(url, params=qs, signature=token)
         return response
 
     def followers(self, offset=0, limit=25, feeds=None):
