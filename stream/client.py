@@ -156,7 +156,6 @@ class StreamClient(object):
         data = data or {}
         serialized = None
         default_params = self.get_default_params()
-        print params
         default_params.update(params)
         headers = self.get_default_header()
         headers['Authorization'] = signature
