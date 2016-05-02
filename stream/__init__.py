@@ -5,9 +5,9 @@ __author__ = 'Thierry Schellenbach'
 __copyright__ = 'Copyright 2014, Thierry Schellenbach'
 __credits__ = ['Thierry Schellenbach, mellowmorning.com, @tschellenbach']
 __license__ = 'BSD'
-__version__ = '2.3.5'
+__version__ = '2.3.6'
 __maintainer__ = 'Thierry Schellenbach'
-__email__ = 'thierryschellenbach@gmail.com'
+__email__ = 'thierry@getstream.io'
 __status__ = 'Production'
 
 
