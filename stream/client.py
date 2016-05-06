@@ -149,7 +149,7 @@ class StreamClient(object):
             payload['feed_id'] = feed_id
         if user_id is not None:
             payload['user_id'] = user_id
-        return jwt.encode(payload, self.api_secret)
+        return jwt.encode(payload, self.api_secret).decode("utf-8")
 
     def _make_request(self, method, relative_url, signature, params=None, data=None):
         params = params or {}
