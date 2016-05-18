@@ -1,6 +1,6 @@
 import re
 
-valid_re = re.compile('^\w+$')
+valid_re = re.compile('^[\w-]+$')
 
 
 def validate_feed_id(feed_id):
