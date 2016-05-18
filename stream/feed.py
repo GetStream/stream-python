@@ -81,9 +81,10 @@ class Feed(object):
                     activity_data['to'])
         token = self.create_scope_token('feed', 'write')
         data = dict(activities=activities)
-        result = self.client.post(
-            self.feed_url, data=data, signature=token)
-        return result
+        if activities:
+            result = self.client.post(
+                self.feed_url, data=data, signature=token)
+            return result
 
     def remove_activity(self, activity_id=None, foreign_id=None):
         '''
