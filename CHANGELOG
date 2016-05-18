@@ -5,7 +5,9 @@
 * Add HTTP Signature auth method (for application auth resources)
 * Add support for follow_many batch operation
 * Add support for add_to_many batch operation
-
+* Decode JWT from bytes to UTF-8
+* Skip add_activities API call if activity_list is empty
+* Fix feed group and id validation, dashes are now allowed
 
 2.3.5
 =====
