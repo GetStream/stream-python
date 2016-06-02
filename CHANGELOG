@@ -2,6 +2,11 @@
  Change history
 ================
 
+2.3.7
+=====
+:release-date: 2016-06-02
+:by: Tommaso Barbugli
+
 * Add HTTP Signature auth method (for application auth resources)
 * Add support for follow_many batch operation
 * Add support for add_to_many batch operation
