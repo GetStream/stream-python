@@ -150,7 +150,7 @@ class Feed(object):
             url, data=data, signature=token)
         return response
 
-    def unfollow(self, target_feed_slug, target_user_id):
+    def unfollow(self, target_feed_slug, target_user_id, keep_history=False):
         '''
         Unfollow the given feed
         '''
@@ -159,7 +159,10 @@ class Feed(object):
         target_feed_id = '%s:%s' % (target_feed_slug, target_user_id)
         token = self.create_scope_token('follower', 'delete')
         url = self.feed_url + 'follows/%s/' % target_feed_id
-        response = self.client.delete(url, signature=token)
+        params = {}
+        if keep_history:
+            params['keep_history'] = True
+        response = self.client.delete(url, signature=token, params=params)
         return response
 
     def followers(self, offset=0, limit=25, feeds=None):
