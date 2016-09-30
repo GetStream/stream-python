@@ -58,7 +58,7 @@ class StreamClient(object):
             self.base_url = base_url
         elif location is not None:
             self.base_url = 'https://%s-api.getstream.io/api/' % location
-            
+
         self.base_analytics_url = 'https://analytics.getstream.io/analytics/'
 
         self.session = requests.Session()
@@ -268,7 +268,7 @@ class StreamClient(object):
         Update a single activity
         '''
         return self.update_activities([activity])
-        
+
     def create_redirect_url(self, target_url, user_id, events):
         '''
         Creates a redirect url for tracking the given events in the context
