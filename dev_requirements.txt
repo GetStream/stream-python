@@ -1,5 +1,5 @@
-pep8==1.5.7
+pep8
 python-coveralls
 python-dateutil
-pytest-cov==1.8.1
+pytest-cov
 -e .
