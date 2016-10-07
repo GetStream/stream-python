@@ -9,7 +9,7 @@ notifications:
     - thierryschellenbach@gmail.com
     - tbarbugli@gmail.com
 install:
-  - pip install dev_requirements.txt
+  - pip install -r dev_requirements.txt
 script:
   - py.test stream/tests.py -slv --cov stream --cov-report term-missing
 after_script:
