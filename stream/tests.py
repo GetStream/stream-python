@@ -8,6 +8,7 @@ from unittest.case import TestCase
 import json
 
 import os
+import sys
 import datetime
 import copy
 import requests
@@ -21,9 +22,20 @@ except ImportError:
 
 
 def connect_debug():
+    try:
+        key = os.environ['STREAM_KEY']
+        secret = os.environ['STREAM_SECRET']
+    except KeyError:
+        print('To run the tests the STREAM_KEY and STREAM_SECRET variables '
+              'need to be available. \n'
+              'Please create a pull request if you are an external '
+              'contributor, because these variables are automatically added '
+              'by Travis.')
+        sys.exit(1)
+
     return stream.connect(
-        'q56mdvdzreye',
-        'spmf6x2b2v2tqg93sfp5t393wfcxru58zm7jr3ynf7dmmndw5y8chux25hs63znf',
+        key,
+        secret,
         location='us-east',
         timeout=10
     )
