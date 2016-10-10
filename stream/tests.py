@@ -387,15 +387,20 @@ class ClientTest(TestCase):
         agg_feed.follow(user_feed.slug, user_feed.user_id)
         user_feed.remove_activity(activity_id)
 
-        self._test_sleep(10, 0.25)
-
-        for x in range(5):
+        for x in range(40):
             activities = agg_feed.get(limit=3)['results']
             activity = self._get_first_aggregated_activity(activities)
-            activity_id_found = activity['id'] if activity is not None else None
-            self.assertNotEqual(activity_id_found, activity_id)
-            # self._test_sleep(1, 0.1)
+            activity_id_found = (activity['id'] if activity is not None
+                                 else None)
 
+            try:
+                self.assertNotEqual(activity_id_found, activity_id)
+            except AssertionError:
+                self._test_sleep(1, 0.1)
+            else:
+                break
+
+        self.assertNotEqual(activity_id_found, activity_id)
 
     # def test_follow_private(self):
     #     feed = getfeed('secret', 'py1')
