@@ -14,6 +14,7 @@ import copy
 import requests
 from stream import serializer
 from requests.exceptions import MissingSchema
+from itertools import count
 
 try:
     from urlparse import urlparse, parse_qs
@@ -43,8 +44,13 @@ def connect_debug():
 
 client = connect_debug()
 
+counter = count()
+test_timestamp = int(time.time())
+
+
 def get_random_postfix():
-    return str(int(time.time())) + str(random.randint(0, 1000))
+    return 'test_%s-feed_%s' % (test_timestamp, next(counter))
+
 
 def getfeed(feed_slug, user_id):
     '''
