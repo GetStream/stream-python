@@ -41,28 +41,29 @@ def connect_debug():
         base_url='http://qa.getstream.io:82/api/',
     )
 
-random_postfix = str(int(time.time())) + str(random.randint(0, 1000))
 client = connect_debug()
 
+def get_random_postfix():
+    return str(int(time.time())) + str(random.randint(0, 1000))
 
 def getfeed(feed_slug, user_id):
     '''
     Adds the random postfix to the user id
     '''
-    return client.feed(feed_slug, user_id + random_postfix)
-
-user1 = getfeed('user', '1')
-user2 = getfeed('user', '2')
-aggregated2 = getfeed('aggregated', '2')
-aggregated3 = getfeed('aggregated', '3')
-topic1 = getfeed('topic', '1')
-flat3 = getfeed('flat', '3')
+    return client.feed(feed_slug, user_id + get_random_postfix())
 
 
 class ClientTest(TestCase):
 
     def setUp(self):
         # DEBUG account details
+        user1 = getfeed('user', '1')
+        user2 = getfeed('user', '2')
+        aggregated2 = getfeed('aggregated', '2')
+        aggregated3 = getfeed('aggregated', '3')
+        topic1 = getfeed('topic', '1')
+        flat3 = getfeed('flat', '3')
+
         self.c = client
         self.user1 = user1
         self.user2 = user2
@@ -114,7 +115,7 @@ class ClientTest(TestCase):
                 'foreign_id': 'object:%s' % i,
                 'time': datetime.datetime.utcnow().isoformat()
             })
-        activities_created = user1.add_activities(activities)['activities']
+        activities_created = self.user1.add_activities(activities)['activities']
         activities = copy.deepcopy(activities_created)
 
         self._test_sleep(3, 0.25)
@@ -125,7 +126,7 @@ class ClientTest(TestCase):
 
         self.c.update_activities(activities)
 
-        activities_updated = user1.get(limit=len(activities))['results']
+        activities_updated = self.user1.get(limit=len(activities))['results']
         activities_updated.reverse()
 
         for i, activity in enumerate(activities_updated):
@@ -707,7 +708,7 @@ class ClientTest(TestCase):
         self.flat3.follow('user', self.user1.user_id)
         # add the same activity twice
         now = datetime.datetime.now(tzlocal())
-        tweet = 'My Way %s' % random_postfix
+        tweet = 'My Way %s' % get_random_postfix()
         activity_data = {
             'actor': 1, 'verb': 'tweet', 'object': 1, 'time': now, 'tweet': tweet}
         self.topic1.add_activity(activity_data)
