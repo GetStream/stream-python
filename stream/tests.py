@@ -49,7 +49,7 @@ test_timestamp = int(time.time())
 
 
 def get_random_postfix():
-    return 'test_%s-feed_%s' % (test_timestamp, next(counter))
+    return '---test_%s-feed_%s' % (test_timestamp, next(counter))
 
 
 def getfeed(feed_slug, user_id):
