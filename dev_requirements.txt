@@ -1,0 +1,5 @@
+pep8
+python-coveralls
+python-dateutil
+pytest-cov
+-e .

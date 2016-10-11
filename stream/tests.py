@@ -5,23 +5,37 @@ from stream.exceptions import ApiKeyException, InputException
 import random
 import jwt
 from unittest.case import TestCase
+import json
 
 import os
+import sys
 import datetime
 import copy
 import requests
 from stream import serializer
-from requests.exceptions import ConnectionError, MissingSchema
+from requests.exceptions import MissingSchema
 
 try:
     from urlparse import urlparse, parse_qs
 except ImportError:
     from urllib.parse import urlparse, parse_qs
 
+
 def connect_debug():
+    try:
+        key = os.environ['STREAM_KEY']
+        secret = os.environ['STREAM_SECRET']
+    except KeyError:
+        print('To run the tests the STREAM_KEY and STREAM_SECRET variables '
+              'need to be available. \n'
+              'Please create a pull request if you are an external '
+              'contributor, because these variables are automatically added '
+              'by Travis.')
+        sys.exit(1)
+
     return stream.connect(
-        'q56mdvdzreye',
-        'spmf6x2b2v2tqg93sfp5t393wfcxru58zm7jr3ynf7dmmndw5y8chux25hs63znf',
+        key,
+        secret,
         location='us-east',
         timeout=10
     )
@@ -385,15 +399,20 @@ class ClientTest(TestCase):
         agg_feed.follow(user_feed.slug, user_feed.user_id)
         user_feed.remove_activity(activity_id)
 
-        self._test_sleep(10, 0.25)
-
-        for x in range(5):
+        for x in range(40):
             activities = agg_feed.get(limit=3)['results']
             activity = self._get_first_aggregated_activity(activities)
-            activity_id_found = activity['id'] if activity is not None else None
-            self.assertNotEqual(activity_id_found, activity_id)
-            # self._test_sleep(1, 0.1)
+            activity_id_found = (activity['id'] if activity is not None
+                                 else None)
 
+            try:
+                self.assertNotEqual(activity_id_found, activity_id)
+            except AssertionError:
+                self._test_sleep(1, 0.1)
+            else:
+                break
+
+        self.assertNotEqual(activity_id_found, activity_id)
 
     # def test_follow_private(self):
     #     feed = getfeed('secret', 'py1')
@@ -842,18 +861,29 @@ class ClientTest(TestCase):
             self.assertEqual(feed.get()['results'][0]['custom'], 'data')
 
     def test_create_email_redirect(self):
-        expected_parts = ['https://analytics.getstream.io/analytics/redirect/',
-            'auth_type=jwt',
-            'url=http%3A%2F%2Fgoogle.com%2F%3Fa%3Db%26c%3Dd',
-            'api_key=%s' % self.c.api_key,
-            'events=%5B%7B%22foreign_ids%22%3A+%5B%22tweet%3A1%22%2C+%22tweet%3A2%22%2C+%22tweet%3A3%22%2C+%22tweet%3A4%22%2C+%22tweet%3A5%22%5D%2C+%22feed_id%22%3A+%22user%3Aglobal%22%2C+%22user_id%22%3A+%22tommaso%22%2C+%22location%22%3A+%22email%22%7D%2C+%7B%22user_id%22%3A+%22tommaso%22%2C+%22label%22%3A+%22click%22%2C+%22feed_id%22%3A+%22user%3Aglobal%22%2C+%22location%22%3A+%22email%22%2C+%22position%22%3A+3%2C+%22foreign_id%22%3A+%22tweet%3A1%22%7D%5D',
-        ]
-        engagement = {'foreign_id': 'tweet:1', 'label': 'click', 'position': 3, 'user_id': 'tommaso', 'location': 'email', 'feed_id': 'user:global'}
-        impression = {'foreign_ids': ['tweet:1', 'tweet:2', 'tweet:3', 'tweet:4', 'tweet:5'], 'user_id':
-                      'tommaso', 'location': 'email', 'feed_id': 'user:global'}
-        events = [impression, engagement]
         target_url = 'http://google.com/?a=b&c=d'
         user_id = 'tommaso'
+
+        impression = {
+            'foreign_ids': ['tweet:1',
+                            'tweet:2',
+                            'tweet:3',
+                            'tweet:4',
+                            'tweet:5'],
+            'feed_id': 'user:global',
+            'user_id': user_id,
+            'location': 'email'
+        }
+        engagement = {
+            'user_id': user_id,
+            'label': 'click',
+            'feed_id': 'user:global',
+            'location': 'email',
+            'position': 3,
+            'foreign_id': 'tweet:1'
+        }
+        events = [impression, engagement]
+
         redirect_url = self.c.create_redirect_url(target_url, user_id, events)
 
         parsed_url = urlparse(redirect_url)
@@ -867,9 +897,18 @@ class ClientTest(TestCase):
             'user_id': 'tommaso'
         })
 
-        for part in expected_parts:
-            if part not in redirect_url:
-                raise ValueError('didnt find %s in url \n %s' % (part, redirect_url))
+        expected_params = {
+            'auth_type': 'jwt',
+            'url': target_url,
+            'api_key': self.c.api_key,
+        }
+
+        for k, v in expected_params.items():
+            self.assertEqual(qs[k][0], v)
+
+        self.assertEqual(json.loads(qs['events'][0]), events)
+
+
 
     def test_email_redirect_invalid_target(self):
         engagement = {'foreign_id': 'tweet:1', 'label': 'click', 'position': 3, 'user_id': 'tommaso', 'location': 'email', 'feed_id': 'user:global'}
