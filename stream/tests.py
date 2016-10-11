@@ -37,7 +37,8 @@ def connect_debug():
         key,
         secret,
         location='us-east',
-        timeout=10
+        timeout=10,
+        base_url='http://qa.getstream.io:82/api/',
     )
 
 random_postfix = str(int(time.time())) + str(random.randint(0, 1000))
