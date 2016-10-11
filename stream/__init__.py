@@ -7,7 +7,7 @@ __credits__ = ['Thierry Schellenbach, mellowmorning.com, @tschellenbach']
 __license__ = 'BSD'
 __version__ = '2.3.8'
 __maintainer__ = 'Thierry Schellenbach'
-__email__ = 'thierry@getstream.io'
+__email__ = 'support@getstream.io'
 __status__ = 'Production'
 
 
