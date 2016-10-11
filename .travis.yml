@@ -10,9 +10,6 @@ notifications:
     - thierryschellenbach@gmail.com
     - tbarbugli@gmail.com
 
-env:
-  secure: G4nELnequtvrwsK0waSmkeikVaF+HSeLgeoM2F8eN22vo92VZKrnz9r0zinBnX/VHGEJ3yNmrQ+XbStb9UuWUL9S23iy/KF2M+f0NbSHsD3iNCuCYCa6c2bQ9O9EjV3NJljXDzJgRCX3UkHq3jueLfx6rXP3Pdhz9FIUhg2F8Ok=
-  secure: M2XYAJE6WQkhcAtj7W3DMcVH4B9N82JyhTYhABXw4qpmhDEeIO5sJWodkoIKmh+nnWnbY0S6lubk6kcs8OwKk4/YMCbIcZ7iyDCJFwT6kyEwIiGyQ3YZkpwZvF5pWyxga78WgH3snTDnx1d6w5MwrKN5c5jsDpm70vrVxT0BT0U=
 install:
   - pip install -r dev_requirements.txt
 script:
