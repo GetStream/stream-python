@@ -10,6 +10,7 @@ import json
 import os
 import sys
 import datetime
+import datetime as dt
 import copy
 import requests
 from stream import serializer
@@ -732,12 +733,14 @@ class ClientTest(TestCase):
         add one using time
         add another activity it should be in the right spot
         '''
-        now = datetime.datetime.utcnow
+
+        # timedelta is used to "make sure" that ordering is known even though
+        # server time is not
+        custom_time = datetime.datetime.utcnow() - dt.timedelta(days=1)
+
         feed = self.user2
-        for index, activity_time in enumerate([None, now, None]):
-            if activity_time is not None:
-                activity_time = activity_time()
-                middle = activity_time
+        for index, activity_time in enumerate([None, custom_time, None]):
+            self._test_sleep(1, 1) # so times are a bit different
             activity_data = {'actor': 1, 'verb': 'tweet',
                              'object': 1, 'foreign_id': 'tweet:%s' % index, 'time': activity_time}
             feed.add_activity(activity_data)
@@ -746,9 +749,9 @@ class ClientTest(TestCase):
         # the second post should have overwritten the first one (because they
         # had same id)
         self.assertEqual(activities[0]['foreign_id'], 'tweet:2')
-        self.assertEqual(activities[1]['foreign_id'], 'tweet:1')
-        self.assertEqual(activities[2]['foreign_id'], 'tweet:0')
-        self.assertDatetimeAlmostEqual(activities[1]['time'], middle)
+        self.assertEqual(activities[1]['foreign_id'], 'tweet:0')
+        self.assertEqual(activities[2]['foreign_id'], 'tweet:1')
+        self.assertDatetimeAlmostEqual(activities[2]['time'], custom_time)
 
     def test_missing_actor(self):
         activity_data = {'verb': 'tweet', 'object':
