@@ -571,15 +571,19 @@ class ClientTest(TestCase):
     def test_mark_read(self):
         notification_feed = getfeed('notification', 'py3')
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
-        notification_feed.add_activity(activity_data)
+        print(notification_feed.add_activity(activity_data)['id'])
         activity_data = {'actor': 2, 'verb': 'add', 'object': 2}
-        notification_feed.add_activity(activity_data)
+        print(notification_feed.add_activity(activity_data)['id'])
         activity_data = {'actor': 3, 'verb': 'watch', 'object': 2}
-        notification_feed.add_activity(activity_data)
+        print(notification_feed.add_activity(activity_data)['id'])
 
 
         activities = notification_feed.get(limit=3)['results']
+        from pprint import pprint
+        print(len(activities))
+        pprint(activities)
         for activity in activities:
+            pprint(activity)
             self.assertFalse(activity['is_read'])
         activities = notification_feed.get(mark_read=True)['results']
         activities = notification_feed.get(limit=2)['results']
@@ -588,13 +592,17 @@ class ClientTest(TestCase):
 
     def test_get_not_marked_seen(self):
         notification_feed = getfeed('notification', 'test_mark_seen')
-        notification_feed.add_activity({'actor': 1, 'verb': 'tweet', 'object': 1})
-        notification_feed.add_activity({'actor': 2, 'verb': 'add', 'object': 2})
-        notification_feed.add_activity({'actor': 3, 'verb': 'watch', 'object': 3})
+        print(notification_feed.add_activity({'actor': 1, 'verb': 'tweet', 'object': 1})['id'])
+        print(notification_feed.add_activity({'actor': 2, 'verb': 'tweet', 'object': 2})['id'])
+        print(notification_feed.add_activity({'actor': 3, 'verb': 'tweet', 'object': 3})['id'])
 
 
         activities = notification_feed.get(limit=3)['results']
+        from pprint import pprint
+        print(len(activities))
+        pprint(activities)
         for activity in activities:
+            pprint(activity)
             self.assertFalse(activity['is_seen'])
 
     def test_mark_seen_on_get(self):
@@ -632,14 +640,18 @@ class ClientTest(TestCase):
 
     def test_mark_read_by_id(self):
         notification_feed = getfeed('notification', 'py2')
-        notification_feed.add_activity({'actor': 1, 'verb': 'tweet', 'object': 1})  # ['id']
-        notification_feed.add_activity({'actor': 2, 'verb': 'add', 'object': 2})  # ['id']
-        notification_feed.add_activity({'actor': 3, 'verb': 'watch', 'object': 2})  # ['id']
+        print(notification_feed.add_activity({'actor': 1, 'verb': 'tweet', 'object': 1})['id'])  # ['id']
+        print(notification_feed.add_activity({'actor': 2, 'verb': 'tweet', 'object': 2})['id'])  # ['id']
+        print(notification_feed.add_activity({'actor': 3, 'verb': 'tweet', 'object': 2})['id'])  # ['id']
 
 
         activities = notification_feed.get(limit=3)['results']
         ids = []
+        from pprint import pprint
+        print(len(activities))
+        pprint(activities)
         for activity in activities:
+            pprint(activity)
             ids.append(activity['id'])
             self.assertFalse(activity['is_read'])
         ids = ids[:2]
