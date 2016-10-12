@@ -357,7 +357,12 @@ class ClientTest(TestCase):
         self.assertEqual(get_activity_ids, activity_ids[::-1])
 
     def test_add_activities_to(self):
-        to = [getfeed('user', 'pyto2').id, getfeed('user', 'pyto3').id]
+        pyto2 = getfeed('user', 'pyto2')
+        pyto3 = getfeed('user', 'pyto3')
+        print(pyto2.id)
+        print(pyto3.id)
+
+        to = [pyto2.id, pyto3.id]
         activity_data = [
             {'actor': 1, 'verb': 'tweet', 'object': 1, 'to': to},
             {'actor': 2, 'verb': 'watch', 'object': 2, 'to': to},
@@ -368,13 +373,11 @@ class ClientTest(TestCase):
         get_activity_ids = [a['id'] for a in activities]
         self.assertEqual(get_activity_ids, activity_ids[::-1])
         # test first target
-        feed = getfeed('user', 'pyto2')
-        activities = feed.get(limit=2)['results']
+        activities = pyto2.get(limit=2)['results']
         get_activity_ids = [a['id'] for a in activities]
         self.assertEqual(get_activity_ids, activity_ids[::-1])
         # test second target
-        feed = getfeed('user', 'pyto3')
-        activities = feed.get(limit=2)['results']
+        activities = pyto3.get(limit=2)['results']
         get_activity_ids = [a['id'] for a in activities]
         self.assertEqual(get_activity_ids, activity_ids[::-1])
 
