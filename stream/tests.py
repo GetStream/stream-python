@@ -91,7 +91,10 @@ class ClientTest(TestCase):
         :param local_wait: float, number of seconds to sleep when hitting localhost API
         :return: None
         """
-        return
+        sleep_time = production_wait
+        if self.local_tests:
+            sleep_time = local_wait
+        time.sleep(sleep_time)
 
     def test_update_activities_create(self):
         activities = [{
