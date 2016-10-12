@@ -721,7 +721,7 @@ class ClientTest(TestCase):
         # the second post should have overwritten the first one (because they
         # had same id)
 
-        self.assertEqual(len(activities['foreign_id']), 1)
+        self.assertEqual(len(activities), 1)
         self.assertEqual(activities[0]['object'], '3')
         self.assertEqual(activities[0]['foreign_id'], 'tweet:11')
         self.assertDatetimeAlmostEqual(activities[0]['time'], utcnow)
