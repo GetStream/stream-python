@@ -701,19 +701,23 @@ class ClientTest(TestCase):
     def test_uniqueness_foreign_id(self):
         now = datetime.datetime.now(tzlocal())
         utcnow = (now - now.utcoffset()).replace(tzinfo=None)
+
         activity_data = {'actor': 1, 'verb': 'tweet',
                          'object': 1, 'foreign_id': 'tweet:11', 'time': now}
         response = self.user1.add_activity(activity_data)
+
         activity_data = {'actor': 2, 'verb': 'tweet',
                          'object': 3, 'foreign_id': 'tweet:11', 'time': now}
         response = self.user1.add_activity(activity_data)
-        activities = self.user1.get(limit=2)['results']
+
+        activities = self.user1.get(limit=10)['results']
         # the second post should have overwritten the first one (because they
         # had same id)
+
+        self.assertEqual(len(activities['foreign_id']), 1)
         self.assertEqual(activities[0]['object'], '3')
         self.assertEqual(activities[0]['foreign_id'], 'tweet:11')
         self.assertDatetimeAlmostEqual(activities[0]['time'], utcnow)
-        self.assertNotEqual(activities[1]['foreign_id'], 'tweet:11')
 
     def test_time_ordering(self):
         '''
