@@ -319,10 +319,15 @@ class ClientTest(TestCase):
 
     def test_remove_activity(self):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
+
         activity_id = self.user1.add_activity(activity_data)['id']
+        activities = self.user1.get(limit=8)['results']
+        self.assertEqual(len(activities), 1)
+
         self.user1.remove_activity(activity_id)
-        activities = self.user1.get(limit=1)['results']
-        self.assertNotEqual(activities[0]['id'], activity_id)
+        # verify that no activities were returned
+        activities = self.user1.get(limit=8)['results']
+        self.assertEqual(len(activities), 0)
 
     def test_remove_activity_by_foreign_id(self):
         activity_data = {
