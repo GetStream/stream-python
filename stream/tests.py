@@ -127,7 +127,6 @@ class ClientTest(TestCase):
         activities_created = self.user1.add_activities(activities)['activities']
         activities = copy.deepcopy(activities_created)
 
-        self._test_sleep(3, 0.25)
 
         for activity in activities:
             activity.pop('id')
@@ -245,7 +244,6 @@ class ClientTest(TestCase):
         activity_data['to'] = [team_feed.id]
         feed.add_activity(activity_data)
 
-        self._test_sleep(2, 0.25)
 
         self.assertEqual(activity_data['to'], [team_feed.id])
 
@@ -256,7 +254,6 @@ class ClientTest(TestCase):
         activity_data['to'] = [team_feed.id]
         feed.add_activities([activity_data])
 
-        self._test_sleep(2, 0.25)
 
         self.assertEqual(activity_data['to'], [team_feed.id])
 
@@ -272,7 +269,6 @@ class ClientTest(TestCase):
         response = user_feed.add_activity(activity_data)
         activity_id = response['id']
 
-        self._test_sleep(2, 0.25)
 
         # see if the new activity is also in the team feed
         activities = team_feed.get(limit=1)['results']
@@ -318,7 +314,6 @@ class ClientTest(TestCase):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
         activity_id = self.user1.add_activity(activity_data)['id']
         self.user1.remove_activity(activity_id)
-        self._test_sleep(10, 0.25)
         activities = self.user1.get(limit=1)['results']
         self.assertNotEqual(activities[0]['id'], activity_id)
 
@@ -327,7 +322,6 @@ class ClientTest(TestCase):
             'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:10'}
         activity_id = self.user1.add_activity(activity_data)['id']
         self.user1.remove_activity(foreign_id='tweet:10')
-        self._test_sleep(10, 0.25)
         activities = self.user1.get(limit=1)['results']
         self.assertNotEqual(activities[0]['id'], activity_id)
         # verify this doesnt raise an error, but fails silently
@@ -374,7 +368,6 @@ class ClientTest(TestCase):
         activity_id = feed.add_activity(activity_data)['id']
         agg_feed.follow(feed.slug, feed.user_id)
 
-        self._test_sleep(5, 0.1)
 
         activities = agg_feed.get(limit=3)['results']
         activity = self._get_first_aggregated_activity(activities)
@@ -389,7 +382,6 @@ class ClientTest(TestCase):
         feed1.add_activity({ 'actor': actor_id, 'verb': 'tweet', 'object': 1 })
         feed.follow(feed1.slug, feed1.user_id, activity_copy_limit=0)
 
-        self._test_sleep(5, 0.25)
 
         activities = feed.get(limit=5)['results']
 
@@ -402,23 +394,14 @@ class ClientTest(TestCase):
         activity_data = {'actor': actor_id, 'verb': 'tweet', 'object': 1}
         activity_id = user_feed.add_activity(activity_data)['id']
 
-        self._test_sleep(10, 0.25)
 
         agg_feed.follow(user_feed.slug, user_feed.user_id)
         user_feed.remove_activity(activity_id)
 
-        for x in range(40):
-            activities = agg_feed.get(limit=3)['results']
-            activity = self._get_first_aggregated_activity(activities)
-            activity_id_found = (activity['id'] if activity is not None
-                                 else None)
-
-            try:
-                self.assertNotEqual(activity_id_found, activity_id)
-            except AssertionError:
-                self._test_sleep(1, 0.1)
-            else:
-                break
+        activities = agg_feed.get(limit=3)['results']
+        activity = self._get_first_aggregated_activity(activities)
+        activity_id_found = (activity['id'] if activity is not None
+                             else None)
 
         self.assertNotEqual(activity_id_found, activity_id)
 
@@ -429,7 +412,6 @@ class ClientTest(TestCase):
     #     activity_data = {'actor': actor_id, 'verb': 'tweet', 'object': 1}
     #     activity_id = feed.add_activity(activity_data)['id']
     #     agg_feed.follow(feed.slug, feed.user_id)
-    #     time._test_sleep(10, 0.25)
     #     activities = agg_feed.get(limit=3)['results']
     #     activity = self._get_first_aggregated_activity(activities)
     #     activity_id_found = activity['id'] if activity is not None else None
@@ -441,7 +423,6 @@ class ClientTest(TestCase):
         activity_id = feed.add_activity(activity_data)['id']
         self.flat3.follow(feed.slug, feed.user_id)
 
-        self._test_sleep(5, 0.25)
 
         activities = self.flat3.get(limit=3)['results']
         activity = self._get_first_activity(activities)
@@ -455,7 +436,6 @@ class ClientTest(TestCase):
         feed.add_activity(activity_data)['id']
         follower.follow(feed.slug, feed.user_id, activity_copy_limit=0)
 
-        self._test_sleep(5, 0.25)
 
         activities = follower.get(limit=3)['results']
         self.assertEqual(activities, [])
@@ -469,7 +449,6 @@ class ClientTest(TestCase):
         feed.add_activity(activity_data)['id']
         follower.follow(feed.slug, feed.user_id, activity_copy_limit=1)
 
-        self._test_sleep(5, 0.25)
 
         activities = follower.get(limit=3)['results']
         # verify we get the latest activity
@@ -576,7 +555,6 @@ class ClientTest(TestCase):
         activity_data = {'actor': 3, 'verb': 'watch', 'object': 2}
         notification_feed.add_activity(activity_data)
 
-        self._test_sleep(10, 0.25)
 
         activities = notification_feed.get(limit=3)['results']
         for activity in activities:
@@ -592,7 +570,6 @@ class ClientTest(TestCase):
         notification_feed.add_activity({'actor': 2, 'verb': 'add', 'object': 2})
         notification_feed.add_activity({'actor': 3, 'verb': 'watch', 'object': 3})
 
-        self._test_sleep(10, 0.25)
 
         activities = notification_feed.get(limit=3)['results']
         for activity in activities:
@@ -604,7 +581,6 @@ class ClientTest(TestCase):
         for activity in activities:
             notification_feed.remove_activity(activity['id'])
 
-        self._test_sleep(10, 0.25)
 
         old_activities = [
             notification_feed.add_activity({'actor': 1, 'verb': 'tweet', 'object': 1}),
@@ -612,10 +588,8 @@ class ClientTest(TestCase):
             notification_feed.add_activity({'actor': 3, 'verb': 'watch', 'object': 3}),
         ]
 
-        self._test_sleep(10, 2)
         notification_feed.get(mark_seen=[old_activities[0]['id'], old_activities[1]['id']])
 
-        self._test_sleep(10, 0.25)
         activities = notification_feed.get(limit=3)['results']
 
         # is the seen state correct
@@ -630,7 +604,6 @@ class ClientTest(TestCase):
 
         # see if the state properly resets after we add another activity
         notification_feed.add_activity({'actor': 3, 'verb': 'watch', 'object': 3})  # ['id']
-        self._test_sleep(10, 0.25)
         activities = notification_feed.get(limit=3)['results']
         self.assertFalse(activities[0]['is_seen'])
         self.assertEqual(len(activities[0]['activities']), 2)
@@ -641,7 +614,6 @@ class ClientTest(TestCase):
         notification_feed.add_activity({'actor': 2, 'verb': 'add', 'object': 2})  # ['id']
         notification_feed.add_activity({'actor': 3, 'verb': 'watch', 'object': 2})  # ['id']
 
-        self._test_sleep(10, 0.25)
 
         activities = notification_feed.get(limit=3)['results']
         ids = []
@@ -699,7 +671,6 @@ class ClientTest(TestCase):
         response = self.user1.add_activity(activity_data)
         response = self.user1.add_activity(activity_data)
 
-        self._test_sleep(5, 0.25)
 
         activities = self.user1.get(limit=2)['results']
         self.assertDatetimeAlmostEqual(activities[0]['time'], utcnow)
@@ -754,7 +725,6 @@ class ClientTest(TestCase):
         now = datetime.datetime.utcnow
         feed = self.user2
         for index, activity_time in enumerate([None, now, None]):
-            self._test_sleep(1, 0.1)
             if activity_time is not None:
                 activity_time = activity_time()
                 middle = activity_time
@@ -843,7 +813,6 @@ class ClientTest(TestCase):
         }
         for feed in targets:
             feed.add_activity(activity)
-            self._test_sleep(1, 0.1)
             self.assertEqual(len(feed.get(limit=5)['results']), 1)
 
         sources_id = [feed.id for feed in sources]
@@ -851,7 +820,6 @@ class ClientTest(TestCase):
         feeds = [{'source': s, 'target': t} for s, t in zip(sources_id, targets_id)]
 
         self.c.follow_many(feeds, activity_copy_limit=0)
-        self._test_sleep(5, 2)
 
         for feed in sources:
             activities = feed.get(limit=5)['results']
@@ -862,7 +830,6 @@ class ClientTest(TestCase):
         feeds = [getfeed('flat', str(i)).id for i in range(10, 20)]
         self.c.add_to_many(activity, feeds)
 
-        self._test_sleep(3, 0.25)
 
         for feed in feeds:
             feed = self.c.feed(*feed.split(':'))
