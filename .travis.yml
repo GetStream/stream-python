@@ -14,7 +14,7 @@ notifications:
 install:
   - pip install -r dev_requirements.txt
 script:
-  - py.test stream/tests.py -slv --cov stream --cov-report term-missing
+  - py.test stream/tests.py -lv --cov stream --cov-report term-missing
 after_script:
   # ensure we validate against pep standards
   - "pep8 --exclude=migrations --ignore=E501,E225,W293 stream"
