@@ -39,7 +39,7 @@ def connect_debug():
         secret,
         location='us-east',
         timeout=10,
-        base_url='http://qa.getstream.io:82/api/',
+        base_url='http://qa-api.getstream.io:82/api/',
     )
 
 client = connect_debug()
