@@ -77,6 +77,12 @@ class ClientTest(TestCase):
         self.aggregated3 = aggregated3
         self.topic1 = topic1
         self.flat3 = flat3
+        print(user1.id)
+        print(user2.id)
+        print(aggregated2.id)
+        print(aggregated3.id)
+        print(topic1.id)
+        print(flat3.id)
 
         self.local_tests = False
         if 'LOCAL' in os.environ:
