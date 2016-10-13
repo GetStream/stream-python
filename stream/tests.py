@@ -730,6 +730,8 @@ class ClientTest(TestCase):
         # verify that flat3 contains the activity exactly once
         response = self.flat3.get(limit=3)
         activity_tweets = [a.get('tweet') for a in response['results']]
+        print(response)
+        print(activity_tweets)
         self.assertEqual(activity_tweets.count(tweet), 1)
 
     def test_uniqueness_foreign_id(self):
