@@ -11,7 +11,8 @@ __email__ = 'support@getstream.io'
 __status__ = 'Production'
 
 
-def connect(api_key=None, api_secret=None, app_id=None, version='v1.0', timeout=3.0, location=None):
+def connect(api_key=None, api_secret=None, app_id=None, version='v1.0',
+            timeout=3.0, location=None, base_url=None):
     '''
     Returns a Client object
 
@@ -32,4 +33,5 @@ def connect(api_key=None, api_secret=None, app_id=None, version='v1.0', timeout=
         else:
             raise ValueError('Invalid api key or heroku url')
 
-    return StreamClient(api_key, api_secret, app_id, version, timeout, location=location)
+    return StreamClient(api_key, api_secret, app_id, version, timeout,
+                        location=location, base_url=base_url)
