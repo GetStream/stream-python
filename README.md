@@ -1,7 +1,7 @@
 stream-python
 =============
 
-[![Build Status](https://travis-ci.org/GetStream/stream-python.svg?branch=master)](https://travis-ci.org/GetStream/stream-python) [![Coverage Status](https://coveralls.io/repos/github/GetStream/stream-python/badge.svg?branch=master)](https://coveralls.io/r/tschellenbach/stream-python?branch=master) [![PyPI version](https://badge.fury.io/py/stream-python.svg)](http://badge.fury.io/py/stream-python)
+[![Build Status](https://travis-ci.org/GetStream/stream-python.svg?branch=master)](https://travis-ci.org/GetStream/stream-python) [![Coverage Status](https://coveralls.io/repos/github/GetStream/stream-python/badge.svg?branch=master)](https://coveralls.io/r/GetStream/stream-python?branch=master) [![PyPI version](https://badge.fury.io/py/stream-python.svg)](http://badge.fury.io/py/stream-python)
 
 stream-python is the official Python client for [Stream](https://getstream.io/), a web service for building scalable newsfeeds and activity streams. 
 The full documentation is available on [GetStream.io/docs](http://getstream.io/docs/?language=python). Note that there is also a [higher level Django integration](https://github.com/getstream/stream-django) which hooks into your ORM.
