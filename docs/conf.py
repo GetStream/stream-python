@@ -56,7 +56,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'stream-python'
-copyright = u'2014, Thierry Schellenbach'
+copyright = u'2014, Stream.io, Inc'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -276,7 +276,7 @@ texinfo_documents = [
 epub_title = u'stream-python'
 epub_author = u'Thierry Schellenbach'
 epub_publisher = u'Thierry Schellenbach'
-epub_copyright = u'2014, Thierry Schellenbach'
+epub_copyright = u'2014, Stream.io, Inc'
 
 # The basename for the epub file. It defaults to the project name.
 #epub_basename = u'stream-python'
