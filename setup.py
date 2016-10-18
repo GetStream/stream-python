@@ -53,7 +53,7 @@ setup(
     version=__version__,
     author=__maintainer__,
     author_email=__email__,
-    url='http://github.com/tschellenbach/stream-python',
+    url='http://github.com/GetStream/stream-python',
     description='Client for getstream.io. Build scalable newsfeeds & activity streams in a few hours instead of weeks.',
     long_description=long_description,
     packages=find_packages(),
