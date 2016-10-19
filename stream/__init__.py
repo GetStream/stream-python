@@ -2,9 +2,9 @@ import re
 import os
 
 __author__ = 'Thierry Schellenbach'
-__copyright__ = 'Copyright 2014, Thierry Schellenbach'
+__copyright__ = 'Copyright 2014, Stream.io, Inc'
 __credits__ = ['Thierry Schellenbach, mellowmorning.com, @tschellenbach']
-__license__ = 'BSD'
+__license__ = 'BSD-3-Clause'
 __version__ = '2.3.8'
 __maintainer__ = 'Thierry Schellenbach'
 __email__ = 'support@getstream.io'

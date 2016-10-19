@@ -3,7 +3,7 @@
 
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
-from stream import __version__, __maintainer__, __email__
+from stream import __version__, __maintainer__, __email__, __license__
 import sys
 
 
@@ -23,7 +23,7 @@ Documentation
 -------------
 Full documentation is available on `Github`_.
 
-.. _`Github`: https://github.com/getstream/stream-python
+.. _`Github`: https://github.com/GetStream/stream-python
 '''
 
 install_requires = [
@@ -53,9 +53,10 @@ setup(
     version=__version__,
     author=__maintainer__,
     author_email=__email__,
-    url='http://github.com/tschellenbach/stream-python',
+    url='http://github.com/GetStream/stream-python',
     description='Client for getstream.io. Build scalable newsfeeds & activity streams in a few hours instead of weeks.',
     long_description=long_description,
+    license=__license__,
     packages=find_packages(),
     zip_safe=False,
     install_requires=install_requires,
@@ -69,13 +70,13 @@ setup(
         'Operating System :: OS Independent',
         'Topic :: Software Development',
         'Development Status :: 5 - Production/Stable',
-        'License :: OSI Approved :: GNU General Public License (GPL)',
+        'License :: OSI Approved :: BSD License',
         'Natural Language :: English',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
 )
