@@ -236,6 +236,7 @@ class ClientTest(TestCase):
 
     def test_token_retrieval(self):
         self.user1.token
+        self.user1.get_readonly_token()
 
     def test_add_activity(self):
         feed = getfeed('user', 'py1')
