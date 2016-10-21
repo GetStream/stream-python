@@ -452,6 +452,10 @@ class ClientTest(TestCase):
         activity_id_found = activity['id'] if activity is not None else None
         self.assertEqual(activity_id_found, activity_id)
 
+        self.flat3.unfollow(feed.slug, feed.user_id)
+        activities = self.flat3.get(limit=3)['results']
+        self.assertEqual(len(activities), 0)
+
     def test_flat_follow_no_copy(self):
         feed = getfeed('user', 'test_flat_follow_no_copy')
         follower = getfeed('flat', 'test_flat_follow_no_copy')
