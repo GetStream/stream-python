@@ -184,7 +184,7 @@ class StreamClient(object):
                 return exception_fields
 
             for field, errors in exception_fields.items():
-                errors.append('Field "%s" errors: %s' % (field, repr(errors)))
+                result.append('Field "%s" errors: %s' % (field, repr(errors)))
             return result
 
         if result is not None:
