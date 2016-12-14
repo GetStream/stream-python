@@ -236,6 +236,7 @@ class ClientTest(TestCase):
 
     def test_token_retrieval(self):
         self.user1.token
+        self.user1.get_readonly_token()
 
     def test_add_activity(self):
         feed = getfeed('user', 'py1')
@@ -450,6 +451,10 @@ class ClientTest(TestCase):
         activity = self._get_first_activity(activities)
         activity_id_found = activity['id'] if activity is not None else None
         self.assertEqual(activity_id_found, activity_id)
+
+        self.flat3.unfollow(feed.slug, feed.user_id)
+        activities = self.flat3.get(limit=3)['results']
+        self.assertEqual(len(activities), 0)
 
     def test_flat_follow_no_copy(self):
         feed = getfeed('user', 'test_flat_follow_no_copy')

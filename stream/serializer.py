@@ -46,16 +46,6 @@ def dumps(*args, **kwargs):
     return json.dumps(*args, **kwargs)
 
 
-def dump(*args, **kwargs):
-    kwargs['default'] = _datetime_encoder
-    return json.dump(*args, **kwargs)
-
-
 def loads(*args, **kwargs):
     kwargs['object_hook'] = _datetime_decoder
     return json.loads(*args, **kwargs)
-
-
-def load(*args, **kwargs):
-    kwargs['object_hook'] = _datetime_decoder
-    return json.load(*args, **kwargs)
