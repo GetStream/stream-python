@@ -180,11 +180,11 @@ class StreamClient(object):
 
         def errors_from_fields(exception_fields):
             result = []
-            if not isinstance(exception_fields, list):
+            if not isinstance(exception_fields, dict):
                 return exception_fields
 
             for field, errors in exception_fields.items():
-                errors.append('Field "%s" errors: %s' % (field, repr(errors)))
+                result.append('Field "%s" errors: %s' % (field, repr(errors)))
             return result
 
         if result is not None:

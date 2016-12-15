@@ -2,6 +2,15 @@
  Change history
 ================
 
+Unreleased
+==========
+:release-date: YYYY-MM-DD
+:by: Unknown
+
+* Fix errors_from_fields function so it displays the extra data returned by the
+    server about InputException errors.
+
+
 2.3.8
 =====
 :release-date: 2016-06-09
