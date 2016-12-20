@@ -2,10 +2,10 @@
  Change history
 ================
 
-Unreleased
+2.3.9
 ==========
-:release-date: YYYY-MM-DD
-:by: Unknown
+:release-date: 2016-12-20
+:by: Jelte Fennema
 
 * Fix errors_from_fields function so it displays the extra data returned by the
     server about InputException errors.
