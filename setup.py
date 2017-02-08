@@ -26,7 +26,7 @@ Full documentation is available on `Github`_.
 .. _`Github`: https://github.com/GetStream/stream-python
 '''
 
-requests = 'requests[security]>=2.3.0' if sys.version_info < (2, 7, 9) else (
+requests = 'requests[security]>=2.4.1' if sys.version_info < (2, 7, 9) else (
     'requests>=2.3.0')
 
 install_requires = [
