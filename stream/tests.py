@@ -416,11 +416,8 @@ class ClientTest(TestCase):
         actor_id = random.randint(10, 100000)
         activity_data = {'actor': actor_id, 'verb': 'tweet', 'object': 1}
         activity_id = user_feed.add_activity(activity_data)['id']
-
-
         agg_feed.follow(user_feed.slug, user_feed.user_id)
         user_feed.remove_activity(activity_id)
-
         activities = agg_feed.get(limit=3)['results']
         activity = self._get_first_aggregated_activity(activities)
         activity_id_found = (activity['id'] if activity is not None
@@ -812,12 +809,6 @@ class ClientTest(TestCase):
         serialized = serializer.dumps(data)
         loaded = serializer.loads(serialized)
         self.assertEqual(data, loaded)
-
-    def test_signed_request_post(self):
-        self.c._make_signed_request('post', 'test/auth/digest/', {}, {})
-
-    def test_signed_request_get(self):
-        self.c._make_signed_request('post', 'test/auth/digest/', {}, {})
 
     def test_follow_many(self):
         sources = [getfeed('user', str(i)).id for i in range(10)]
