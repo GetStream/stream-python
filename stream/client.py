@@ -10,6 +10,7 @@ from requests.adapters import HTTPAdapter
 from stream import exceptions, serializer
 from stream.signing import sign
 from stream.utils import validate_feed_slug, validate_user_id
+from stream import __version__
 from requests import Request
 
 
@@ -160,6 +161,7 @@ class StreamClient(object):
         headers = self.get_default_header()
         headers['Authorization'] = signature
         headers['stream-auth-type'] = 'jwt'
+        headers['X-Stream-Client'] = 'stream-python-client-%s' % __version__
         url = self.get_full_url(relative_url)
         if method.__name__ in ['post', 'put']:
             serialized = serializer.dumps(data)
