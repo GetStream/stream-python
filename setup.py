@@ -27,7 +27,7 @@ Full documentation is available on `Github`_.
 '''
 
 install_requires = [
-    'pyjwt==1.3.0',
+    'pyjwt==1.4.0',
     'requests>=2.3.0',
     'six>=1.8.0',
     'httpsig==1.1.2'
