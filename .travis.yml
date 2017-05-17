@@ -11,7 +11,7 @@ python:
   - '3.6-dev' # 3.6 development branch
   - 'nightly' # currently points to 3.7-dev
   - 'pypy-5.3.1'
-  - 'pypy3'
+  - 'pypy3.3-5.2-alpha1'
 
 matrix:
   fast_finish: true
@@ -20,7 +20,7 @@ matrix:
     - python: '3.6-dev' # 3.6 development branch
     - python: 'nightly'
     - python: 'pypy-5.3.1'
-    - python: 'pypy3'
+    - python: 'pypy3.3-5.2-alpha1'
 
 cache: pip
 notifications:

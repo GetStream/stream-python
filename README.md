@@ -3,17 +3,23 @@ stream-python
 
 [![Build Status](https://travis-ci.org/GetStream/stream-python.svg?branch=master)](https://travis-ci.org/GetStream/stream-python) [![Coverage Status](https://coveralls.io/repos/github/GetStream/stream-python/badge.svg?branch=master)](https://coveralls.io/r/GetStream/stream-python?branch=master) [![PyPI version](https://badge.fury.io/py/stream-python.svg)](http://badge.fury.io/py/stream-python)
 
-stream-python is the official Python client for [Stream](https://getstream.io/), a web service for building scalable newsfeeds and activity streams. 
-The full documentation is available on [GetStream.io/docs](http://getstream.io/docs/?language=python). Note that there is also a [higher level Django integration](https://github.com/getstream/stream-django) which hooks into your ORM.
+[stream-python](https://github.com/GetStream/stream-python) is the official Python client for [Stream](https://getstream.io/), a web service for building scalable newsfeeds and activity streams.
+
+Note there is also a higher level [Django - Stream integration](https://github.com/getstream/stream-django) library which hooks into the Django ORM.
+
+You can sign up for a Stream account at https://getstream.io/get_started.
 
 ### Installation
 
 #### Install from Pypi
 
-
 ```bash
 pip install stream-python
 ```
+
+### Full documentation
+
+Documentation for this Python client are available at the [Stream website](https://getstream.io/docs/?language=python) or on [Read the Docs](http://stream-python.readthedocs.org/en/latest/).
 
 ### Usage
 
@@ -38,7 +44,7 @@ result = user_feed_1.get(limit=5, id_lt="e561de8f-00f1-11e4-b400-0cc47a024be0")
 activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:1'}
 activity_response = user_feed_1.add_activity(activity_data)
 # Create a bit more complex activity
-activity_data = {'actor': 1, 'verb': 'run', 'object': 1, 'foreign_id': 'run:1', 
+activity_data = {'actor': 1, 'verb': 'run', 'object': 1, 'foreign_id': 'run:1',
 	'course': {'name': 'Golden Gate park', 'distance': 10},
 	'participants': ['Thierry', 'Tommaso'],
 	'started_at': datetime.datetime.now()
@@ -97,19 +103,19 @@ readonly_token = user_feed_1.get_readonly_token()
 # Generate a redirect url for the Stream Analytics platform to track
 # events/impressions on url clicks
 impression = {
-    'content_list': ['tweet:1', 'tweet:2', 'tweet:3'], 
-    'user_data': 'tommaso', 
+    'content_list': ['tweet:1', 'tweet:2', 'tweet:3'],
+    'user_data': 'tommaso',
     'location': 'email',
     'feed_id': 'user:global'
 }
 
 engagement = {
-    'content': 'tweet:2', 
+    'content': 'tweet:2',
     'label': 'click',
-    'position': 1, 
-    'user_data': 'tommaso', 
+    'position': 1,
+    'user_data': 'tommaso',
     'location': 'email',
-    'feed_id': 
+    'feed_id':
     'user:global'
 }
 
@@ -117,12 +123,6 @@ events = [impression, engagement]
 
 redirect_url = client.create_redirect_url('http://google.com/', 'user_id', events)
 ```
-
-
-
-API docs are on [Read the
-docs](http://stream-python.readthedocs.org/en/latest/).
-
 
 [JS client](http://github.com/getstream/stream-js).
 
@@ -137,3 +137,9 @@ py.test stream/tests.py --cov stream --cov-report html
 # against a local API backend
 LOCAL=true py.test stream/tests.py
 ```
+
+### Copyright and License Information
+
+Copyright (c) 2014-2017 Stream.io Inc, and individual contributors. All rights reserved.
+
+See the file "LICENSE" for information on the history of this software, terms & conditions for usage, and a DISCLAIMER OF ALL WARRANTIES.
