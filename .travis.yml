@@ -1,6 +1,7 @@
 language: python
 sudo: false
 python:
+  - '2.7.8'
   - 2.7
   - 3.3
   - 3.4
@@ -9,7 +10,7 @@ python:
   - '3.5-dev' # 3.5 development branch
   - '3.6-dev' # 3.6 development branch
   - 'nightly' # currently points to 3.7-dev
-  - 'pypy'
+  - 'pypy-5.3.1'
   - 'pypy3.3-5.2-alpha1'
 
 matrix:
@@ -18,7 +19,7 @@ matrix:
     - python: '3.5-dev' # 3.5 development branch
     - python: '3.6-dev' # 3.6 development branch
     - python: 'nightly'
-    - python: 'pypy'
+    - python: 'pypy-5.3.1'
     - python: 'pypy3.3-5.2-alpha1'
 
 cache: pip

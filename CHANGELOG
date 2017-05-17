@@ -2,6 +2,15 @@
  Change history
 ================
 
+2.3.10
+==========
+:release-date: xxxx-yy-zz
+:by: <Unknown>
+
+* Require requests[security] for python versions below 2.7.9 this is required
+    for SNI support.
+
+
 2.3.9
 ==========
 :release-date: 2016-12-20
