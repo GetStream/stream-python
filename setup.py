@@ -26,13 +26,13 @@ Full documentation is available on `Github`_.
 .. _`Github`: https://github.com/GetStream/stream-python
 '''
 
-requests = 'requests[security]>=2.4.1' if sys.version_info < (2, 7, 9) else (
-    'requests>=2.3.0')
+requests = 'requests[security]>=2.4.1,<3' if sys.version_info < (2, 7, 9) else (
+    'requests>=2.3.0,<3')
 
 install_requires = [
     'pyjwt==1.3.0',
     requests,
-    'six>=1.8.0',
+    'six>=1.8.0,<2',
     'httpsig==1.1.2'
 ]
 
