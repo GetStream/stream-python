@@ -85,6 +85,7 @@ def get_exceptions():
 
 
 def get_exception_dict():
-    classes = get_exceptions()
-    exception_dict = {c.code: c for c in classes}
+    exception_dict = {}
+    for c in get_exceptions():
+        exception_dict[c.code] = c
     return exception_dict
