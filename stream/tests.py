@@ -65,9 +65,21 @@ def getfeed(feed_slug, user_id):
     return client.feed(feed_slug, user_id + get_unique_postfix())
 
 
+def api_request_parse_validator(test):
+    def wrapper(meth):
+        def _parse_response(*args, **kwargs):
+            response = meth(*args, **kwargs)
+            test.assertIn('duration', response)
+            return response
+        return _parse_response
+    return wrapper
+
+
 class ClientTest(TestCase):
 
     def setUp(self):
+        client._parse_response = api_request_parse_validator(self)(client._parse_response)
+
         # DEBUG account details
         user1 = getfeed('user', '1')
         user2 = getfeed('user', '2')
@@ -418,11 +430,8 @@ class ClientTest(TestCase):
         actor_id = random.randint(10, 100000)
         activity_data = {'actor': actor_id, 'verb': 'tweet', 'object': 1}
         activity_id = user_feed.add_activity(activity_data)['id']
-
-
         agg_feed.follow(user_feed.slug, user_feed.user_id)
         user_feed.remove_activity(activity_id)
-
         activities = agg_feed.get(limit=3)['results']
         activity = self._get_first_aggregated_activity(activities)
         activity_id_found = (activity['id'] if activity is not None
