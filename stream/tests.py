@@ -69,7 +69,7 @@ def api_request_parse_validator(test):
     def wrapper(meth):
         def _parse_response(*args, **kwargs):
             response = meth(*args, **kwargs)
-            test.assertIn('duration', response)
+            test.assertTrue('duration' in response)
             return response
         return _parse_response
     return wrapper
