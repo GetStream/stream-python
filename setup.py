@@ -28,7 +28,7 @@ Full documentation is available on `Github`_.
 
 install_requires = [
     'pyjwt==1.3.0',
-    'requests>=2.3.0',
+    'requests>=2.2.1',
     'six>=1.8.0',
     'httpsig==1.1.2'
 ]
@@ -72,6 +72,7 @@ setup(
         'Development Status :: 5 - Production/Stable',
         'License :: OSI Approved :: BSD License',
         'Natural Language :: English',
+        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',

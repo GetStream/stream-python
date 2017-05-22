@@ -4,7 +4,10 @@ import time
 from stream.exceptions import ApiKeyException, InputException
 import random
 import jwt
-from unittest.case import TestCase
+try:
+    from unittest.case import TestCase
+except ImportError:
+    from unittest import TestCase
 import json
 
 import os
@@ -42,6 +45,7 @@ def connect_debug():
         location='us-east',
         timeout=30,
         base_url='http://qa-api.getstream.io/api/',
+        # base_url='http://localhost-api.getstream.io:8000/api/',
     )
 
 client = connect_debug()
@@ -308,7 +312,6 @@ class ClientTest(TestCase):
         activities = team_follower_feed.get(limit=1)['results']
         self.assertFirstActivityIDNotEqual(activities, activity_id)
 
-
     def test_add_activity_to_type_error(self):
         user_feed = getfeed('user', '1')
         activity_data = {
@@ -316,8 +319,7 @@ class ClientTest(TestCase):
             'to': 'string'
         }
 
-        with self.assertRaises(TypeError):
-            user_feed.add_activity(activity_data)
+        self.assertRaises(TypeError, user_feed.add_activity, activity_data)
 
     def assertFirstActivityIDEqual(self, activities, correct_activity_id):
         activity_id = None
@@ -610,7 +612,6 @@ class ClientTest(TestCase):
         print(notification_feed.add_activity({'actor': 2, 'verb': 'tweet', 'object': 2})['id'])
         print(notification_feed.add_activity({'actor': 3, 'verb': 'tweet', 'object': 3})['id'])
 
-
         activities = notification_feed.get(limit=3)['results']
         from pprint import pprint
         print(len(activities))
@@ -657,7 +658,6 @@ class ClientTest(TestCase):
         print(notification_feed.add_activity({'actor': 1, 'verb': 'tweet', 'object': 1})['id'])  # ['id']
         print(notification_feed.add_activity({'actor': 2, 'verb': 'tweet', 'object': 2})['id'])  # ['id']
         print(notification_feed.add_activity({'actor': 3, 'verb': 'tweet', 'object': 2})['id'])  # ['id']
-
 
         activities = notification_feed.get(limit=3)['results']
         ids = []
@@ -822,6 +822,12 @@ class ClientTest(TestCase):
         loaded = serializer.loads(serialized)
         self.assertEqual(data, loaded)
 
+    # def test_signed_request_post(self):
+    #     self.c._make_signed_request('post', 'test/auth/digest/', {}, {})
+    #
+    # def test_signed_request_get(self):
+    #     self.c._make_signed_request('post', 'test/auth/digest/', {}, {})
+
     def test_follow_many(self):
         sources = [getfeed('user', str(i)).id for i in range(10)]
         targets = [getfeed('flat', str(i)).id for i in range(10)]
@@ -831,14 +837,14 @@ class ClientTest(TestCase):
         for target in targets:
             follows = self.c.feed(*target.split(':')).followers()['results']
             self.assertEqual(len(follows), 1)
-            self.assertIn(follows[0]['feed_id'], sources)
+            self.assertTrue(follows[0]['feed_id'] in sources)
             self.assertEqual(follows[0]['target_id'], target)
 
         for source in sources:
             follows = self.c.feed(*source.split(':')).following()['results']
             self.assertEqual(len(follows), 1)
             self.assertEqual(follows[0]['feed_id'], source)
-            self.assertIn(follows[0]['target_id'], targets)
+            self.assertTrue(follows[0]['target_id'] in targets)
 
     def test_follow_many_acl(self):
         sources = [getfeed('user', str(i)) for i in range(10)]
@@ -932,8 +938,6 @@ class ClientTest(TestCase):
             self.assertEqual(qs[k][0], v)
 
         self.assertEqual(json.loads(qs['events'][0]), events)
-
-
 
     def test_email_redirect_invalid_target(self):
         engagement = {'foreign_id': 'tweet:1', 'label': 'click', 'position': 3, 'user_id': 'tommaso', 'location': 'email', 'feed_id': 'user:global'}
