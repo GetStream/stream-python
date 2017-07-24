@@ -211,3 +211,18 @@ class Feed(object):
             feed = self.client.feed(feed_slug, user_id)
             data.append("%s %s" % (recipient, feed.token))
         return data
+
+    def change_activity_to(self, activity_id, replace=None, add=None,
+                           delete=None):
+        data = {}
+        if replace is not None:
+            data['replace'] = replace
+        if add is not None:
+            data['add'] = add
+        if delete is not None:
+            data['delete'] = delete
+
+        url = self.feed_url + ('change_activity_to/%s/' % activity_id)
+
+        token = self.create_scope_token('feed_targets', 'write')
+        return self.client.post(url, data=data, signature=token)
