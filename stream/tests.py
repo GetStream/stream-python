@@ -572,14 +572,14 @@ class ClientTest(TestCase):
 
         ret = self.user1.change_activity_to(activity_id, replace=['user:3', 'user:2'])
         self.assertEqual(len(ret['activity']['to']), 2)
-        self.assertIn('user:2', ret['activity']['to'])
-        self.assertIn('user:3', ret['activity']['to'])
+        self.assertTrue('user:2' in ret['activity']['to'])
+        self.assertTrue('user:3' in ret['activity']['to'])
 
         ret = self.user1.change_activity_to(activity_id, add=['user:4', 'user:5'], delete=['user:3'])
         self.assertEqual(len(ret['activity']['to']), 3)
-        self.assertIn('user:2', ret['activity']['to'])
-        self.assertIn('user:4', ret['activity']['to'])
-        self.assertIn('user:5', ret['activity']['to'])
+        self.assertTrue('user:2' in ret['activity']['to'])
+        self.assertTrue('user:4' in ret['activity']['to'])
+        self.assertTrue('user:5' in ret['activity']['to'])
 
 
     def test_get(self):
