@@ -19,6 +19,7 @@ class Feed(object):
         self.token = token
 
         self.feed_url = 'feed/%s/' % self.id.replace(':', '/')
+        self.feed_targets_url = 'feed_targets/%s/' % self.id.replace(':', '/')
         self.feed_together = self.id.replace(':', '')
         self.signature = self.feed_together + ' ' + self.token
 
@@ -222,7 +223,7 @@ class Feed(object):
         if delete is not None:
             data['delete'] = delete
 
-        url = self.feed_url + ('change_activity_to/%s/' % activity_id)
+        url = self.feed_targets_url + ('change_activity_to/%s/' % activity_id)
 
         token = self.create_scope_token('feed_targets', 'write')
         return self.client.post(url, data=data, signature=token)
