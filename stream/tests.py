@@ -565,6 +565,23 @@ class ClientTest(TestCase):
         self.assertEqual(followings['results'][0]['feed_id'], social.id)
         self.assertEqual(followings['results'][0]['target_id'], 'user:apy')
 
+    def test_change_activity_to(self):
+        activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
+        activity_data['to'] = ['user:1', 'user:2']
+        activity_id = self.user1.add_activity(activity_data)['id']
+
+        ret = self.user1.change_activity_to(activity_id, replace=['user:3', 'user:2'])
+        self.assertEqual(len(ret['activity']['to']), 2)
+        self.assertIn('user:2', ret['activity']['to'])
+        self.assertIn('user:3', ret['activity']['to'])
+
+        ret = self.user1.change_activity_to(activity_id, add=['user:4', 'user:5'], delete=['user:3'])
+        self.assertEqual(len(ret['activity']['to']), 3)
+        self.assertIn('user:2', ret['activity']['to'])
+        self.assertIn('user:4', ret['activity']['to'])
+        self.assertIn('user:5', ret['activity']['to'])
+
+
     def test_get(self):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
         activity_id = self.user1.add_activity(activity_data)['id']
