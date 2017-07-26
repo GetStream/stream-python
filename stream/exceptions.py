@@ -70,6 +70,77 @@ class SiteSuspendedException(StreamApiException):
     status_code = 401
     code = 7
 
+class InvalidPaginationException(StreamApiException):
+
+    '''
+    Raised when there is an issue with your Access Key
+    '''
+    status_code = 401
+    code = 8
+
+
+class MissingRankingException(FeedConfigException):
+    '''
+    Raised when you didn't configure the ranking for the given feed
+    '''
+    status_code = 400
+    code = 12
+
+
+class MissingUserException(MissingRankingException):
+    status_code = 400
+    code = 10
+
+
+class RankingException(FeedConfigException):
+    '''
+    Raised when there is a runtime issue with ranking the feed
+    '''
+    status_code = 400
+    code = 11
+
+
+class RateLimitReached(StreamApiException):
+
+    '''
+    Raised when too many requests are performed
+    '''
+    status_code = 429
+    code = 9
+
+
+class OldStorageBackend(StreamApiException):
+    '''
+    Raised if you try to perform an action which only works with the new storage
+    '''
+    status_code = 400
+    code = 13
+
+
+class BestPracticeException(StreamApiException):
+    '''
+    Raised if best practices are enforced and you do something that
+    would break a high volume integration
+    '''
+    status_code = 400
+    code = 15
+
+
+class DoesNotExistException(StreamApiException):
+    '''
+    Raised when the requested resource could not be found.
+    '''
+    status_code = 404
+    code = 16
+
+
+class NotAllowedException(StreamApiException):
+    '''
+    Raised when the requested action is not allowed for some reason.
+    '''
+    status_code = 403
+    code = 17
+
 
 def get_exceptions():
     from stream import exceptions
