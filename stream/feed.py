@@ -227,7 +227,7 @@ class Feed(object):
         if remove is not None:
             data['remove'] = remove
 
-        url = self.feed_targets_url + 'update_activity_to_targets/'
+        url = self.feed_targets_url + 'activity_to_targets/'
 
         token = self.create_scope_token('feed_targets', 'write')
         return self.client.post(url, data=data, signature=token)
