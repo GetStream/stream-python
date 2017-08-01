@@ -214,18 +214,19 @@ class Feed(object):
         return data
 
     def update_activity_to_targets(self, foreign_id, time,
-                                   replace=None, add=None, remove=None):
+                                   new_targets=None, added_targets=None,
+                                   removed_targets=None):
         data = {
             'foreign_id': foreign_id,
             'time': time,
         }
 
-        if replace is not None:
-            data['replace'] = replace
-        if add is not None:
-            data['add'] = add
-        if remove is not None:
-            data['remove'] = remove
+        if new_targets is not None:
+            data['new_targets'] = new_targets
+        if added_targets is not None:
+            data['added_targets'] = added_targets
+        if removed_targets is not None:
+            data['removed_targets'] = removed_targets
 
         url = self.feed_targets_url + 'activity_to_targets/'
 
