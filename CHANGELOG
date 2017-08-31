@@ -2,6 +2,13 @@
  Change history
 ================
 
+2.4.0
+======
+:release-date: 2017-08-31
+:by: Tommaso Barbugli
+
+* Added support for To target update endpoint
+
 2.3.11
 ======
 :release-date: 2017-05-22
