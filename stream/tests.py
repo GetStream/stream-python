@@ -565,6 +565,31 @@ class ClientTest(TestCase):
         self.assertEqual(followings['results'][0]['feed_id'], social.id)
         self.assertEqual(followings['results'][0]['target_id'], 'user:apy')
 
+    def test_update_activity_to_targets(self):
+        time = datetime.datetime.utcnow().isoformat()
+        foreign_id = 'user:1'
+        activity_data = {
+            'actor': 1,
+            'verb': 'tweet',
+            'object': 1,
+            'foreign_id': foreign_id,
+            'time': time,
+        }
+        activity_data['to'] = ['user:1', 'user:2']
+        self.user1.add_activity(activity_data)
+
+        ret = self.user1.update_activity_to_targets(foreign_id, time, new_targets=['user:3', 'user:2'])
+        self.assertEqual(len(ret['activity']['to']), 2)
+        self.assertTrue('user:2' in ret['activity']['to'])
+        self.assertTrue('user:3' in ret['activity']['to'])
+
+        ret = self.user1.update_activity_to_targets(foreign_id, time, added_targets=['user:4', 'user:5'], removed_targets=['user:3'])
+        self.assertEqual(len(ret['activity']['to']), 3)
+        self.assertTrue('user:2' in ret['activity']['to'])
+        self.assertTrue('user:4' in ret['activity']['to'])
+        self.assertTrue('user:5' in ret['activity']['to'])
+
+
     def test_get(self):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
         activity_id = self.user1.add_activity(activity_data)['id']

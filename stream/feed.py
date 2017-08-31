@@ -19,6 +19,7 @@ class Feed(object):
         self.token = token
 
         self.feed_url = 'feed/%s/' % self.id.replace(':', '/')
+        self.feed_targets_url = 'feed_targets/%s/' % self.id.replace(':', '/')
         self.feed_together = self.id.replace(':', '')
         self.signature = self.feed_together + ' ' + self.token
 
@@ -211,3 +212,23 @@ class Feed(object):
             feed = self.client.feed(feed_slug, user_id)
             data.append("%s %s" % (recipient, feed.token))
         return data
+
+    def update_activity_to_targets(self, foreign_id, time,
+                                   new_targets=None, added_targets=None,
+                                   removed_targets=None):
+        data = {
+            'foreign_id': foreign_id,
+            'time': time,
+        }
+
+        if new_targets is not None:
+            data['new_targets'] = new_targets
+        if added_targets is not None:
+            data['added_targets'] = added_targets
+        if removed_targets is not None:
+            data['removed_targets'] = removed_targets
+
+        url = self.feed_targets_url + 'activity_to_targets/'
+
+        token = self.create_scope_token('feed_targets', 'write')
+        return self.client.post(url, data=data, signature=token)
