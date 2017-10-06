@@ -79,7 +79,6 @@ class ClientTest(TestCase):
 
     def setUp(self):
         client._parse_response = api_request_parse_validator(self)(client._parse_response)
-
         # DEBUG account details
         user1 = getfeed('user', '1')
         user2 = getfeed('user', '2')
@@ -95,16 +94,15 @@ class ClientTest(TestCase):
         self.aggregated3 = aggregated3
         self.topic1 = topic1
         self.flat3 = flat3
-        print(user1.id)
-        print(user2.id)
-        print(aggregated2.id)
-        print(aggregated3.id)
-        print(topic1.id)
-        print(flat3.id)
-
         self.local_tests = False
         if 'LOCAL' in os.environ:
             self.local_tests = os.environ['LOCAL']
+            print(user1.id)
+            print(user2.id)
+            print(aggregated2.id)
+            print(aggregated3.id)
+            print(topic1.id)
+            print(flat3.id)
 
     def _test_sleep(self, production_wait, local_wait):
         """
@@ -150,8 +148,6 @@ class ClientTest(TestCase):
             })
         activities_created = self.user1.add_activities(activities)['activities']
         activities = copy.deepcopy(activities_created)
-
-
         for activity in activities:
             activity.pop('id')
             activity['popularity'] = 100
@@ -174,7 +170,7 @@ class ClientTest(TestCase):
         self.assertEqual(client.app_id, '1')
 
     def test_heroku_no_location(self):
-        url = 'https://bvt88g4kvc63:twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd@getstream.io/?app_id=669'
+        url = 'https://bvt88g4kvc63:twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd@getstream.io/?app_id=669'  # noqa
         os.environ['STREAM_URL'] = url
         client = stream.connect()
         self.assertEqual(client.api_key, 'bvt88g4kvc63')
@@ -190,7 +186,7 @@ class ClientTest(TestCase):
                 client.base_url, 'https://api.getstream.io/api/')
 
     def test_heroku_location(self):
-        url = 'https://ahj2ndz7gsan:gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy@us-east.getstream.io/?app_id=1'
+        url = 'https://ahj2ndz7gsan:gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy@us-east.getstream.io/?app_id=1'  # noqa
         os.environ['STREAM_URL'] = url
         client = stream.connect()
         self.assertEqual(client.api_key, 'ahj2ndz7gsan')
@@ -229,8 +225,9 @@ class ClientTest(TestCase):
                                     'b',
                                     'c',
                                     location='nonexistant')
+
             def get_feed():
-                f = client.feed('user', '1').get()
+                client.feed('user', '1').get()
             self.assertRaises(requests.exceptions.ConnectionError, get_feed)
 
     def test_invalid_feed_values(self):
@@ -268,8 +265,6 @@ class ClientTest(TestCase):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
         activity_data['to'] = [team_feed.id]
         feed.add_activity(activity_data)
-
-
         self.assertEqual(activity_data['to'], [team_feed.id])
 
     def test_add_activities_to_inplace_change(self):
@@ -278,8 +273,6 @@ class ClientTest(TestCase):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
         activity_data['to'] = [team_feed.id]
         feed.add_activities([activity_data])
-
-
         self.assertEqual(activity_data['to'], [team_feed.id])
 
     def test_add_activity_to(self):
@@ -293,7 +286,6 @@ class ClientTest(TestCase):
         }
         response = user_feed.add_activity(activity_data)
         activity_id = response['id']
-
 
         # see if the new activity is also in the team feed
         activities = team_feed.get(limit=1)['results']
@@ -349,7 +341,7 @@ class ClientTest(TestCase):
         activity_data = {
             'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'tweet:10'}
 
-        self.user1.add_activity(activity_data)['id']
+        self.user1.add_activity(activity_data)
         activities = self.user1.get(limit=8)['results']
         self.assertEqual(len(activities), 1)
 
@@ -375,9 +367,6 @@ class ClientTest(TestCase):
     def test_add_activities_to(self):
         pyto2 = getfeed('user', 'pyto2')
         pyto3 = getfeed('user', 'pyto3')
-        print(pyto2.id)
-        print(pyto3.id)
-
         to = [pyto2.id, pyto3.id]
         activity_data = [
             {'actor': 1, 'verb': 'tweet', 'object': 1, 'to': to},
@@ -404,8 +393,6 @@ class ClientTest(TestCase):
         activity_data = {'actor': actor_id, 'verb': 'tweet', 'object': 1}
         activity_id = feed.add_activity(activity_data)['id']
         agg_feed.follow(feed.slug, feed.user_id)
-
-
         activities = agg_feed.get(limit=3)['results']
         activity = self._get_first_aggregated_activity(activities)
         activity_id_found = activity['id'] if activity is not None else None
@@ -416,12 +403,9 @@ class ClientTest(TestCase):
         feed = getfeed('user', 'test_follow_acl')
         feed1 = getfeed('user', 'test_follow_acl1')
         actor_id = random.randint(10, 100000)
-        feed1.add_activity({ 'actor': actor_id, 'verb': 'tweet', 'object': 1 })
+        feed1.add_activity({'actor': actor_id, 'verb': 'tweet', 'object': 1})
         feed.follow(feed1.slug, feed1.user_id, activity_copy_limit=0)
-
-
         activities = feed.get(limit=5)['results']
-
         self.assertEqual(len(activities), 0)
 
     def test_follow_and_delete(self):
@@ -456,8 +440,6 @@ class ClientTest(TestCase):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
         activity_id = feed.add_activity(activity_data)['id']
         self.flat3.follow(feed.slug, feed.user_id)
-
-
         activities = self.flat3.get(limit=3)['results']
         activity = self._get_first_activity(activities)
         activity_id_found = activity['id'] if activity is not None else None
@@ -471,10 +453,8 @@ class ClientTest(TestCase):
         feed = getfeed('user', 'test_flat_follow_no_copy')
         follower = getfeed('flat', 'test_flat_follow_no_copy')
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
-        feed.add_activity(activity_data)['id']
+        feed.add_activity(activity_data)
         follower.follow(feed.slug, feed.user_id, activity_copy_limit=0)
-
-
         activities = follower.get(limit=3)['results']
         self.assertEqual(activities, [])
 
@@ -486,8 +466,6 @@ class ClientTest(TestCase):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1, 'foreign_id': 'test:2'}
         feed.add_activity(activity_data)['id']
         follower.follow(feed.slug, feed.user_id, activity_copy_limit=1)
-
-
         activities = follower.get(limit=3)['results']
         # verify we get the latest activity
         self.assertEqual(activities[0]['foreign_id'], 'test:2')
@@ -495,17 +473,14 @@ class ClientTest(TestCase):
     def _get_first_aggregated_activity(self, activities):
         try:
             return activities[0]['activities'][0]
-        except IndexError as e:
+        except IndexError:
             pass
 
     def _get_first_activity(self, activities):
         try:
             return activities[0]
-        except IndexError as e:
+        except IndexError:
             pass
-
-    def test_unfollow(self):
-        f = getfeed('user', 'asocialpython').id.split(':')
 
     def test_empty_followings(self):
         asocial = getfeed('user', 'asocialpython')
@@ -582,13 +557,12 @@ class ClientTest(TestCase):
         self.assertEqual(len(ret['activity']['to']), 2)
         self.assertTrue('user:2' in ret['activity']['to'])
         self.assertTrue('user:3' in ret['activity']['to'])
-
-        ret = self.user1.update_activity_to_targets(foreign_id, time, added_targets=['user:4', 'user:5'], removed_targets=['user:3'])
+        ret = self.user1.update_activity_to_targets(
+            foreign_id, time, added_targets=['user:4', 'user:5'], removed_targets=['user:3'])
         self.assertEqual(len(ret['activity']['to']), 3)
         self.assertTrue('user:2' in ret['activity']['to'])
         self.assertTrue('user:4' in ret['activity']['to'])
         self.assertTrue('user:5' in ret['activity']['to'])
-
 
     def test_get(self):
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
@@ -612,19 +586,13 @@ class ClientTest(TestCase):
     def test_mark_read(self):
         notification_feed = getfeed('notification', 'py3')
         activity_data = {'actor': 1, 'verb': 'tweet', 'object': 1}
-        print(notification_feed.add_activity(activity_data)['id'])
+        notification_feed.add_activity(activity_data)
         activity_data = {'actor': 2, 'verb': 'add', 'object': 2}
-        print(notification_feed.add_activity(activity_data)['id'])
+        notification_feed.add_activity(activity_data)
         activity_data = {'actor': 3, 'verb': 'watch', 'object': 2}
-        print(notification_feed.add_activity(activity_data)['id'])
-
-
+        notification_feed.add_activity(activity_data)
         activities = notification_feed.get(limit=3)['results']
-        from pprint import pprint
-        print(len(activities))
-        pprint(activities)
         for activity in activities:
-            pprint(activity)
             self.assertFalse(activity['is_read'])
         activities = notification_feed.get(mark_read=True)['results']
         activities = notification_feed.get(limit=2)['results']
@@ -633,16 +601,11 @@ class ClientTest(TestCase):
 
     def test_get_not_marked_seen(self):
         notification_feed = getfeed('notification', 'test_mark_seen')
-        print(notification_feed.add_activity({'actor': 1, 'verb': 'tweet', 'object': 1})['id'])
-        print(notification_feed.add_activity({'actor': 2, 'verb': 'tweet', 'object': 2})['id'])
-        print(notification_feed.add_activity({'actor': 3, 'verb': 'tweet', 'object': 3})['id'])
-
+        notification_feed.add_activity({'actor': 1, 'verb': 'tweet', 'object': 1})
+        notification_feed.add_activity({'actor': 2, 'verb': 'tweet', 'object': 2})
+        notification_feed.add_activity({'actor': 3, 'verb': 'tweet', 'object': 3})
         activities = notification_feed.get(limit=3)['results']
-        from pprint import pprint
-        print(len(activities))
-        pprint(activities)
         for activity in activities:
-            pprint(activity)
             self.assertFalse(activity['is_seen'])
 
     def test_mark_seen_on_get(self):
@@ -650,18 +613,17 @@ class ClientTest(TestCase):
         activities = notification_feed.get(limit=100)['results']
         for activity in activities:
             notification_feed.remove_activity(activity['id'])
-
-
+        now = datetime.datetime.utcnow().isoformat()
         old_activities = [
-            notification_feed.add_activity({'actor': 1, 'verb': 'tweet', 'object': 1}),
-            notification_feed.add_activity({'actor': 2, 'verb': 'add', 'object': 2}),
-            notification_feed.add_activity({'actor': 3, 'verb': 'watch', 'object': 3}),
+            notification_feed.add_activity({'actor': 1, 'verb': 'tweet', 'object': 1, 'time': now}),
+            notification_feed.add_activity({'actor': 2, 'verb': 'add', 'object': 2, 'time': now}),
+            notification_feed.add_activity({'actor': 3, 'verb': 'watch', 'object': 3, 'time': now}),
         ]
-
         notification_feed.get(mark_seen=[old_activities[0]['id'], old_activities[1]['id']])
-
         activities = notification_feed.get(limit=3)['results']
-
+        from pprint import pprint
+        for a in activities:
+            pprint(a)
         # is the seen state correct
         for activity in activities:
             # using a loop in case we're retrieving activities in a different order than old_activities
@@ -672,25 +634,27 @@ class ClientTest(TestCase):
             if old_activities[2]['id'] == activity['id']:
                 self.assertFalse(activity['is_seen'])
 
-        # see if the state properly resets after we add another activity
-        notification_feed.add_activity({'actor': 3, 'verb': 'watch', 'object': 3})  # ['id']
+        # see if the state is reset if the *same* actitivity is added again
+        notification_feed.add_activity({'actor': 3, 'verb': 'watch', 'object': 3, 'time': now})
         activities = notification_feed.get(limit=3)['results']
         self.assertFalse(activities[0]['is_seen'])
-        self.assertEqual(len(activities[0]['activities']), 2)
+        self.assertEqual(len(activities[0]['activities']), 1)
+
+        # see if the state properly resets after we re-add activity
+        notification_feed.add_activity({'actor': 2, 'verb': 'add', 'object': 2, 'time': now})
+        activities = notification_feed.get(limit=3)['results']
+        self.assertTrue(activities[1]['is_seen'])
+        self.assertEqual(len(activities[1]['activities']), 1)
 
     def test_mark_read_by_id(self):
         notification_feed = getfeed('notification', 'py2')
-        print(notification_feed.add_activity({'actor': 1, 'verb': 'tweet', 'object': 1})['id'])  # ['id']
-        print(notification_feed.add_activity({'actor': 2, 'verb': 'tweet', 'object': 2})['id'])  # ['id']
-        print(notification_feed.add_activity({'actor': 3, 'verb': 'tweet', 'object': 2})['id'])  # ['id']
+        notification_feed.add_activity({'actor': 1, 'verb': 'tweet', 'object': 1})
+        notification_feed.add_activity({'actor': 2, 'verb': 'tweet', 'object': 2})
+        notification_feed.add_activity({'actor': 3, 'verb': 'tweet', 'object': 2})
 
         activities = notification_feed.get(limit=3)['results']
         ids = []
-        from pprint import pprint
-        print(len(activities))
-        pprint(activities)
         for activity in activities:
-            pprint(activity)
             ids.append(activity['id'])
             self.assertFalse(activity['is_read'])
         ids = ids[:2]
@@ -737,14 +701,11 @@ class ClientTest(TestCase):
         a.) The same time and activity data
         b.) The same time and foreign id
         '''
-        from pprint import pprint
         utcnow = datetime.datetime.utcnow()
         activity_data = {
             'actor': 1, 'verb': 'tweet', 'object': 1, 'time': utcnow}
-        response = self.user1.add_activity(activity_data)
-        response = self.user1.add_activity(activity_data)
-
-
+        self.user1.add_activity(activity_data)
+        self.user1.add_activity(activity_data)
         activities = self.user1.get(limit=2)['results']
         self.assertDatetimeAlmostEqual(activities[0]['time'], utcnow)
         if (len(activities) > 1):
@@ -769,26 +730,20 @@ class ClientTest(TestCase):
         # verify that flat3 contains the activity exactly once
         response = self.flat3.get(limit=3)
         activity_tweets = [a.get('tweet') for a in response['results']]
-        print(response)
-        print(activity_tweets)
         self.assertEqual(activity_tweets.count(tweet), 1)
 
     def test_uniqueness_foreign_id(self):
         now = datetime.datetime.now(tzlocal())
         utcnow = (now - now.utcoffset()).replace(tzinfo=None)
-
         activity_data = {'actor': 1, 'verb': 'tweet',
                          'object': 1, 'foreign_id': 'tweet:11', 'time': now}
-        response = self.user1.add_activity(activity_data)
-
+        self.user1.add_activity(activity_data)
         activity_data = {'actor': 2, 'verb': 'tweet',
                          'object': 3, 'foreign_id': 'tweet:11', 'time': now}
-        response = self.user1.add_activity(activity_data)
-
+        self.user1.add_activity(activity_data)
         activities = self.user1.get(limit=10)['results']
         # the second post should have overwritten the first one (because they
         # had same id)
-
         self.assertEqual(len(activities), 1)
         self.assertEqual(activities[0]['object'], '3')
         self.assertEqual(activities[0]['foreign_id'], 'tweet:11')
@@ -808,7 +763,7 @@ class ClientTest(TestCase):
 
         feed = self.user2
         for index, activity_time in enumerate([None, custom_time, None]):
-            self._test_sleep(1, 1) # so times are a bit different
+            self._test_sleep(1, 1)  # so times are a bit different
             activity_data = {'actor': 1, 'verb': 'tweet',
                              'object': 1, 'foreign_id': 'tweet:%s' % index, 'time': activity_time}
             feed.add_activity(activity_data)
@@ -824,11 +779,11 @@ class ClientTest(TestCase):
     def test_missing_actor(self):
         activity_data = {'verb': 'tweet', 'object':
                          1, 'debug_example_undefined': 'test'}
-        doit = lambda: self.user1.add_activity(activity_data)
+        doit = lambda: self.user1.add_activity(activity_data)  # noqa
         try:
             doit()
             raise ValueError('should have raised InputException')
-        except InputException as e:
+        except InputException:
             pass
 
     def test_wrong_feed_spec(self):
@@ -856,7 +811,7 @@ class ClientTest(TestCase):
     def test_follow_many(self):
         sources = [getfeed('user', str(i)).id for i in range(10)]
         targets = [getfeed('flat', str(i)).id for i in range(10)]
-        feeds = [{'source': s, 'target': t} for s,t in zip(sources, targets)]
+        feeds = [{'source': s, 'target': t} for s, t in zip(sources, targets)]
         self.c.follow_many(feeds)
 
         for target in targets:
@@ -906,11 +861,16 @@ class ClientTest(TestCase):
             activities = feed.get(limit=5)['results']
             self.assertEqual(len(activities), 0)
 
+        self.c.follow_many(feeds, activity_copy_limit=2)
+
+        for feed in sources:
+            activities = feed.get(limit=5)['results']
+            self.assertTrue(len(activities) <= 2)
+
     def test_add_to_many(self):
         activity = {'actor': 1, 'verb': 'tweet', 'object': 1, 'custom': 'data'}
         feeds = [getfeed('flat', str(i)).id for i in range(10, 20)]
         self.c.add_to_many(activity, feeds)
-
 
         for feed in feeds:
             feed = self.c.feed(*feed.split(':'))
@@ -965,14 +925,14 @@ class ClientTest(TestCase):
         self.assertEqual(json.loads(qs['events'][0]), events)
 
     def test_email_redirect_invalid_target(self):
-        engagement = {'foreign_id': 'tweet:1', 'label': 'click', 'position': 3, 'user_id': 'tommaso', 'location': 'email', 'feed_id': 'user:global'}
+        engagement = {'foreign_id': 'tweet:1', 'label': 'click', 'position': 3, 'user_id': 'tommaso', 'location': 'email', 'feed_id': 'user:global'}  # noqa
         impression = {'foreign_ids': ['tweet:1', 'tweet:2', 'tweet:3', 'tweet:4', 'tweet:5'], 'user_id':
                       'tommaso', 'location': 'email', 'feed_id': 'user:global'}
         events = [impression, engagement]
         # no protocol specified, this should raise an error
         target_url = 'google.com'
         user_id = 'tommaso'
-        create_redirect = lambda : self.c.create_redirect_url(target_url, user_id, events)
+        create_redirect = lambda : self.c.create_redirect_url(target_url, user_id, events)  # noqa
         self.assertRaises(MissingSchema, create_redirect)
 
     def test_follow_redirect_url(self):
@@ -980,7 +940,6 @@ class ClientTest(TestCase):
         events = []
         user_id = 'tommaso'
         redirect_url = self.c.create_redirect_url(target_url, user_id, events)
-
         res = requests.get(redirect_url)
         res.raise_for_status()
         self.assertTrue('google' in res.url)
