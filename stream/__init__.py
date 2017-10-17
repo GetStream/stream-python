@@ -29,7 +29,7 @@ def connect(api_key=None, api_secret=None, app_id=None, version='v1.0',
         result = pattern.match(stream_url)
         if result and len(result.groups()) == 4:
             api_key, api_secret, location, app_id = result.groups()
-            location = None if location == 'getstream' else location
+            location = None if location in ('getstream', 'stream-io-api') else location
         else:
             raise ValueError('Invalid api key or heroku url')
 

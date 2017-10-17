@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 class StreamClient(object):
-    base_url = 'https://api.getstream.io/api/'
+    base_url = 'https://api.stream-io-api.com/api/'
 
     def __init__(self, api_key, api_secret, app_id, version='v1.0', timeout=6.0, base_url=None, location=None):
         '''
@@ -57,9 +57,9 @@ class StreamClient(object):
         elif base_url is not None:
             self.base_url = base_url
         elif location is not None:
-            self.base_url = 'https://%s-api.getstream.io/api/' % location
+            self.base_url = 'https://%s-api.stream-io-api.com/api/' % location
 
-        self.base_analytics_url = 'https://analytics.getstream.io/analytics/'
+        self.base_analytics_url = 'https://analytics.stream-io-api.com/analytics/'
 
         self.session = requests.Session()
         # TODO: turn this back on after we verify it doesnt retry on slower requests

@@ -7,21 +7,9 @@ python:
   - 3.4
   - 3.5
   - 3.6
-  # These are allowed to fail
-  - '3.5-dev' # 3.5 development branch
-  - '3.6-dev' # 3.6 development branch
-  - 'nightly' # currently points to 3.7-dev
-  - 'pypy'
-  - 'pypy3.3-5.2-alpha1'
 
 matrix:
   fast_finish: true
-  allow_failures:
-    - python: '3.5-dev' # 3.5 development branch
-    - python: '3.6-dev' # 3.6 development branch
-    - python: 'nightly'
-    - python: 'pypy'
-    - python: 'pypy3.3-5.2-alpha1'
 
 cache: pip
 notifications:
