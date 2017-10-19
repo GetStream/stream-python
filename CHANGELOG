@@ -2,6 +2,13 @@
  Change history
 ================
 
+2.5.0
+======
+:release-date: 2017-10-19
+:by: Tommaso Barbugli
+
+* Use new .com domain for API and Analytics
+
 2.4.0
 ======
 :release-date: 2017-08-31
