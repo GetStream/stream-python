@@ -18,7 +18,7 @@ class Personalization(object):
 
         **Example**::
 
-            personalization.get('follow_recommendations', limit=10, offset=10)
+            personalization.get('follow_recommendations', user_id=123, limit=10, offset=10)
         """
 
         response = self.client.get(url, personal=True, params=params,
