@@ -83,6 +83,16 @@ class StreamClient(object):
 
         return Feed(self, feed_slug, user_id, token)
 
+
+    def personalization(self):
+        """
+        Returns a Personalized Feed object
+        """
+        from stream.personalization import Personalization
+        token = self.create_jwt_token('*', '*', feed_id='*', user_id='*')
+
+        return Personalization(self, token)
+
     def get_default_params(self):
         '''
         Returns the params with the API key present
@@ -99,6 +109,10 @@ class StreamClient(object):
 
     def get_full_url(self, relative_url):
         url = self.base_url + self.version + '/' + relative_url
+        return url
+
+    def get_full_personal_url(self, relative_url):
+        url = self.base_url + '/' + relative_url + '/'
         return url
 
     def get_user_agent(self):
@@ -151,7 +165,7 @@ class StreamClient(object):
             payload['user_id'] = user_id
         return jwt.encode(payload, self.api_secret).decode("utf-8")
 
-    def _make_request(self, method, relative_url, signature, params=None, data=None):
+    def _make_request(self, method, relative_url, signature, personal=False, params=None, data=None):
         params = params or {}
         data = data or {}
         serialized = None
@@ -160,7 +174,10 @@ class StreamClient(object):
         headers = self.get_default_header()
         headers['Authorization'] = signature
         headers['stream-auth-type'] = 'jwt'
-        url = self.get_full_url(relative_url)
+        if personal:
+            url = self.get_full_personal_url(relative_url)
+        else:
+            url = self.get_full_url(relative_url)
         if method.__name__ in ['post', 'put']:
             serialized = serializer.dumps(data)
         response = method(url, data=serialized, headers=headers,
