@@ -128,8 +128,6 @@ class Feed(object):
             self.feed_url, params=params, signature=token)
         return response
 
-
-
     def follow(self, target_feed_slug, target_user_id, activity_copy_limit=None, **extra_data):
         '''
         Follows the given feed
