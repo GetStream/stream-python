@@ -112,7 +112,7 @@ class StreamClient(object):
         return url
 
     def get_full_personal_url(self, relative_url):
-        url = self.base_url + '/' + relative_url + '/'
+        url = self.base_url + '/personalization/' + relative_url + '/'
         return url
 
     def get_user_agent(self):
