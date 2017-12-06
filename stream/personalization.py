@@ -52,11 +52,10 @@ class Personalization(object):
 
         return response
 
-    def upsert_data(self, collection_name, ids, data):
+    def upsert_data(self, collection_name, data):
         """
 
         :param collection_name: Collection Name i.e 'user'
-        :param ids: list of ids of feed group i.e [123,456]
         :param data: list of dictionaries
         :return: http response, 201 if successful along with data posted.
 
