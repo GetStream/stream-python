@@ -31,7 +31,7 @@ class Collections(object):
         for i in range(len(ids)):
             data_json['%s:%s' % (collection_name, ids[i])] = data[i]
 
-        response = self.client.post('meta', personal=True,
+        response = self.client.post('meta', personal='meta',
                                     signature=self.token, data={'data': data_json})
         return response
 
@@ -55,7 +55,7 @@ class Collections(object):
         for i in range(len(ids)):
             foreign_ids.append('%s:%s' % (collection_name, ids[i]))
 
-        response = self.client.get('meta', personal=True, params={'foreign_ids': foreign_ids},
+        response = self.client.get('meta', personal='meta', params={'foreign_ids': foreign_ids},
                                    signature=self.token)
 
         return response
@@ -79,7 +79,7 @@ class Collections(object):
         for i in range(len(ids)):
             foreign_ids.append('%s:%s' % (collection_name, ids[i]))
 
-        response = self.client.delete('meta', personal=True, foreign_ids=foreign_ids,
+        response = self.client.delete('meta', personal='meta', foreign_ids=foreign_ids,
                                       signature=self.token)
 
         return response

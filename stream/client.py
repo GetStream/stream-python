@@ -120,7 +120,18 @@ class StreamClient(object):
         return url
 
     def get_full_personal_url(self, relative_url):
-        url = self.base_url + '/personalization/' + relative_url + '/'
+        base_url = self.base_url.split('.')  # company.getstream.io
+        if len(base_url) > 1:
+            DNS_change = base_url[0] + '-personalization'
+            base_url[0] = DNS_change
+            base_url = '.'.join(base_url)
+        else:
+            base_url = self.base_url # if running on localhost
+        url = base_url + 'personalization/' + relative_url + '/'
+        return url
+
+    def get_full_meta_url(self):
+        url = self.base_url + 'personalization/' + self.version + '/api/meta/'
         return url
 
     def get_user_agent(self):
@@ -173,7 +184,7 @@ class StreamClient(object):
             payload['user_id'] = user_id
         return jwt.encode(payload, self.api_secret).decode("utf-8")
 
-    def _make_request(self, method, relative_url, signature, personal=False, params=None, data=None):
+    def _make_request(self, method, relative_url, signature, personal=None, params=None, data=None):
         params = params or {}
         data = data or {}
         serialized = None
@@ -182,8 +193,13 @@ class StreamClient(object):
         headers = self.get_default_header()
         headers['Authorization'] = signature
         headers['stream-auth-type'] = 'jwt'
-        if personal:
-            url = self.get_full_personal_url(relative_url)
+        if personal is not None:
+            if personal == 'personal':
+                url = self.get_full_personal_url(relative_url)
+            elif personal == 'meta':
+                url = self.get_full_meta_url()
+            else:
+                raise Exception("keyword 'personal' must be None, personal, or meta")
         else:
             url = self.get_full_url(relative_url)
         if method.__name__ in ['post', 'put']:
