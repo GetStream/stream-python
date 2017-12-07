@@ -83,7 +83,6 @@ class StreamClient(object):
 
         return Feed(self, feed_slug, user_id, token)
 
-
     def personalization(self):
         """
         Returns a Personalized Feed object
@@ -92,6 +91,15 @@ class StreamClient(object):
         token = self.create_jwt_token('*', '*', feed_id='*', user_id='*')
 
         return Personalization(self, token)
+
+    def collection(self):
+        """
+        Returns a collection object (used for meta data endpoint)
+        """
+        from stream.collections import Collections
+        token = self.create_jwt_token('*', '*', feed_id='*', user_id='*')
+
+        return Collections(self, token)
 
     def get_default_params(self):
         '''
@@ -180,6 +188,7 @@ class StreamClient(object):
             url = self.get_full_url(relative_url)
         if method.__name__ in ['post', 'put']:
             serialized = serializer.dumps(data)
+        print(url)
         response = method(url, data=serialized, headers=headers,
                           params=default_params, timeout=self.timeout)
         logger.debug('stream api call %s, headers %s data %s',
