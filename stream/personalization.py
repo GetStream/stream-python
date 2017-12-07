@@ -1,7 +1,7 @@
 class Personalization(object):
     def __init__(self, client, token):
         """
-        Methods to interact with personalized feeds. 
+        Methods to interact with personalized feeds.
         :param client: the api client
         :param token: the token
         """
