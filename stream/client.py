@@ -83,6 +83,26 @@ class StreamClient(object):
 
         return Feed(self, feed_slug, user_id, token)
 
+    @property
+    def personalization(self):
+        """
+        Returns a Personalized Feed object
+        """
+        from stream.personalization import Personalization
+        token = self.create_jwt_token('personalization', '*', feed_id='*', user_id='*')
+
+        return Personalization(self, token)
+
+    @property
+    def collection(self):
+        """
+        Returns a collection object (used for meta data endpoint)
+        """
+        from stream.collections import Collections
+        token = self.create_jwt_token('personalization', '*', feed_id='*', user_id='*')
+
+        return Collections(self, token)
+
     def get_default_params(self):
         '''
         Returns the params with the API key present
@@ -99,6 +119,21 @@ class StreamClient(object):
 
     def get_full_url(self, relative_url):
         url = self.base_url + self.version + '/' + relative_url
+        return url
+
+    def get_full_personal_url(self, relative_url):
+        base_url = self.base_url.split('.')  # company.getstream.io
+        if len(base_url) > 1:
+            DNS_change = base_url[0] + '-personalization'
+            base_url[0] = DNS_change
+            base_url = '.'.join(base_url)
+        else:
+            base_url = self.base_url # if running on localhost
+        url = base_url + 'personalization/' + relative_url + '/'
+        return url
+
+    def get_full_meta_url(self):
+        url = self.base_url + 'personalization/' + self.version + '/meta/'
         return url
 
     def get_user_agent(self):
@@ -151,7 +186,7 @@ class StreamClient(object):
             payload['user_id'] = user_id
         return jwt.encode(payload, self.api_secret).decode("utf-8")
 
-    def _make_request(self, method, relative_url, signature, params=None, data=None):
+    def _make_request(self, method, relative_url, signature, personal=None, params=None, data=None):
         params = params or {}
         data = data or {}
         serialized = None
@@ -160,8 +195,16 @@ class StreamClient(object):
         headers = self.get_default_header()
         headers['Authorization'] = signature
         headers['stream-auth-type'] = 'jwt'
-        url = self.get_full_url(relative_url)
-        if method.__name__ in ['post', 'put']:
+        if personal is not None:
+            if personal == 'personal':
+                url = self.get_full_personal_url(relative_url)
+            elif personal == 'meta':
+                url = self.get_full_meta_url()
+            else:
+                raise Exception("keyword 'personal' must be None, personal, or meta")
+        else:
+            url = self.get_full_url(relative_url)
+        if method.__name__ in ['post', 'put', 'delete']:
             serialized = serializer.dumps(data)
         response = method(url, data=serialized, headers=headers,
                           params=default_params, timeout=self.timeout)
