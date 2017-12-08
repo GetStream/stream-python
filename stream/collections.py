@@ -39,12 +39,13 @@ class Collections(object):
         :return: meta data as json blob
 
         **Example**::
-            client.collection.select('user', '1')
-            client.collection.select('user', ['1','2','3'])
+            client.collection.select('user', 1)
+            client.collection.select('user', [1,2,3])
         """
 
         if type(ids) != list:
             ids = [ids]
+        ids = [str(i) for i in ids]
 
         foreign_ids = []
         for i in range(len(ids)):
@@ -70,6 +71,7 @@ class Collections(object):
 
         if type(ids) != list:
             ids = [ids]
+        ids = [str(i) for i in ids]
 
         data = {'collection_name': collection_name, 'ids': ids}
 
