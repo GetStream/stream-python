@@ -65,6 +65,16 @@ class StreamClient(object):
         # TODO: turn this back on after we verify it doesnt retry on slower requests
         self.session.mount(self.base_url, HTTPAdapter(max_retries=0))
         self.auth = HTTPSignatureAuth(api_key, secret=api_secret)
+        
+        # setup personalization
+        from stream.personalization import Personalization
+        token = self.create_jwt_token('personalization', '*', feed_id='*', user_id='*')
+        self.personalization = Personalization(self, token)
+        # setup the collection
+        from stream.collections import Collections
+        token = self.create_jwt_token('collections', '*', feed_id='*', user_id='*')
+        self.collections = Collections(self, token)
+        
 
     def feed(self, feed_slug, user_id):
         '''
@@ -82,26 +92,6 @@ class StreamClient(object):
         token = sign(self.api_secret, feed_id)
 
         return Feed(self, feed_slug, user_id, token)
-
-    @property
-    def personalization(self):
-        """
-        Returns a Personalized Feed object
-        """
-        from stream.personalization import Personalization
-        token = self.create_jwt_token('personalization', '*', feed_id='*', user_id='*')
-
-        return Personalization(self, token)
-
-    @property
-    def collection(self):
-        """
-        Returns a collection object (used for meta data endpoint)
-        """
-        from stream.collections import Collections
-        token = self.create_jwt_token('personalization', '*', feed_id='*', user_id='*')
-
-        return Collections(self, token)
 
     def get_default_params(self):
         '''
