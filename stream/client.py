@@ -206,8 +206,6 @@ class StreamClient(object):
             url = self.get_full_url(relative_url)
         if method.__name__ in ['post', 'put', 'delete']:
             serialized = serializer.dumps(data)
-        print(url)
-        print(serialized)
         response = method(url, data=serialized, headers=headers,
                           params=default_params, timeout=self.timeout)
         logger.debug('stream api call %s, headers %s data %s',
