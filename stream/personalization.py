@@ -17,7 +17,6 @@ class Personalization(object):
         :return: personalized feed
 
         **Example**::
-
             personalization.get('follow_recommendations', user_id=123, limit=10, offset=10)
         """
 
@@ -49,7 +48,7 @@ class Personalization(object):
         shortcut to delete metadata or activites
         :param resource: personalized url endpoint typical "meta"
         :param params: params to pass to url i.e user_id = "user:123"
-        :return: http response
+        :return: data that was deleted if if successful or not.
         """
 
         response = self.client.delete(resource, personal='personal', params=params,
