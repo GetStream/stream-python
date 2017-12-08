@@ -2,6 +2,14 @@
  Change history
 ================
 
+
+2.6.0
+=====
+:release-date 2017-12-08
+:by: Balazs
+
+Support the new collections endpoint and flexible get requests for personalization
+
 2.5.0
 ======
 :release-date: 2017-10-19
