@@ -17,19 +17,14 @@ class Collections(object):
         :return: http response, 201 if successful along with data posted.
 
         **Example**::
-            collections.upsert('user', [{"id": 1, "name": "Juniper", "hobbies": ["Playing", "Sleeping", "Eating"]},
-                                             {"id": 2, "name": "Ruby", "interests": ["Sunbeams", "Surprise Attacks"]}])
+            client.collection.upsert('user', [{"id": '1', "name": "Juniper", "hobbies": ["Playing", "Sleeping", "Eating"]},
+                                           {"id": '2', "name": "Ruby", "interests": ["Sunbeams", "Surprise Attacks"]}])
         """
 
         if type(data) != list:
             data = [data]
 
-        ids = [i['id'] for i in data]
-
-        # format data to expected json blob
-        data_json = {}
-        for i in range(len(ids)):
-            data_json['%s:%s' % (collection_name, ids[i])] = data[i]
+        data_json = {collection_name: data}
 
         response = self.client.post('meta', personal='meta',
                                     signature=self.token, data={'data': data_json})
@@ -44,8 +39,8 @@ class Collections(object):
         :return: meta data as json blob
 
         **Example**::
-            collections.select('user', 1)
-            collections.select('user', [1,2,3])
+            client.collection.select('user', '1')
+            client.collection.select('user', ['1','2','3'])
         """
 
         if type(ids) != list:
@@ -54,6 +49,7 @@ class Collections(object):
         foreign_ids = []
         for i in range(len(ids)):
             foreign_ids.append('%s:%s' % (collection_name, ids[i]))
+        foreign_ids = ','.join(foreign_ids)
 
         response = self.client.get('meta', personal='meta', params={'foreign_ids': foreign_ids},
                                    signature=self.token)
@@ -68,18 +64,16 @@ class Collections(object):
         :return: http response.
 
         **Example**::
-            collections.delete('user', 1)
-            collections.delete('user', [1,2,3])
+            client.collections.delete('user', '1')
+            collections.delete('user', ['1','2','3'])
         """
 
         if type(ids) != list:
             ids = [ids]
 
-        foreign_ids = []
-        for i in range(len(ids)):
-            foreign_ids.append('%s:%s' % (collection_name, ids[i]))
+        data = {'collection_name': collection_name, 'ids': ids}
 
-        response = self.client.delete('meta', personal='meta', foreign_ids=foreign_ids,
+        response = self.client.delete('meta', personal='meta', data=data,
                                       signature=self.token)
 
         return response

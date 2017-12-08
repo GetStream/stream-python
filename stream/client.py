@@ -83,21 +83,23 @@ class StreamClient(object):
 
         return Feed(self, feed_slug, user_id, token)
 
+    @property
     def personalization(self):
         """
         Returns a Personalized Feed object
         """
         from stream.personalization import Personalization
-        token = self.create_jwt_token('*', '*', feed_id='*', user_id='*')
+        token = self.create_jwt_token('personalization', '*', feed_id='*', user_id='*')
 
         return Personalization(self, token)
 
+    @property
     def collection(self):
         """
         Returns a collection object (used for meta data endpoint)
         """
         from stream.collections import Collections
-        token = self.create_jwt_token('*', '*', feed_id='*', user_id='*')
+        token = self.create_jwt_token('personalization', '*', feed_id='*', user_id='*')
 
         return Collections(self, token)
 
@@ -131,7 +133,7 @@ class StreamClient(object):
         return url
 
     def get_full_meta_url(self):
-        url = self.base_url + 'personalization/' + self.version + '/api/meta/'
+        url = self.base_url + 'personalization/' + self.version + '/meta/'
         return url
 
     def get_user_agent(self):
@@ -202,8 +204,10 @@ class StreamClient(object):
                 raise Exception("keyword 'personal' must be None, personal, or meta")
         else:
             url = self.get_full_url(relative_url)
-        if method.__name__ in ['post', 'put']:
+        if method.__name__ in ['post', 'put', 'delete']:
             serialized = serializer.dumps(data)
+        print(url)
+        print(serialized)
         response = method(url, data=serialized, headers=headers,
                           params=default_params, timeout=self.timeout)
         logger.debug('stream api call %s, headers %s data %s',
