@@ -118,6 +118,105 @@ class ClientTest(TestCase):
             sleep_time = local_wait
         time.sleep(sleep_time)
 
+    def test_collections_url(self):
+        feed_url = client.get_full_url(relative_url='meta/', service_name='api')
+
+        if self.local_tests:
+            self.assertEqual(
+                feed_url, 'http://localhost:8000/api/v1.0/meta/')
+        else:
+            self.assertEqual(
+                feed_url, 'https://qa-api.stream-io-api.com/api/v1.0/meta/')
+
+    def test_personalization_url(self):
+        feed_url = client.get_full_url(relative_url='recommended', service_name='personalization')
+
+        if self.local_tests:
+            self.assertEqual(
+                feed_url, 'http://localhost:8000/personalization/v1.0/recommended')
+        else:
+            self.assertEqual(
+                feed_url, 'https://qa-personalization.stream-io-api.com/personalization/v1.0/recommended')
+
+    def test_api_url(self):
+        feed_url = client.get_full_url(service_name='api', relative_url='feed/')
+
+        if self.local_tests:
+            self.assertEqual(
+                feed_url, 'http://localhost:8000/api/v1.0/feed/')
+        else:
+            self.assertEqual(
+                feed_url, 'https://qa-api.stream-io-api.com/api/v1.0/feed/')
+
+    def test_collections_url_default(self):
+        client = stream.connect(
+            'key',
+            'secret',
+        )
+        feed_url = client.get_full_url(relative_url='meta/', service_name='api')
+
+        if not self.local_tests:
+            self.assertEqual(
+                feed_url, 'https://api.stream-io-api.com/api/v1.0/meta/')
+
+    def test_personalization_url_default(self):
+        client = stream.connect(
+            'key',
+            'secret',
+        )
+        feed_url = client.get_full_url(relative_url='recommended', service_name='personalization')
+
+        if not self.local_tests:
+            self.assertEqual(
+                feed_url, 'https://personalization.stream-io-api.com/personalization/v1.0/recommended')
+
+    def test_api_url_default(self):
+        client = stream.connect(
+            'key',
+            'secret',
+        )
+        feed_url = client.get_full_url(service_name='api', relative_url='feed/')
+
+        if not self.local_tests:
+            self.assertEqual(
+                feed_url, 'https://api.stream-io-api.com/api/v1.0/feed/')
+
+    def test_collections_url_location(self):
+        client = stream.connect(
+            'key',
+            'secret',
+            location='tokyo',
+        )
+        feed_url = client.get_full_url(relative_url='meta/', service_name='api')
+
+        if not self.local_tests:
+            self.assertEqual(
+                feed_url, 'https://api-tokyo.stream-io-api.com/api/v1.0/meta/')
+
+    def test_personalization_url_location(self):
+        client = stream.connect(
+            'key',
+            'secret',
+            location='tokyo',
+        )
+        feed_url = client.get_full_url(relative_url='recommended', service_name='personalization')
+
+        if not self.local_tests:
+            self.assertEqual(
+                feed_url, 'https://personalization-tokyo.stream-io-api.com/personalization/v1.0/recommended')
+
+    def test_api_url_location(self):
+        client = stream.connect(
+            'key',
+            'secret',
+            location='tokyo',
+        )
+        feed_url = client.get_full_url(service_name='api', relative_url='feed/')
+
+        if not self.local_tests:
+            self.assertEqual(
+                feed_url, 'https://api-tokyo.stream-io-api.com/api/v1.0/feed/')
+
     def test_update_activities_create(self):
         activities = [{
             'actor': 'user:1',
