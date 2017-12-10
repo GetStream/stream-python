@@ -195,12 +195,14 @@ class ClientTest(TestCase):
         self.assertEqual(
             client.api_secret, 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy')
 
+        feed_url = client.get_full_url('api', 'feed/')
         if self.local_tests:
             self.assertEqual(
-                client.base_url, 'http://localhost:8000/api/')
+                feed_url, 'http://localhost:8000/api/v1.0/feed/')
         else:
             self.assertEqual(
-                client.base_url, 'https://us-east-api.stream-io-api.com/api/')
+                feed_url, 'https://us-east-api.stream-io-api.com/api/v1.0/feed/')
+
         self.assertEqual(client.app_id, '1')
 
     def test_heroku_location(self):
@@ -211,12 +213,13 @@ class ClientTest(TestCase):
         self.assertEqual(
             client.api_secret, 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy')
 
+        feed_url = client.get_full_url('api', 'feed/')
         if self.local_tests:
             self.assertEqual(
-                client.base_url, 'http://localhost:8000/api/')
+                feed_url, 'http://localhost:8000/api/v1.0/feed/')
         else:
             self.assertEqual(
-                client.base_url, 'https://us-east-api.stream-io-api.com/api/')
+                feed_url, 'https://us-east-api.stream-io-api.com/api/v1.0/feed/')
         self.assertEqual(client.app_id, '1')
 
     def test_heroku_overwrite(self):

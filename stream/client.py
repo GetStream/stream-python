@@ -21,7 +21,6 @@ logger = logging.getLogger(__name__)
 
 
 class StreamClient(object):
-    base_url = 'https://api.stream-io-api.com/api/'
 
     def __init__(self, api_key, api_secret, app_id, version='v1.0', timeout=6.0, base_url=None, location=None):
         '''
@@ -77,8 +76,6 @@ class StreamClient(object):
         self.base_analytics_url = 'https://analytics.stream-io-api.com/analytics/'
 
         self.session = requests.Session()
-        # TODO: turn this back on after we verify it doesnt retry on slower requests
-        self.session.mount(self.base_url, HTTPAdapter(max_retries=0))
         self.auth = HTTPSignatureAuth(api_key, secret=api_secret)
         
         # setup personalization
