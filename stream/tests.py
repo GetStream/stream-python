@@ -42,10 +42,8 @@ def connect_debug():
     return stream.connect(
         key,
         secret,
-        location='us-east',
+        location='qa',
         timeout=30,
-        base_url='https://qa.stream-io-api.com/api/',
-        # base_url='http://localhost-api.getstream.io:8000/api/',
     )
 
 client = connect_debug()
