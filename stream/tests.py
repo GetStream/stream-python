@@ -179,13 +179,14 @@ class ClientTest(TestCase):
         self.assertEqual(
             client.api_secret, 'twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd')
         self.assertEqual(client.app_id, '669')
+        feed_url = client.get_full_url('api', 'feed/')
 
         if self.local_tests:
             self.assertEqual(
-                client.base_url, 'http://localhost:8000/api/')
+                feed_url, 'http://localhost:8000/api/v1.0/feed/')
         else:
             self.assertEqual(
-                client.base_url, 'https://api.stream-io-api.com/api/')
+                feed_url, 'https://api.stream-io-api.com/api/v1.0/feed/')
 
     def test_heroku_location_compat(self):
         url = 'https://ahj2ndz7gsan:gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy@us-east.getstream.io/?app_id=1'
@@ -233,12 +234,13 @@ class ClientTest(TestCase):
     def test_location_support(self):
         client = stream.connect('a', 'b', 'c', location='us-east')
 
-        full_location = 'https://us-east-api.stream-io-api.com/api/'
+        full_location = 'https://us-east-api.stream-io-api.com/api/v1.0/feed/'
         if self.local_tests:
-            full_location = 'http://localhost:8000/api/'
+            full_location = 'http://localhost:8000/api/v1.0/feed/'
 
         self.assertEqual(client.location, 'us-east')
-        self.assertEqual(client.base_url, full_location)
+        feed_url = client.get_full_url('api', 'feed/')
+        self.assertEqual(feed_url, full_location)
 
         # test a wrong location, can only work on non-local test running
         if not self.local_tests:
