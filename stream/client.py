@@ -89,7 +89,7 @@ class StreamClient(object):
         Returns a Personalized Feed object
         """
         from stream.personalization import Personalization
-        token = self.create_jwt_token('personalization', '*', feed_id='*', user_id='*')
+        token = self.create_jwt_token('*', '*', feed_id='*', user_id='*')
 
         return Personalization(self, token)
 
@@ -204,6 +204,7 @@ class StreamClient(object):
                 raise Exception("keyword 'personal' must be None, personal, or meta")
         else:
             url = self.get_full_url(relative_url)
+        print(url)
         if method.__name__ in ['post', 'put', 'delete']:
             serialized = serializer.dumps(data)
         response = method(url, data=serialized, headers=headers,
