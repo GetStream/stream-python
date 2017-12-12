@@ -133,6 +133,8 @@ class StreamClient(object):
 
     def _parse_response(self, response):
         try:
+            if response.encoding is None:
+                response.encoding = 'utf-8'
             parsed_result = serializer.loads(response.text)
         except ValueError:
             parsed_result = None
