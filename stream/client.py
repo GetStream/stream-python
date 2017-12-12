@@ -202,7 +202,7 @@ class StreamClient(object):
             relative_url += '/'
 
         url = self.get_full_url(service_name, relative_url)
-        print(url)
+        
         if method.__name__ in ['post', 'put', 'delete']:
             serialized = serializer.dumps(data)
         response = method(url, data=serialized, headers=headers,
