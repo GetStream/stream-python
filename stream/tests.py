@@ -191,7 +191,7 @@ class ClientTest(TestCase):
 
         if not self.local_tests:
             self.assertEqual(
-                feed_url, 'https://api-tokyo.stream-io-api.com/api/v1.0/meta/')
+                feed_url, 'https://tokyo-api.stream-io-api.com/api/v1.0/meta/')
 
     def test_personalization_url_location(self):
         client = stream.connect(
@@ -203,7 +203,7 @@ class ClientTest(TestCase):
 
         if not self.local_tests:
             self.assertEqual(
-                feed_url, 'https://personalization-tokyo.stream-io-api.com/personalization/v1.0/recommended')
+                feed_url, 'https://tokyo-personalization.stream-io-api.com/personalization/v1.0/recommended')
 
     def test_api_url_location(self):
         client = stream.connect(
@@ -215,7 +215,7 @@ class ClientTest(TestCase):
 
         if not self.local_tests:
             self.assertEqual(
-                feed_url, 'https://api-tokyo.stream-io-api.com/api/v1.0/feed/')
+                feed_url, 'https://tokyo-api.stream-io-api.com/api/v1.0/feed/')
 
     def test_update_activities_create(self):
         activities = [{
