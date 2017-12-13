@@ -3,6 +3,13 @@
 ================
 
 
+2.7.0
+=====
+:release-date 2017-12-08
+:by: Balazs
+
+Consolidate API URL generation across API, Collections and Personalization services
+
 2.6.0
 =====
 :release-date 2017-12-08
