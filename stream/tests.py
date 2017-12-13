@@ -42,10 +42,8 @@ def connect_debug():
     return stream.connect(
         key,
         secret,
-        location='us-east',
+        location='qa',
         timeout=30,
-        base_url='https://qa.stream-io-api.com/api/',
-        # base_url='http://localhost-api.getstream.io:8000/api/',
     )
 
 client = connect_debug()
@@ -120,6 +118,105 @@ class ClientTest(TestCase):
             sleep_time = local_wait
         time.sleep(sleep_time)
 
+    def test_collections_url(self):
+        feed_url = client.get_full_url(relative_url='meta/', service_name='api')
+
+        if self.local_tests:
+            self.assertEqual(
+                feed_url, 'http://localhost:8000/api/v1.0/meta/')
+        else:
+            self.assertEqual(
+                feed_url, 'https://qa-api.stream-io-api.com/api/v1.0/meta/')
+
+    def test_personalization_url(self):
+        feed_url = client.get_full_url(relative_url='recommended', service_name='personalization')
+
+        if self.local_tests:
+            self.assertEqual(
+                feed_url, 'http://localhost:8000/personalization/v1.0/recommended')
+        else:
+            self.assertEqual(
+                feed_url, 'https://qa-personalization.stream-io-api.com/personalization/v1.0/recommended')
+
+    def test_api_url(self):
+        feed_url = client.get_full_url(service_name='api', relative_url='feed/')
+
+        if self.local_tests:
+            self.assertEqual(
+                feed_url, 'http://localhost:8000/api/v1.0/feed/')
+        else:
+            self.assertEqual(
+                feed_url, 'https://qa-api.stream-io-api.com/api/v1.0/feed/')
+
+    def test_collections_url_default(self):
+        client = stream.connect(
+            'key',
+            'secret',
+        )
+        feed_url = client.get_full_url(relative_url='meta/', service_name='api')
+
+        if not self.local_tests:
+            self.assertEqual(
+                feed_url, 'https://api.stream-io-api.com/api/v1.0/meta/')
+
+    def test_personalization_url_default(self):
+        client = stream.connect(
+            'key',
+            'secret',
+        )
+        feed_url = client.get_full_url(relative_url='recommended', service_name='personalization')
+
+        if not self.local_tests:
+            self.assertEqual(
+                feed_url, 'https://personalization.stream-io-api.com/personalization/v1.0/recommended')
+
+    def test_api_url_default(self):
+        client = stream.connect(
+            'key',
+            'secret',
+        )
+        feed_url = client.get_full_url(service_name='api', relative_url='feed/')
+
+        if not self.local_tests:
+            self.assertEqual(
+                feed_url, 'https://api.stream-io-api.com/api/v1.0/feed/')
+
+    def test_collections_url_location(self):
+        client = stream.connect(
+            'key',
+            'secret',
+            location='tokyo',
+        )
+        feed_url = client.get_full_url(relative_url='meta/', service_name='api')
+
+        if not self.local_tests:
+            self.assertEqual(
+                feed_url, 'https://tokyo-api.stream-io-api.com/api/v1.0/meta/')
+
+    def test_personalization_url_location(self):
+        client = stream.connect(
+            'key',
+            'secret',
+            location='tokyo',
+        )
+        feed_url = client.get_full_url(relative_url='recommended', service_name='personalization')
+
+        if not self.local_tests:
+            self.assertEqual(
+                feed_url, 'https://tokyo-personalization.stream-io-api.com/personalization/v1.0/recommended')
+
+    def test_api_url_location(self):
+        client = stream.connect(
+            'key',
+            'secret',
+            location='tokyo',
+        )
+        feed_url = client.get_full_url(service_name='api', relative_url='feed/')
+
+        if not self.local_tests:
+            self.assertEqual(
+                feed_url, 'https://tokyo-api.stream-io-api.com/api/v1.0/feed/')
+
     def test_update_activities_create(self):
         activities = [{
             'actor': 'user:1',
@@ -181,13 +278,14 @@ class ClientTest(TestCase):
         self.assertEqual(
             client.api_secret, 'twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd')
         self.assertEqual(client.app_id, '669')
+        feed_url = client.get_full_url('api', 'feed/')
 
         if self.local_tests:
             self.assertEqual(
-                client.base_url, 'http://localhost:8000/api/')
+                feed_url, 'http://localhost:8000/api/v1.0/feed/')
         else:
             self.assertEqual(
-                client.base_url, 'https://api.stream-io-api.com/api/')
+                feed_url, 'https://api.stream-io-api.com/api/v1.0/feed/')
 
     def test_heroku_location_compat(self):
         url = 'https://ahj2ndz7gsan:gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy@us-east.getstream.io/?app_id=1'
@@ -197,12 +295,14 @@ class ClientTest(TestCase):
         self.assertEqual(
             client.api_secret, 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy')
 
+        feed_url = client.get_full_url('api', 'feed/')
         if self.local_tests:
             self.assertEqual(
-                client.base_url, 'http://localhost:8000/api/')
+                feed_url, 'http://localhost:8000/api/v1.0/feed/')
         else:
             self.assertEqual(
-                client.base_url, 'https://us-east-api.stream-io-api.com/api/')
+                feed_url, 'https://us-east-api.stream-io-api.com/api/v1.0/feed/')
+
         self.assertEqual(client.app_id, '1')
 
     def test_heroku_location(self):
@@ -213,12 +313,13 @@ class ClientTest(TestCase):
         self.assertEqual(
             client.api_secret, 'gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy')
 
+        feed_url = client.get_full_url('api', 'feed/')
         if self.local_tests:
             self.assertEqual(
-                client.base_url, 'http://localhost:8000/api/')
+                feed_url, 'http://localhost:8000/api/v1.0/feed/')
         else:
             self.assertEqual(
-                client.base_url, 'https://us-east-api.stream-io-api.com/api/')
+                feed_url, 'https://us-east-api.stream-io-api.com/api/v1.0/feed/')
         self.assertEqual(client.app_id, '1')
 
     def test_heroku_overwrite(self):
@@ -232,12 +333,13 @@ class ClientTest(TestCase):
     def test_location_support(self):
         client = stream.connect('a', 'b', 'c', location='us-east')
 
-        full_location = 'https://us-east-api.stream-io-api.com/api/'
+        full_location = 'https://us-east-api.stream-io-api.com/api/v1.0/feed/'
         if self.local_tests:
-            full_location = 'http://localhost:8000/api/'
+            full_location = 'http://localhost:8000/api/v1.0/feed/'
 
         self.assertEqual(client.location, 'us-east')
-        self.assertEqual(client.base_url, full_location)
+        feed_url = client.get_full_url('api', 'feed/')
+        self.assertEqual(feed_url, full_location)
 
         # test a wrong location, can only work on non-local test running
         if not self.local_tests:
