@@ -2,6 +2,13 @@
  Change history
 ================
 
+=======
+2.7.0
+======
+:release-date: 2017-12-14
+:by: Aaron McMillin
+
+* All client methods that make requests will return the response
 
 2.6.2
 =====
