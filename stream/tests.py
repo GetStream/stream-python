@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from dateutil.tz import tzlocal
 import stream
 import time
@@ -379,6 +380,16 @@ class ClientTest(TestCase):
         activity_id = response['id']
         activities = feed.get(limit=1)['results']
         self.assertEqual(activities[0]['id'], activity_id)
+
+    def test_add_activity_with_utf8_data(self):
+        feed = getfeed('user', 'py1')
+        activity_data = {'actor': 2, 'verb': 'tweet', 'object': '😀🐶❤️'}
+        response = feed.add_activity(activity_data)
+        activity_id = response['id']
+        activity_object = response['object']
+        activities = feed.get(limit=1)['results']
+        self.assertEqual(activities[0]['id'], activity_id)
+        self.assertEqual(activities[0]['object'], activity_object)
 
     def test_add_activity_to_inplace_change(self):
         feed = getfeed('user', 'py1')
