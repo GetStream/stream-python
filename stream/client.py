@@ -12,12 +12,15 @@ from stream.signing import sign
 from stream.utils import validate_feed_slug, validate_user_id
 from requests import Request
 
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 logger = logging.getLogger(__name__)
 
 
 class StreamClient(object):
-    base_url = 'https://api.getstream.io/api/'
 
     def __init__(self, api_key, api_secret, app_id, version='v1.0', timeout=6.0, base_url=None, location=None):
         '''
@@ -51,20 +54,39 @@ class StreamClient(object):
         self.timeout = timeout
         self.location = location
 
+        self.base_domain_name = 'stream-io-api.com'
+        self.api_location = location
+        self.custom_api_port = None
+        self.protocol = 'https'
+
         if os.environ.get('LOCAL'):
-            self.base_url = 'http://localhost:8000/api/'
+            self.base_domain_name = 'localhost'
+            self.protocol = 'http'
+            self.custom_api_port = 8000
             self.timeout = 20
         elif base_url is not None:
-            self.base_url = base_url
+            parsed_url = urlparse(base_url)
+            self.base_domain_name = parsed_url.hostname
+            self.protocol = parsed_url.scheme
+            self.custom_api_port = parsed_url.port
+            self.api_location = ""
         elif location is not None:
-            self.base_url = 'https://%s-api.getstream.io/api/' % location
+            self.location = location
 
-        self.base_analytics_url = 'https://analytics.getstream.io/analytics/'
+        self.base_analytics_url = 'https://analytics.stream-io-api.com/analytics/'
 
         self.session = requests.Session()
-        # TODO: turn this back on after we verify it doesnt retry on slower requests
-        self.session.mount(self.base_url, HTTPAdapter(max_retries=0))
         self.auth = HTTPSignatureAuth(api_key, secret=api_secret)
+        
+        # setup personalization
+        from stream.personalization import Personalization
+        token = self.create_jwt_token('personalization', '*', feed_id='*', user_id='*')
+        self.personalization = Personalization(self, token)
+        # setup the collection
+        from stream.collections import Collections
+        token = self.create_jwt_token('collections', '*', feed_id='*', user_id='*')
+        self.collections = Collections(self, token)
+        
 
     def feed(self, feed_slug, user_id):
         '''
@@ -97,8 +119,23 @@ class StreamClient(object):
         }
         return base_headers
 
-    def get_full_url(self, relative_url):
-        url = self.base_url + self.version + '/' + relative_url
+    def get_full_url(self, service_name, relative_url):
+        if self.api_location:
+            hostname = '%s-%s.%s' % (self.api_location, service_name, self.base_domain_name)
+        elif service_name:
+            hostname = '%s.%s' % (service_name, self.base_domain_name)
+        else:
+            hostname = self.base_domain_name
+
+        if self.base_domain_name == 'localhost':
+            hostname = 'localhost'
+
+        base_url = "%s://%s" % (self.protocol, hostname)
+
+        if self.custom_api_port:
+            base_url = "%s:%s" % (base_url, self.custom_api_port)
+
+        url = base_url + '/' + service_name + '/' + self.version + '/' + relative_url
         return url
 
     def get_user_agent(self):
@@ -125,7 +162,7 @@ class StreamClient(object):
         headers['Date'] = date_header
         default_params = self.get_default_params()
         default_params.update(params)
-        url = self.get_full_url(relative_url)
+        url = self.get_full_url('api', relative_url)
         serialized = serializer.dumps(data)
         method = getattr(self.session, method_name)
         if method_name in ['post', 'put']:
@@ -151,7 +188,7 @@ class StreamClient(object):
             payload['user_id'] = user_id
         return jwt.encode(payload, self.api_secret).decode("utf-8")
 
-    def _make_request(self, method, relative_url, signature, params=None, data=None):
+    def _make_request(self, method, relative_url, signature, service_name='api', params=None, data=None):
         params = params or {}
         data = data or {}
         serialized = None
@@ -160,8 +197,13 @@ class StreamClient(object):
         headers = self.get_default_header()
         headers['Authorization'] = signature
         headers['stream-auth-type'] = 'jwt'
-        url = self.get_full_url(relative_url)
-        if method.__name__ in ['post', 'put']:
+
+        if not relative_url.endswith('/'):
+            relative_url += '/'
+
+        url = self.get_full_url(service_name, relative_url)
+        
+        if method.__name__ in ['post', 'put', 'delete']:
             serialized = serializer.dumps(data)
         response = method(url, data=serialized, headers=headers,
                           params=default_params, timeout=self.timeout)
@@ -236,7 +278,7 @@ class StreamClient(object):
 
         '''
         data = {'activity': activity, 'feeds': feeds}
-        self._make_signed_request('post', 'feed/add_to_many/', data=data)
+        return self._make_signed_request('post', 'feed/add_to_many/', data=data)
 
     def follow_many(self, follows, activity_copy_limit=None):
         '''
@@ -251,7 +293,7 @@ class StreamClient(object):
         if activity_copy_limit != None:
             params = dict(activity_copy_limit=activity_copy_limit)
 
-        self._make_signed_request('post', 'follow_many/', params=params, data=follows)
+        return self._make_signed_request('post', 'follow_many/', params=params, data=follows)
 
     def update_activities(self, activities):
         '''
