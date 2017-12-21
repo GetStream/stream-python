@@ -20,7 +20,9 @@ class BaseTestCase(unittest.TestCase):
         # convert into [(k1,"v1"), (k2, "v2"), ...]
         param_pairs = [p.split('=', 1) for p in param_list]
         # convert into {k1:v1, k2:v2, ...}
-        param_dict = {k: v.strip('"') for k, v in param_pairs}
+        param_dict = {}
+        for k, v in param_pairs:
+            param_dict[k] = v.strip('"')
         return param_dict
 
 
