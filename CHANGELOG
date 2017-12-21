@@ -3,6 +3,14 @@
 ================
 
 =======
+2.8.1
+======
+:release-date: 2017-12-21
+:by: Tommaso Barbugli
+
+Fixes a regression with embedded httpsig and Python 3
+
+=======
 2.8.0
 ======
 :release-date: 2017-12-21
