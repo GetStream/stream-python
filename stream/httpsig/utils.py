@@ -11,8 +11,8 @@ except ImportError:
     # Python 2
     from urllib2 import parse_http_list
 
-from Crypto.PublicKey import RSA
-from Crypto.Hash import SHA, SHA256, SHA512
+from Cryptodome.PublicKey import RSA
+from Cryptodome.Hash import SHA, SHA256, SHA512
 
 ALGORITHMS = frozenset(['rsa-sha1', 'rsa-sha256', 'rsa-sha512', 'hmac-sha1', 'hmac-sha256', 'hmac-sha512'])
 HASHES = {'sha1':   SHA,
@@ -42,15 +42,15 @@ def ct_bytes_compare(a, b):
             result |= ord(x) ^ ord(y)
         else:
             result |= x ^ y
-            
+
     return (result == 0)
 
 def generate_message(required_headers, headers, host=None, method=None, path=None):
     headers = CaseInsensitiveDict(headers)
-    
+
     if not required_headers:
         required_headers = ['date']
-    
+
     signable_list = []
     for h in required_headers:
         h = h.lower()
@@ -58,7 +58,7 @@ def generate_message(required_headers, headers, host=None, method=None, path=Non
             if not method or not path:
                 raise Exception('method and path arguments required when using "(request-target)"')
             signable_list.append('%s: %s %s' % (h, method.lower(), path))
-        
+
         elif h == 'host':
             # 'host' special case due to requests lib restrictions
             # 'host' is not available when adding auth so must use a param
@@ -82,11 +82,11 @@ def generate_message(required_headers, headers, host=None, method=None, path=Non
 def parse_authorization_header(header):
     if not isinstance(header, six.string_types):
         header = header.decode("ascii") #HTTP headers cannot be Unicode.
-    
+
     auth = header.split(" ", 1)
     if len(auth) > 2:
         raise ValueError('Invalid authorization header. (eg. Method key1=value1,key2="value, \"2\"")')
-    
+
     # Split up any args into a dictionary.
     values = {}
     if len(auth) == 2:
@@ -94,7 +94,7 @@ def parse_authorization_header(header):
         if auth_value and len(auth_value):
             # This is tricky string magic.  Let urllib do it.
             fields = parse_http_list(auth_value)
-        
+
             for item in fields:
                 # Only include keypairs.
                 if '=' in item:
@@ -102,13 +102,13 @@ def parse_authorization_header(header):
                     key, value = item.split('=', 1)
                     if not (len(key) and len(value)):
                         continue
-                    
+
                     # Unquote values, if quoted.
                     if value[0] == '"':
                         value = value[1:-1]
-                
+
                     values[key] = value
-    
+
     # ("Signature", {"headers": "date", "algorithm": "hmac-sha256", ... })
     return (auth[0], CaseInsensitiveDict(values))
 

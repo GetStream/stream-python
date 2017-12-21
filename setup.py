@@ -32,7 +32,7 @@ if sys.version_info < (2, 7, 9):
     requests = 'requests[security]>=2.4.1,<3'
 
 install_requires = [
-    'pycryptodome==3.4.7',
+    'pycryptodomex==3.4.7',
     'pyjwt==1.3.0',
     requests,
     'six>=1.8.0'
