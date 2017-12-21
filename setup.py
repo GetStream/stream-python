@@ -9,12 +9,11 @@ import sys
 
 unit = 'unittest2py3k' if sys.version_info > (3, 0, 0) else 'unittest2'
 tests_require = [
-    'pep8',
     unit,
-    #'pytest',
+    'pytest==3.3.1',
     'python-coveralls',
     'unittest2',
-    'pytest-cov==1.8.1',
+    'pytest-cov==2.5.1',
     'python-dateutil'
 ]
 
