@@ -12,10 +12,6 @@ matrix:
   fast_finish: true
 
 cache: pip
-notifications:
-  email:
-    - thierryschellenbach@gmail.com
-    - tbarbugli@gmail.com
 
 install:
   - pip install -r dev_requirements.txt
@@ -24,5 +20,3 @@ script:
 after_script:
   # ensure we validate against pep standards
   - "pep8 --exclude=migrations --ignore=E501,E225,W293 stream"
-after_success:
-   - coveralls

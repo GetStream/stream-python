@@ -3,13 +3,13 @@ import json
 import logging
 import os
 
-from httpsig.requests_auth import HTTPSignatureAuth
 import jwt
 import requests
 from requests.adapters import HTTPAdapter
 from stream import exceptions, serializer
 from stream.signing import sign
 from stream.utils import validate_feed_slug, validate_user_id
+from stream.httpsig.requests_auth import HTTPSignatureAuth
 from requests import Request
 
 try:
