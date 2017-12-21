@@ -10,15 +10,17 @@ import stream.httpsig.sign as sign
 from stream.httpsig.utils import parse_authorization_header
 
 
-sign.DEFAULT_SIGN_ALGORITHM = "rsa-sha256"
-
-
 class TestSign(unittest.TestCase):
+    DEFAULT_SIGN_ALGORITHM = sign.DEFAULT_SIGN_ALGORITHM
 
     def setUp(self):
+        sign.DEFAULT_SIGN_ALGORITHM = "rsa-sha256"
         self.key_path = os.path.join(os.path.dirname(__file__), 'rsa_private.pem')
         with open(self.key_path, 'rb') as f:
             self.key = f.read()
+
+    def tearDown(self):
+        sign.DEFAULT_SIGN_ALGORITHM = self.DEFAULT_SIGN_ALGORITHM
 
     def test_default(self):
         hs = sign.HeaderSigner(key_id='Test', secret=self.key)

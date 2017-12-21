@@ -131,11 +131,11 @@ redirect_url = client.create_redirect_url('http://google.com/', 'user_id', event
 First, make sure you can run the test suite. Tests are run via py.test
 
 ```bash
-py.test stream/tests.py
+py.test
 # with coverage
-py.test stream/tests.py --cov stream --cov-report html
+py.test --cov stream --cov-report html
 # against a local API backend
-LOCAL=true py.test stream/tests.py
+LOCAL=true py.test
 ```
 
 ### Copyright and License Information

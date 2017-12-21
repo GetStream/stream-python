@@ -49,7 +49,7 @@ class PyTest(TestCommand):
         # import here, cause outside the eggs aren't loaded
         import pytest
         errno = pytest.main(
-            'stream/tests.py --cov stream --cov-report term-missing -v')
+            '--cov stream --cov-report term-missing -v')
         sys.exit(errno)
 
 setup(
