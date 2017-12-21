@@ -18,5 +18,6 @@ install:
 script:
   - py.test -lv --cov stream --cov-report term-missing
 after_script:
-  # ensure we validate against pep standards
   - "pep8 --exclude=migrations --ignore=E501,E225,W293 stream"
+  - "python setup.py install"
+
