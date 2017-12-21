@@ -105,8 +105,7 @@ class TestVerifyHMACSHA1(BaseTestCase):
         signed = hs.sign(unsigned, method=METHOD, path=PATH)
 
         hv = HeaderVerifier(headers=signed, secret=self.verify_secret, required_headers=["some-other-header"], host=HOST, method=METHOD, path=PATH)
-        with self.assertRaises(Exception) as ex:
-            hv.verify()
+        self.assertRaises(Exception, hv.verify)
 
     def test_extra_auth_headers(self):
         HOST = "example.com"
