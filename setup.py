@@ -10,7 +10,7 @@ import sys
 unit = 'unittest2py3k' if sys.version_info > (3, 0, 0) else 'unittest2'
 tests_require = [
     unit,
-    'pytest==3.3.1',
+    'pytest==3.2.5',
     'python-coveralls',
     'unittest2',
     'pytest-cov==2.5.1',
