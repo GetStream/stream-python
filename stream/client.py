@@ -7,6 +7,7 @@ import jwt
 import requests
 from requests.adapters import HTTPAdapter
 from stream import exceptions, serializer
+from stream.httpsig.requests_auth import HTTPSignatureAuth
 from stream.signing import sign
 from stream.utils import validate_feed_slug, validate_user_id
 from stream.httpsig.requests_auth import HTTPSignatureAuth
