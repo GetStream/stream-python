@@ -28,14 +28,14 @@ class TestSign(unittest.TestCase):
             'Date': 'Thu, 05 Jan 2012 21:31:40 GMT'
         }
         signed = hs.sign(unsigned)
-        self.assertIn('Date', signed)
+        self.assertTrue('Date' in signed)
         self.assertEqual(unsigned['Date'], signed['Date'])
-        self.assertIn('Authorization', signed)
+        self.assertTrue('Authorization' in signed)
         auth = parse_authorization_header(signed['authorization'])
         params = auth[1]
-        self.assertIn('keyId', params)
-        self.assertIn('algorithm', params)
-        self.assertIn('signature', params)
+        self.assertTrue('keyId' in params)
+        self.assertTrue('algorithm' in params)
+        self.assertTrue('signature' in params)
         self.assertEqual(params['keyId'], 'Test')
         self.assertEqual(params['algorithm'], 'rsa-sha256')
         self.assertEqual(params['signature'], 'ATp0r26dbMIxOopqw0OfABDT7CKMIoENumuruOtarj8n/97Q3htHFYpH8yOSQk3Z5zh8UxUym6FYTb5+A0Nz3NRsXJibnYi7brE/4tx5But9kkFGzG+xpUmimN4c3TMN7OFH//+r8hBf7BT9/GmHDUVZT2JzWGLZES2xDOUuMtA=')
@@ -58,14 +58,14 @@ class TestSign(unittest.TestCase):
         }
         signed = hs.sign(unsigned, method='POST', path='/foo?param=value&pet=dog')
 
-        self.assertIn('Date', signed)
+        self.assertTrue('Date' in signed)
         self.assertEqual(unsigned['Date'], signed['Date'])
-        self.assertIn('Authorization', signed)
+        self.assertTrue('Authorization' in signed)
         auth = parse_authorization_header(signed['authorization'])
         params = auth[1]
-        self.assertIn('keyId', params)
-        self.assertIn('algorithm', params)
-        self.assertIn('signature', params)
+        self.assertTrue('keyId' in params)
+        self.assertTrue('algorithm' in params)
+        self.assertTrue('signature' in params)
         self.assertEqual(params['keyId'], 'Test')
         self.assertEqual(params['algorithm'], 'rsa-sha256')
         self.assertEqual(params['headers'], '(request-target) host date content-type content-md5 content-length')
