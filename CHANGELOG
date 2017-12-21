@@ -3,6 +3,17 @@
 ================
 
 =======
+2.8.0
+======
+:release-date: 2017-12-21
+:by: Tommaso Barbugli
+
+Fixes install issues on Windows
+
+* Bundle http-sig library
+* Use pycryptodomex instead of the discontinued pycrypto library
+
+=======
 2.7.0
 ======
 :release-date: 2017-12-14
