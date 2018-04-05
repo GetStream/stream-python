@@ -63,7 +63,7 @@ class Collections(object):
         Delete data from meta.
         :param collection_name: Collection Name i.e 'user'
         :param ids: list of ids to delete i.e [123,456]
-        :return: data that was deleted if if successful or not.
+        :return: data that was deleted if successful or not.
 
         **Example**::
             client.collections.delete('user', '1')
