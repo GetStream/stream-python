@@ -74,9 +74,9 @@ class Collections(object):
             ids = [ids]
         ids = [str(i) for i in ids]
 
-        data = {'collection_name': collection_name, 'ids': ids}
+        params = {'collection_name': collection_name, 'ids': ids}
 
-        response = self.client.delete('meta/', service_name='api', data=data,
+        response = self.client.delete('meta/', service_name='api', params=params,
                                       signature=self.token)
 
         return response
