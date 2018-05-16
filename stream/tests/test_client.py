@@ -1068,6 +1068,7 @@ class ClientTest(TestCase):
         self.assertEqual(decoded, {
             'resource': 'redirect_and_track',
             'action': '*',
+            'feed_id': '*',
             'user_id': 'tommaso'
         })
 
