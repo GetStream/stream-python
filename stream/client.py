@@ -322,7 +322,7 @@ class StreamClient(object):
         getstream.io/personalization
         '''
         # generate the JWT token
-        auth_token = self.create_jwt_token('redirect_and_track', '*', user_id=user_id)
+        auth_token = self.create_jwt_token('redirect_and_track', '*', '*', user_id=user_id)
         # setup the params
         params = dict(auth_type='jwt', authorization=auth_token, url=target_url)
         params['api_key'] = self.api_key
