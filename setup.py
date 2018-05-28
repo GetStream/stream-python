@@ -36,6 +36,9 @@ install_requires = [
     'six>=1.8.0'
 ]
 
+if sys.version_info < (2, 7, 0):
+    install_requires.append('pyOpenSSL<18.0.0')
+
 class PyTest(TestCommand):
 
     def finalize_options(self):
