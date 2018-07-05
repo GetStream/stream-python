@@ -5,13 +5,11 @@ import os
 
 import jwt
 import requests
-from requests.adapters import HTTPAdapter
 from stream.serializer import _datetime_encoder
 
 from stream import exceptions, serializer
-from stream.httpsig.requests_auth import HTTPSignatureAuth
 from stream.signing import sign
-from stream.utils import validate_feed_slug, validate_user_id
+from stream.utils import validate_feed_slug, validate_user_id, validate_foreign_id_time
 from stream.httpsig.requests_auth import HTTPSignatureAuth
 from requests import Request
 
@@ -336,6 +334,7 @@ class StreamClient(object):
             query_params['ids'] = ','.join(ids)
 
         if foreign_id_time is not None:
+            validate_foreign_id_time(foreign_id_time)
             foreign_ids, timestamps = zip(*foreign_id_time)
             timestamps = map(_datetime_encoder, timestamps)
             query_params['foreign_ids'] = ','.join(foreign_ids)
