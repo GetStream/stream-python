@@ -90,6 +90,14 @@ activity = {
 }
 user_feed_1.add_activity(activity)
 
+# Retrieve an activity by its ID
+client.get_activities(ids=[activity_id])
+
+# Retrieve an activity by the combination of foreign_id and time
+client.get_activities(foreign_id_time=[
+    (foreign_id, activity_time),
+])
+
 # Generating tokens for client side usage (JS client)
 token = user_feed_1.token
 # Javascript client side feed initialization
