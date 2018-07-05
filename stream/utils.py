@@ -43,3 +43,14 @@ def validate_user_id(user_id):
         raise ValueError(msg % user_id)
     return user_id
     
+
+def validate_foreign_id_time(foreign_id_time):
+    if not isinstance(foreign_id_time, (list, tuple)):
+        raise ValueError('foreign_id_time should be a list of tuples')
+
+    for v in foreign_id_time:
+        if not isinstance(v, (list, tuple)):
+            raise ValueError('foreign_id_time elements should be lists or tuples')
+
+        if len(v) != 2:
+            raise ValueError('foreign_id_time elements should have two elements')

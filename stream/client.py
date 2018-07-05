@@ -5,11 +5,11 @@ import os
 
 import jwt
 import requests
-from requests.adapters import HTTPAdapter
+from stream.serializer import _datetime_encoder
+
 from stream import exceptions, serializer
-from stream.httpsig.requests_auth import HTTPSignatureAuth
 from stream.signing import sign
-from stream.utils import validate_feed_slug, validate_user_id
+from stream.utils import validate_feed_slug, validate_user_id, validate_foreign_id_time
 from stream.httpsig.requests_auth import HTTPSignatureAuth
 from requests import Request
 
@@ -304,9 +304,7 @@ class StreamClient(object):
             raise TypeError('Activities parameter should be of type list')
 
         auth_token = self.create_jwt_token('activities', '*', feed_id='*')
-
         data = dict(activities=activities)
-
         return self.post('activities/', auth_token, data=data)
 
     def update_activity(self, activity):
@@ -314,6 +312,35 @@ class StreamClient(object):
         Update a single activity
         '''
         return self.update_activities([activity])
+
+    def get_activities(self, ids=None, foreign_id_time=None):
+        '''
+        Retrieves activities by their ID or foreign_id + time combination
+
+        ids: list of activity IDs
+        foreign_id_time: list of tuples (foreign_id, time)
+        '''
+        auth_token = self.create_jwt_token('activities', '*', feed_id='*')
+
+        if ids is None and foreign_id_time is None:
+            raise TypeError('One the parameters ids or foreign_id_time must be provided and not None')
+
+        if ids is not None and foreign_id_time is not None:
+            raise TypeError('At most one of the parameters ids or foreign_id_time must be provided')
+
+        query_params = {}
+
+        if ids is not None:
+            query_params['ids'] = ','.join(ids)
+
+        if foreign_id_time is not None:
+            validate_foreign_id_time(foreign_id_time)
+            foreign_ids, timestamps = zip(*foreign_id_time)
+            timestamps = map(_datetime_encoder, timestamps)
+            query_params['foreign_ids'] = ','.join(foreign_ids)
+            query_params['timestamps'] = ','.join(timestamps)
+
+        return self.get('activities/', auth_token, params=query_params)
 
     def create_redirect_url(self, target_url, user_id, events):
         '''
