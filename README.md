@@ -94,7 +94,7 @@ user_feed_1.add_activity(activity)
 client.get_activities(ids=[activity_id])
 
 # Retrieve an activity by the combination of foreign_id and time
-client.get_activities(foreign_id_time=[
+client.get_activities(foreign_id_times=[
     (foreign_id, activity_time),
 ])
 

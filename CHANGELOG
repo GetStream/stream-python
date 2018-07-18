@@ -3,6 +3,15 @@
 ================
 
 =======
+2.9.1
+======
+:release-date: 2017-07-18
+:by: Tommaso Barbugli
+
+Renamed client.get_activities' foreign_id_time param to foreign_id_times
+
+
+=======
 2.9.0
 ======
 :release-date: 2017-07-05
