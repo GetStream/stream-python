@@ -313,7 +313,7 @@ class StreamClient(object):
         '''
         return self.update_activities([activity])
 
-    def get_activities(self, ids=None, foreign_id_time=None):
+    def get_activities(self, ids=None, foreign_id_times=None):
         '''
         Retrieves activities by their ID or foreign_id + time combination
 
@@ -322,10 +322,10 @@ class StreamClient(object):
         '''
         auth_token = self.create_jwt_token('activities', '*', feed_id='*')
 
-        if ids is None and foreign_id_time is None:
+        if ids is None and foreign_id_times is None:
             raise TypeError('One the parameters ids or foreign_id_time must be provided and not None')
 
-        if ids is not None and foreign_id_time is not None:
+        if ids is not None and foreign_id_times is not None:
             raise TypeError('At most one of the parameters ids or foreign_id_time must be provided')
 
         query_params = {}
@@ -333,9 +333,9 @@ class StreamClient(object):
         if ids is not None:
             query_params['ids'] = ','.join(ids)
 
-        if foreign_id_time is not None:
-            validate_foreign_id_time(foreign_id_time)
-            foreign_ids, timestamps = zip(*foreign_id_time)
+        if foreign_id_times is not None:
+            validate_foreign_id_time(foreign_id_times)
+            foreign_ids, timestamps = zip(*foreign_id_times)
             timestamps = map(_datetime_encoder, timestamps)
             query_params['foreign_ids'] = ','.join(foreign_ids)
             query_params['timestamps'] = ','.join(timestamps)

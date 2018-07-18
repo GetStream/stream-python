@@ -1098,7 +1098,7 @@ class ClientTest(TestCase):
 
     def test_get_activities_empty_foreign_ids(self):
         response = self.c.get_activities(
-            foreign_id_time=[("fid-x", datetime.datetime.utcnow())]
+            foreign_id_times=[("fid-x", datetime.datetime.utcnow())]
         )
         self.assertEqual(len(response["results"]), 0)
 
@@ -1121,6 +1121,6 @@ class ClientTest(TestCase):
         self.assertEqual(len(response["results"]), 1)
         self.assertEqual(activity["foreign_id"], response["results"][0]["foreign_id"])
 
-        response = self.c.get_activities(foreign_id_time=[(fid, dt)])
+        response = self.c.get_activities(foreign_id_times=[(fid, dt)])
         self.assertEqual(len(response["results"]), 1)
         self.assertEqual(activity["foreign_id"], response["results"][0]["foreign_id"])
