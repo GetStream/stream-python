@@ -942,8 +942,9 @@ class ClientTest(TestCase):
 
     def test_serialization(self):
         today = datetime.date.today()
+        then = datetime.datetime.now().replace(microsecond=0)
         now = datetime.datetime.now()
-        data = dict(string="string", float=0.1, int=1, date=today, datetime=now)
+        data = dict(string="string", float=0.1, int=1, date=today, datetime=now, datetimenomicro=then)
         serialized = serializer.dumps(data)
         loaded = serializer.loads(serialized)
         self.assertEqual(data, loaded)
