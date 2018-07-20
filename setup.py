@@ -6,7 +6,6 @@ from setuptools.command.test import test as TestCommand
 from stream import __version__, __maintainer__, __email__, __license__
 import sys
 
-
 unit = 'unittest2py3k' if sys.version_info > (3, 0, 0) else 'unittest2'
 tests_require = [
     unit,
@@ -31,13 +30,16 @@ if sys.version_info < (2, 7, 9):
 
 install_requires = [
     'pycryptodomex==3.4.7',
-    'pyjwt==1.3.0',
     requests,
     'six>=1.8.0'
 ]
 
 if sys.version_info < (2, 7, 0):
     install_requires.append('pyOpenSSL<18.0.0')
+    install_requires.append('pyjwt>=1.3.0,<1.6.0')
+else:
+    install_requires.append('pyjwt>=1.3.0,<1.7.0')
+
 
 class PyTest(TestCommand):
 
@@ -52,6 +54,7 @@ class PyTest(TestCommand):
         errno = pytest.main(
             '-v --cov=./')
         sys.exit(errno)
+
 
 setup(
     name='stream-python',
@@ -80,7 +83,6 @@ setup(
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Topic :: Software Development :: Libraries :: Python Modules',
