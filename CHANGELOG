@@ -2,7 +2,17 @@
  Change history
 ================
 
-=======
+======
+2.9.2
+======
+:release-date: 2017-07-20
+:by: Tommaso Barbugli
+
+Fixed deserialization problem with datetime objects with zeroed microseconds
+Support newer versions of the pyJWT lib
+
+
+======
 2.9.1
 ======
 :release-date: 2017-07-18
@@ -11,7 +21,7 @@
 Renamed client.get_activities' foreign_id_time param to foreign_id_times
 
 
-=======
+======
 2.9.0
 ======
 :release-date: 2017-07-05
@@ -19,7 +29,7 @@ Renamed client.get_activities' foreign_id_time param to foreign_id_times
 
 Add support for get activity API endpoint
 
-=======
+======
 2.8.1
 ======
 :release-date: 2017-12-21
@@ -27,7 +37,7 @@ Add support for get activity API endpoint
 
 Fixes a regression with embedded httpsig and Python 3
 
-=======
+======
 2.8.0
 ======
 :release-date: 2017-12-21
@@ -38,7 +48,7 @@ Fixes install issues on Windows
 * Bundle http-sig library
 * Use pycryptodomex instead of the discontinued pycrypto library
 
-=======
+======
 2.7.0
 ======
 :release-date: 2017-12-14
