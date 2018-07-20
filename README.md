@@ -13,7 +13,7 @@ You can sign up for a Stream account at https://getstream.io/get_started.
 
 stream-python supports:
 
-- Python (2.6, 2.7, 3.4, 3.5, 3.6)
+- Python (2.6, 2.7, 3.4, 3.5, 3.6, 3.7)
 
 #### Install from Pypi
 
