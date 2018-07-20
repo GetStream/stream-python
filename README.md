@@ -150,6 +150,19 @@ py.test --cov stream --cov-report html
 LOCAL=true py.test
 ```
 
+### Releasing a new version
+
+In order to release new version you need to be a maintainer on Pypi.
+
+- Update CHANGELOG
+- Update the version on setup.py
+- Commit and push to Github
+- Create a new tag for the version (eg. `v2.9.0`)
+- Create a new dist with python `python setup.py sdist`
+- Upload the new distributable with wine `twine upload dist/stream-python-VERSION-NAME.tar.gz`
+
+If unsure you can also test using the Pypi test servers `twine upload --repository-url https://test.pypi.org/legacy/ dist/stream-python-VERSION-NAME.tar.gz`
+
 ### Copyright and License Information
 
 Copyright (c) 2014-2017 Stream.io Inc, and individual contributors. All rights reserved.
