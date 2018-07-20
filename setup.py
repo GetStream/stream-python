@@ -15,13 +15,7 @@ tests_require = [
     'python-dateutil'
 ]
 
-long_description = '''
-Documentation
--------------
-Full documentation is available on `Github`_.
-
-.. _`Github`: https://github.com/GetStream/stream-python
-'''
+long_description = open('README.md', 'r').read()
 
 requests = 'requests>=2.3.0,<3'
 
@@ -64,6 +58,7 @@ setup(
     url='http://github.com/GetStream/stream-python',
     description='Client for getstream.io. Build scalable newsfeeds & activity streams in a few hours instead of weeks.',
     long_description=long_description,
+    long_description_content_type='text/markdown',
     license=__license__,
     packages=find_packages(),
     zip_safe=False,
