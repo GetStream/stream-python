@@ -866,7 +866,7 @@ class ClientTest(TestCase):
             "verb": "tweet",
             "object": 1,
             "foreign_id": "tweet:11",
-            "time": now,
+            "time": utcnow,
         }
         self.user1.add_activity(activity_data)
 
@@ -875,7 +875,7 @@ class ClientTest(TestCase):
             "verb": "tweet",
             "object": 3,
             "foreign_id": "tweet:11",
-            "time": now,
+            "time": utcnow,
         }
         self.user1.add_activity(activity_data)
 
