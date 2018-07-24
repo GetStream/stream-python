@@ -1125,3 +1125,67 @@ class ClientTest(TestCase):
         response = self.c.get_activities(foreign_id_times=[(fid, dt)])
         self.assertEqual(len(response["results"]), 1)
         self.assertEqual(activity["foreign_id"], response["results"][0]["foreign_id"])
+
+    def test_activity_partial_update(self):
+        now = datetime.datetime.utcnow()
+        feed = self.c.feed('user', uuid4())
+        feed.add_activity({
+            "actor": "barry",
+            "object": "09",
+            "verb": "tweet",
+            "time": now,
+            "foreign_id": 'fid:123',
+            'product': {
+                'name': 'shoes',
+                'price': 9.99,
+                'color': 'blue'
+            }
+        })
+        activity = feed.get()['results'][0]
+
+        set = {
+            'product.name': 'boots',
+            'product.price': 7.99,
+            'popularity': 1000,
+            'foo': {
+                'bar': {
+                    'baz': 'qux',
+                }
+            }
+        }
+        unset = [ 'product.color' ]
+
+        # partial update by ID
+        self.c.activity_partial_update(id=activity['id'], set=set, unset=unset)
+        updated = feed.get()['results'][0]
+        expected = activity
+        expected['product'] = {
+            'name': 'boots',
+            'price': 7.99
+        }
+        expected['popularity'] = 1000
+        expected['foo'] = {
+            'bar': {
+                'baz': 'qux'
+            }
+        }
+        self.assertEqual(updated, expected)
+
+        # partial update by foreign ID + time
+        set = {
+            'foo.bar.baz': 42,
+            'popularity': 9000
+        }
+        unset = [ 'product.price' ]
+        self.c.activity_partial_update(foreign_id=activity['foreign_id'], time=activity['time'], set=set, unset=unset)
+        updated = feed.get()['results'][0]
+        expected['product'] = {
+            'name': 'boots'
+        }
+        expected['foo'] = {
+            'bar': {
+                'baz': 42
+            }
+        }
+        expected['popularity'] = 9000
+        self.assertEqual(updated, expected)
