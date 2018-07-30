@@ -342,6 +342,37 @@ class StreamClient(object):
 
         return self.get('activities/', auth_token, params=query_params)
 
+    def activity_partial_update(self, id=None, foreign_id=None, time=None, set={}, unset=[]):
+        '''
+        Partial update activity, via foreign ID or Foreign ID + timestamp
+
+        id: the activity ID
+        foreign_id: the activity foreign ID
+        time: the activity time
+        set: object containing the set operations
+        unset: list of unset operations
+        '''
+
+        auth_token = self.create_jwt_token('activities', '*', feed_id='*')
+
+        if id is None and (foreign_id is None or time is None):
+            raise TypeError('The id or foreign_id+time parameters must be provided and not be None')
+        if id is not None and (foreign_id is not None or time is not None):
+            raise TypeError('Only one of the id or the foreign_id+time parameters can be provided')
+
+        data = {
+            'set': set,
+            'unset': unset,
+        }
+
+        if id:
+            data['id'] = id
+        else:
+            data['foreign_id'] = foreign_id
+            data['time'] = time
+        
+        return self.post('activity/', auth_token, data=data)
+
     def create_redirect_url(self, target_url, user_id, events):
         '''
         Creates a redirect url for tracking the given events in the context
