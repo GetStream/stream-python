@@ -3,6 +3,14 @@
 ================
 
 ======
+2.10.0
+======
+:release-date: 2017-07-30
+:by: Tommaso Barbugli
+
+Partial activity API endpoint
+
+======
 2.9.3
 ======
 :release-date: 2017-07-20
