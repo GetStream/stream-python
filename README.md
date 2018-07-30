@@ -102,6 +102,20 @@ client.get_activities(foreign_id_times=[
     (foreign_id, activity_time),
 ])
 
+# Update some parts of an activity with activity_partial_update
+set = {
+    'product.name': 'boots',
+    'colors': {
+        'red': '0xFF0000',
+        'green': '0x00FF00'
+    }
+}
+unset = [ 'popularity', 'details.info' ]
+# ...by ID
+client.activity_partial_update(id=activity_id, set=set, unset=unset)
+# ...or by combination of foreign_id and time
+client.activity_partial_update(foreign_id=foreign_id, time=activity_time, set=set, unset=unset)
+
 # Generating tokens for client side usage (JS client)
 token = user_feed_1.token
 # Javascript client side feed initialization
