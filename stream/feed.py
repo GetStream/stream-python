@@ -182,7 +182,7 @@ class Feed(object):
             url, params=params, signature=token)
         return response
 
-    def following(self, offset=0, limit=25, feeds=None, filter=None):
+    def following(self, offset=0, limit=25, feeds=None):
         '''
         List the feeds which this feed is following
         '''
