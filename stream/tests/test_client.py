@@ -944,7 +944,14 @@ class ClientTest(TestCase):
         today = datetime.date.today()
         then = datetime.datetime.now().replace(microsecond=0)
         now = datetime.datetime.now()
-        data = dict(string="string", float=0.1, int=1, date=today, datetime=now, datetimenomicro=then)
+        data = dict(
+            string="string",
+            float=0.1,
+            int=1,
+            date=today,
+            datetime=now,
+            datetimenomicro=then,
+        )
         serialized = serializer.dumps(data)
         loaded = serializer.loads(serialized)
         self.assertEqual(data, loaded)
@@ -1128,64 +1135,55 @@ class ClientTest(TestCase):
 
     def test_activity_partial_update(self):
         now = datetime.datetime.utcnow()
-        feed = self.c.feed('user', uuid4())
-        feed.add_activity({
-            "actor": "barry",
-            "object": "09",
-            "verb": "tweet",
-            "time": now,
-            "foreign_id": 'fid:123',
-            'product': {
-                'name': 'shoes',
-                'price': 9.99,
-                'color': 'blue'
+        feed = self.c.feed("user", uuid4())
+        feed.add_activity(
+            {
+                "actor": "barry",
+                "object": "09",
+                "verb": "tweet",
+                "time": now,
+                "foreign_id": "fid:123",
+                "product": {"name": "shoes", "price": 9.99, "color": "blue"},
             }
-        })
-        activity = feed.get()['results'][0]
+        )
+        activity = feed.get()["results"][0]
 
         set = {
-            'product.name': 'boots',
-            'product.price': 7.99,
-            'popularity': 1000,
-            'foo': {
-                'bar': {
-                    'baz': 'qux',
-                }
-            }
+            "product.name": "boots",
+            "product.price": 7.99,
+            "popularity": 1000,
+            "foo": {"bar": {"baz": "qux"}},
         }
-        unset = [ 'product.color' ]
+        unset = ["product.color"]
 
         # partial update by ID
-        self.c.activity_partial_update(id=activity['id'], set=set, unset=unset)
-        updated = feed.get()['results'][0]
+        self.c.activity_partial_update(id=activity["id"], set=set, unset=unset)
+        updated = feed.get()["results"][0]
         expected = activity
-        expected['product'] = {
-            'name': 'boots',
-            'price': 7.99
-        }
-        expected['popularity'] = 1000
-        expected['foo'] = {
-            'bar': {
-                'baz': 'qux'
-            }
-        }
+        expected["product"] = {"name": "boots", "price": 7.99}
+        expected["popularity"] = 1000
+        expected["foo"] = {"bar": {"baz": "qux"}}
         self.assertEqual(updated, expected)
 
         # partial update by foreign ID + time
-        set = {
-            'foo.bar.baz': 42,
-            'popularity': 9000
-        }
-        unset = [ 'product.price' ]
-        self.c.activity_partial_update(foreign_id=activity['foreign_id'], time=activity['time'], set=set, unset=unset)
-        updated = feed.get()['results'][0]
-        expected['product'] = {
-            'name': 'boots'
-        }
-        expected['foo'] = {
-            'bar': {
-                'baz': 42
-            }
-        }
-        expected['popularity'] = 9000
+        set = {"foo.bar.baz": 42, "popularity": 9000}
+        unset = ["product.price"]
+        self.c.activity_partial_update(
+            foreign_id=activity["foreign_id"],
+            time=activity["time"],
+            set=set,
+            unset=unset,
+        )
+        updated = feed.get()["results"][0]
+        expected["product"] = {"name": "boots"}
+        expected["foo"] = {"bar": {"baz": 42}}
+        expected["popularity"] = 9000
         self.assertEqual(updated, expected)
+
+    def test_create_reference(self):
+        ref = self.c.collections.create_reference("item", "42")
+        self.assertEqual(ref, "SO:item:42")
+
+    def test_create_user_reference(self):
+        ref = self.c.collections.create_user_reference("42")
+        self.assertEqual(ref, "SO:user:42")
