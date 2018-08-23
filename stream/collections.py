@@ -10,6 +10,12 @@ class Collections(object):
         self.client = client
         self.token = token
 
+    def create_reference(self, collection_name, id):
+        return "SO:%s:%s" % (collection_name, id)
+   
+    def create_user_reference(self, id):
+        return self.create_reference("user", id)
+
     def upsert(self, collection_name, data):
         """
         "Insert new or update existing data.
