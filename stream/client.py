@@ -183,7 +183,7 @@ class StreamClient(object):
         }
         for k, v in extra_data.items():
             payload[k] = v
-        return jwt.encode(payload, self.api_secret).decode("utf-8")
+        return jwt.encode(payload, self.api_secret, algorithm='HS256').decode("utf-8")
 
     def create_jwt_token(self, resource, action, feed_id=None, user_id=None):
         '''
