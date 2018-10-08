@@ -3,6 +3,14 @@
 ================
 
 ======
+2.12.0
+======
+:release-date: 2018-10-08
+:by: Peter van Kampen
+
+Add user-session-token support
+
+======
 2.11.0
 ======
 :release-date: 2017-08-23
