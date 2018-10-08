@@ -174,6 +174,17 @@ class StreamClient(object):
                      response.url, headers, data)
         return self._parse_response(response)
 
+    def create_user_session_token(self, user_id, **extra_data):
+        '''Setup the payload for the given user_id with optional
+        extra data (key, value pairs) and encode it using jwt
+        '''
+        payload = {
+            'user_id': user_id,
+        }
+        for k, v in extra_data.items():
+            payload[k] = v
+        return jwt.encode(payload, self.api_secret).decode("utf-8")
+
     def create_jwt_token(self, resource, action, feed_id=None, user_id=None):
         '''
         Setup the payload for the given resource, action, feed or user

@@ -372,6 +372,18 @@ class ClientTest(TestCase):
         self.user1.token
         self.user1.get_readonly_token()
 
+    def test_user_session_token(self):
+        client = stream.connect(self.c.api_key, self.c.api_secret)
+        token = client.create_user_session_token("user")
+        self.assertEqual(token[:59], "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoidXNlci")
+        payload = jwt.decode(token, self.c.api_secret)
+        self.assertEqual(payload["user_id"], "user")
+        token = client.create_user_session_token("user", client="python", testing=True)
+        self.assertEqual(token[:59], "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoidXNlci")
+        payload = jwt.decode(token, self.c.api_secret)
+        self.assertEqual(payload["client"], "python")
+        self.assertEqual(payload["testing"], True)
+
     def test_add_activity(self):
         feed = getfeed("user", "py1")
         activity_data = {"actor": 1, "verb": "tweet", "object": 1}
