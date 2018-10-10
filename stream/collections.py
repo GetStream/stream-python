@@ -1,5 +1,4 @@
 class Collections(object):
-
     def __init__(self, client, token):
         """
         Used to manipulate data at the 'meta' endpoint
@@ -12,7 +11,7 @@ class Collections(object):
 
     def create_reference(self, collection_name, id):
         return "SO:%s:%s" % (collection_name, id)
-   
+
     def create_user_reference(self, id):
         return self.create_reference("user", id)
 
@@ -33,8 +32,9 @@ class Collections(object):
 
         data_json = {collection_name: data}
 
-        response = self.client.post('meta/', service_name='api',
-                                    signature=self.token, data={'data': data_json})
+        response = self.client.post(
+            "meta/", service_name="api", signature=self.token, data={"data": data_json}
+        )
         return response
 
     def select(self, collection_name, ids):
@@ -56,11 +56,15 @@ class Collections(object):
 
         foreign_ids = []
         for i in range(len(ids)):
-            foreign_ids.append('%s:%s' % (collection_name, ids[i]))
-        foreign_ids = ','.join(foreign_ids)
+            foreign_ids.append("%s:%s" % (collection_name, ids[i]))
+        foreign_ids = ",".join(foreign_ids)
 
-        response = self.client.get('meta/', service_name='api', params={'foreign_ids': foreign_ids},
-                                   signature=self.token)
+        response = self.client.get(
+            "meta/",
+            service_name="api",
+            params={"foreign_ids": foreign_ids},
+            signature=self.token,
+        )
 
         return response
 
@@ -80,9 +84,10 @@ class Collections(object):
             ids = [ids]
         ids = [str(i) for i in ids]
 
-        params = {'collection_name': collection_name, 'ids': ids}
+        params = {"collection_name": collection_name, "ids": ids}
 
-        response = self.client.delete('meta/', service_name='api', params=params,
-                                      signature=self.token)
+        response = self.client.delete(
+            "meta/", service_name="api", params=params, signature=self.token
+        )
 
         return response

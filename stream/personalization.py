@@ -20,8 +20,12 @@ class Personalization(object):
             personalization.get('follow_recommendations', user_id=123, limit=10, offset=10)
         """
 
-        response = self.client.get(resource, service_name='personalization', params=params,
-                                   signature=self.token)
+        response = self.client.get(
+            resource,
+            service_name="personalization",
+            params=params,
+            signature=self.token,
+        )
         return response
 
     def post(self, resource, **params):
@@ -37,10 +41,15 @@ class Personalization(object):
             rejected=[456])
         """
 
-        data = params['data'] or None
+        data = params["data"] or None
 
-        response = self.client.post(resource, service_name='personalization', params=params,
-                                    signature=self.token, data=data)
+        response = self.client.post(
+            resource,
+            service_name="personalization",
+            params=params,
+            signature=self.token,
+            data=data,
+        )
         return response
 
     def delete(self, resource, **params):
@@ -51,7 +60,11 @@ class Personalization(object):
         :return: data that was deleted if if successful or not.
         """
 
-        response = self.client.delete(resource, service_name='personalization', params=params,
-                                      signature=self.token)
+        response = self.client.delete(
+            resource,
+            service_name="personalization",
+            params=params,
+            signature=self.token,
+        )
 
         return response
