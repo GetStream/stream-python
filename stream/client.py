@@ -78,7 +78,7 @@ class StreamClient(object):
 
         self.session = requests.Session()
         self.auth = HTTPSignatureAuth(api_key, secret=api_secret)
-        
+
         # setup personalization
         from stream.personalization import Personalization
         token = self.create_jwt_token('personalization', '*', feed_id='*', user_id='*')
@@ -87,7 +87,7 @@ class StreamClient(object):
         from stream.collections import Collections
         token = self.create_jwt_token('collections', '*', feed_id='*', user_id='*')
         self.collections = Collections(self, token)
-        
+
 
     def feed(self, feed_slug, user_id):
         '''
@@ -214,7 +214,7 @@ class StreamClient(object):
             relative_url += '/'
 
         url = self.get_full_url(service_name, relative_url)
-        
+
         if method.__name__ in ['post', 'put', 'delete']:
             serialized = serializer.dumps(data)
         response = method(url, data=serialized, headers=headers,
@@ -376,12 +376,12 @@ class StreamClient(object):
             'unset': unset,
         }
 
-        if id:
+        if id is not None:
             data['id'] = id
         else:
             data['foreign_id'] = foreign_id
             data['time'] = time
-        
+
         return self.post('activity/', auth_token, data=data)
 
     def create_redirect_url(self, target_url, user_id, events):
