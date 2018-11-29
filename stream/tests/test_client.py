@@ -1197,3 +1197,43 @@ class ClientTest(TestCase):
     def test_create_user_reference(self):
         ref = self.c.collections.create_user_reference("42")
         self.assertEqual(ref, "SO:user:42")
+
+    def test_reaction_add(self):
+        self.c.reactions.add("like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike")
+
+    def test_reaction_get(self):
+        response = self.c.reactions.add(
+            "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+        )
+        self.c.reactions.get(response["reaction"]["id"])
+
+    def test_reaction_update(self):
+        response = self.c.reactions.add(
+            "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+        )
+        self.c.reactions.update(response["reaction"]["id"], {"changed": True})
+
+    def test_reaction_delete(self):
+        response = self.c.reactions.add(
+            "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+        )
+        self.c.reactions.delete(response["reaction"]["id"])
+
+    def test_reaction_add_child(self):
+        response = self.c.reactions.add(
+            "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+        )
+        self.c.reactions.add_child("like", response["reaction"]["id"], "rob")
+
+    def test_reaction_filter(self):
+        self.c.reactions.filter(
+            reaction_id="54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
+            id_lte="54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
+        )
+        self.c.reactions.filter(
+            activity_id="54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
+            id_lte="54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
+        )
+        self.c.reactions.filter(
+            user_id="mike", id_lte="54a60c1e-4ee3-494b-a1e3-50c06acb5ed4"
+        )
