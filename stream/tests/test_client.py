@@ -1307,14 +1307,14 @@ class ClientTest(TestCase):
     def test_collections_add(self):
         self.c.collections.add("items", {"data": 1}, id=str(uuid1()), user_id="tom")
 
+    def test_collections_add_no_id(self):
+        self.c.collections.add("items", {"data": 1})
+
     def test_collections_add_twice(self):
         id = str(uuid1())
-        r1 = self.c.collections.add("items", {"data": 1}, id=id)
-        r2 = self.c.collections.add("items", {"data": 2}, id=id)
-        entry = self.c.collections.get("items", id)
-        self.assertEqual(entry["data"], r2["data"])
-        self.assertEqual(r1["created_at"], r2["created_at"])
-        self.assertNotEqual(r1["updated_at"], r2["updated_at"])
+        self.c.collections.add("items", {"data": 1}, id=id)
+        with self.assertRaises(StreamApiException):
+            self.c.collections.add("items", {"data": 2}, id=id)
 
     def test_collections_get(self):
         response = self.c.collections.add("items", {"data": 1}, id=str(uuid1()))
