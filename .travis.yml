@@ -19,6 +19,7 @@ cache: pip
 install:
   - pip install -r dev_requirements.txt
 script:
+  - echo $STREAM_KEY
   - py.test -lv --cov=./
 after_script:
   - "pep8 --exclude=migrations --ignore=E501,E225,W293 stream"
