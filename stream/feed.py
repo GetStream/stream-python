@@ -132,16 +132,16 @@ class Feed(object):
         else:
             feed_url = self.feed_url
 
-        if reactions is not None and not isinstance(reactions, (dict, )):
+        if reactions is not None and not isinstance(reactions, (dict,)):
             raise TypeError("reactions argument should be a dictionary")
 
         if reactions is not None:
-            if reactions.get('own'):
-                params['withOwnReactions'] = True
-            if reactions.get('recent'):
-                params['withRecentReactions'] = True
-            if reactions.get('counts'):
-                params['withReactionCounts'] = True
+            if reactions.get("own"):
+                params["withOwnReactions"] = True
+            if reactions.get("recent"):
+                params["withRecentReactions"] = True
+            if reactions.get("counts"):
+                params["withReactionCounts"] = True
 
         response = self.client.get(feed_url, params=params, signature=token)
         return response

@@ -1374,37 +1374,29 @@ class ClientTest(TestCase):
 
     def test_feed_enrichment_own_reaction(self):
         f = getfeed("user", "mike")
-        activity_data = {
-            "actor": "mike",
-            "verb": "buy",
-            "object": "object",
-        }
+        activity_data = {"actor": "mike", "verb": "buy", "object": "object"}
         response = f.add_activity(activity_data)
         reaction = self.c.reactions.add("like", response["id"], "mike")
         reaction.pop("duration")
         enriched_response = f.get(reactions={"own": True}, user_id="mike")
-        self.assertEqual(enriched_response["results"][0]["own_reactions"]["like"][0], reaction)
+        self.assertEqual(
+            enriched_response["results"][0]["own_reactions"]["like"][0], reaction
+        )
 
     def test_feed_enrichment_recent_reaction(self):
         f = getfeed("user", "mike")
-        activity_data = {
-            "actor": "mike",
-            "verb": "buy",
-            "object": "object",
-        }
+        activity_data = {"actor": "mike", "verb": "buy", "object": "object"}
         response = f.add_activity(activity_data)
         reaction = self.c.reactions.add("like", response["id"], "mike")
         reaction.pop("duration")
         enriched_response = f.get(reactions={"recent": True})
-        self.assertEqual(enriched_response["results"][0]["latest_reactions"]["like"][0], reaction)
+        self.assertEqual(
+            enriched_response["results"][0]["latest_reactions"]["like"][0], reaction
+        )
 
     def test_feed_enrichment_reaction_counts(self):
         f = getfeed("user", "mike")
-        activity_data = {
-            "actor": "mike",
-            "verb": "buy",
-            "object": "object",
-        }
+        activity_data = {"actor": "mike", "verb": "buy", "object": "object"}
         response = f.add_activity(activity_data)
         reaction = self.c.reactions.add("like", response["id"], "mike")
         reaction.pop("duration")

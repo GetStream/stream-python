@@ -2,11 +2,11 @@ import datetime
 import json
 import six
 
-'''
+"""
 Adds the ability to send date and datetime objects to the API
 Datetime objects will be encoded/ decoded with microseconds
 The date and datetime formats from the API are automatically supported and parsed
-'''
+"""
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
 DATE_FORMAT = "%Y-%m-%d"
 
@@ -23,8 +23,8 @@ def _datetime_decoder(dict_):
         # The built-in `json` library will `unicode` strings, except for empty
         # strings which are of type `str`. `jsondate` patches this for
         # consistency so that `unicode` is always returned.
-        if value == '':
-            dict_[key] = u''
+        if value == "":
+            dict_[key] = u""
             continue
 
         if value is not None and isinstance(value, six.string_types):
@@ -45,10 +45,10 @@ def _datetime_decoder(dict_):
 
 
 def dumps(*args, **kwargs):
-    kwargs['default'] = _datetime_encoder
+    kwargs["default"] = _datetime_encoder
     return json.dumps(*args, **kwargs)
 
 
 def loads(*args, **kwargs):
-    kwargs['object_hook'] = _datetime_decoder
+    kwargs["object_hook"] = _datetime_decoder
     return json.loads(*args, **kwargs)

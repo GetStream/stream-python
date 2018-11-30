@@ -61,5 +61,8 @@ class Reactions(object):
             lookup_value = params.pop("user_id")
 
         return self.client.get(
-            "reaction/%s/%s/" % (lookup_field, lookup_value), service_name="api", signature=self.token, params=params
+            "reaction/%s/%s/" % (lookup_field, lookup_value),
+            service_name="api",
+            signature=self.token,
+            params=params,
         )
