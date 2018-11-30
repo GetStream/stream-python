@@ -8,14 +8,13 @@ import requests
 from stream.serializer import _datetime_encoder
 
 from stream import exceptions, serializer
-from stream.signing import sign
 from stream.users import Users
 from stream.utils import validate_feed_slug, validate_user_id, validate_foreign_id_time
-from stream.httpsig.requests_auth import HTTPSignatureAuth
 from requests import Request
 from stream.reactions import Reactions
 from stream.collections import Collections
 from stream.personalization import Personalization
+from stream.feed import Feed
 
 try:
     from urllib.parse import urlparse
@@ -89,7 +88,6 @@ class StreamClient(object):
         self.base_analytics_url = "https://analytics.stream-io-api.com/analytics/"
 
         self.session = requests.Session()
-        self.auth = HTTPSignatureAuth(api_key, secret=api_secret)
 
         token = self.create_jwt_token("personalization", "*", feed_id="*", user_id="*")
         self.personalization = Personalization(self, token)
@@ -110,15 +108,9 @@ class StreamClient(object):
         :param feed_slug: the slug of the feed
         :param user_id: the user id
         """
-        from stream.feed import Feed
-
         feed_slug = validate_feed_slug(feed_slug)
         user_id = validate_user_id(user_id)
-
-        # generate the token
-        feed_id = "%s%s" % (feed_slug, user_id)
-        token = sign(self.api_secret, feed_id)
-
+        token = self.create_jwt_token("feed", "*", feed_id="*")
         return Feed(self, feed_slug, user_id, token)
 
     def get_default_params(self):
@@ -176,34 +168,6 @@ class StreamClient(object):
         ):
             self.raise_exception(parsed_result, status_code=response.status_code)
         return parsed_result
-
-    def _make_signed_request(self, method_name, relative_url, params=None, data=None):
-        params = params or {}
-        data = data or {}
-        serialized = None
-        headers = self.get_default_header()
-        headers["X-Api-Key"] = self.api_key
-        date_header = datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
-        headers["Date"] = date_header
-        default_params = self.get_default_params()
-        default_params.update(params)
-        url = self.get_full_url("api", relative_url)
-        serialized = serializer.dumps(data)
-        method = getattr(self.session, method_name)
-        if method_name in ["post", "put"]:
-            serialized = serializer.dumps(data)
-        response = method(
-            url,
-            auth=self.auth,
-            data=serialized,
-            headers=headers,
-            params=default_params,
-            timeout=self.timeout,
-        )
-        logger.debug(
-            "stream api call %s, headers %s data %s", response.url, headers, data
-        )
-        return self._parse_response(response)
 
     def create_user_session_token(self, user_id, **extra_data):
         """Setup the payload for the given user_id with optional
@@ -286,8 +250,6 @@ class StreamClient(object):
             error_message = result["detail"]
             exception_fields = result.get("exception_fields")
             if exception_fields is not None:
-                errors = []
-
                 if isinstance(exception_fields, list):
                     errors = [
                         errors_from_fields(exception_dict)
@@ -341,7 +303,8 @@ class StreamClient(object):
 
         """
         data = {"activity": activity, "feeds": feeds}
-        return self._make_signed_request("post", "feed/add_to_many/", data=data)
+        token = self.create_jwt_token("feed", "*", feed_id="*")
+        return self.post("feed/add_to_many/", token, data=data)
 
     def follow_many(self, follows, activity_copy_limit=None):
         """
@@ -355,9 +318,9 @@ class StreamClient(object):
 
         if activity_copy_limit != None:
             params = dict(activity_copy_limit=activity_copy_limit)
-
-        return self._make_signed_request(
-            "post", "follow_many/", params=params, data=follows
+        token = self.create_jwt_token("follower", "*", feed_id="*")
+        return self.post(
+            "follow_many/", token, params=params, data=follows
         )
 
     def update_activities(self, activities):

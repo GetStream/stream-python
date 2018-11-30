@@ -17,8 +17,8 @@ def validate_feed_id(feed_id):
         raise ValueError(msg % feed_id)
 
     feed_slug, user_id = feed_id.split(":")
-    feed_slug = validate_feed_slug(feed_slug)
-    user_id = validate_user_id(user_id)
+    validate_feed_slug(feed_slug)
+    validate_user_id(user_id)
     return feed_id
 
 
