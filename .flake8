@@ -1,0 +1,5 @@
+[flake8]
+ignore = E501,W503,E203,E731
+max-line-length = 110
+select = C,E,F,W,B,B950
+exclude = .eggs/*,docs/*,lib,src,bin,include,share

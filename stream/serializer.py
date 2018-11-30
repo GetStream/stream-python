@@ -24,7 +24,7 @@ def _datetime_decoder(dict_):
         # strings which are of type `str`. `jsondate` patches this for
         # consistency so that `unicode` is always returned.
         if value == "":
-            dict_[key] = u""
+            dict_[key] = ""
             continue
 
         if value is not None and isinstance(value, six.string_types):

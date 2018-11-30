@@ -1,7 +1,7 @@
 from dateutil.tz import tzlocal
 import stream
 import time
-from stream.exceptions import ApiKeyException, InputException, StreamApiException
+from stream.exceptions import ApiKeyException, InputException
 import random
 import jwt
 
@@ -343,7 +343,7 @@ class ClientTest(TestCase):
             client = stream.connect("a", "b", "c", location="nonexistant")
 
             def get_feed():
-                f = client.feed("user", "1").get()
+                client.feed("user", "1").get()
 
             self.assertRaises(requests.exceptions.ConnectionError, get_feed)
 
@@ -610,13 +610,13 @@ class ClientTest(TestCase):
     def _get_first_aggregated_activity(self, activities):
         try:
             return activities[0]["activities"][0]
-        except IndexError as e:
+        except IndexError:
             pass
 
     def _get_first_activity(self, activities):
         try:
             return activities[0]
-        except IndexError as e:
+        except IndexError:
             pass
 
     def test_empty_followings(self):
@@ -833,8 +833,8 @@ class ClientTest(TestCase):
 
         utcnow = datetime.datetime.utcnow()
         activity_data = {"actor": 1, "verb": "tweet", "object": 1, "time": utcnow}
-        response = self.user1.add_activity(activity_data)
-        response = self.user1.add_activity(activity_data)
+        self.user1.add_activity(activity_data)
+        self.user1.add_activity(activity_data)
 
         activities = self.user1.get(limit=2)["results"]
         self.assertDatetimeAlmostEqual(activities[0]["time"], utcnow)
@@ -940,7 +940,7 @@ class ClientTest(TestCase):
         try:
             doit()
             raise ValueError("should have raised InputException")
-        except InputException as e:
+        except InputException:
             pass
 
     def test_wrong_feed_spec(self):
@@ -1274,12 +1274,6 @@ class ClientTest(TestCase):
     def test_user_add(self):
         self.c.users.add(str(uuid1()))
 
-    def test_user_add_twice(self):
-        user_id = str(uuid1())
-        self.c.users.add(user_id)
-        with self.assertRaises(StreamApiException):
-            self.c.users.add(user_id)
-
     def test_user_add_get_or_create(self):
         user_id = str(uuid1())
         r1 = self.c.users.add(user_id)
@@ -1310,12 +1304,6 @@ class ClientTest(TestCase):
     def test_collections_add_no_id(self):
         self.c.collections.add("items", {"data": 1})
 
-    def test_collections_add_twice(self):
-        id = str(uuid1())
-        self.c.collections.add("items", {"data": 1}, id=id)
-        with self.assertRaises(StreamApiException):
-            self.c.collections.add("items", {"data": 2}, id=id)
-
     def test_collections_get(self):
         response = self.c.collections.add("items", {"data": 1}, id=str(uuid1()))
         entry = self.c.collections.get("items", response["id"])
@@ -1333,10 +1321,6 @@ class ClientTest(TestCase):
     def test_collections_delete(self):
         response = self.c.collections.add("items", {"data": 1}, str(uuid1()))
         self.c.collections.delete("items", response["id"])
-
-    def test_feed_enrichment_bad(self):
-        with self.assertRaises(TypeError):
-            self.c.feed("user", "mike").get(enrich=True, reactions=True)
 
     def test_feed_enrichment_collection(self):
         entry = self.c.collections.add("items", {"name": "time machine"})

@@ -164,7 +164,7 @@ class Feed(object):
             "target": target_feed_id,
             "target_token": self.client.feed(target_feed_slug, target_user_id).token,
         }
-        if activity_copy_limit != None:
+        if activity_copy_limit is not None:
             data["activity_copy_limit"] = activity_copy_limit
         token = self.create_scope_token("follower", "write")
         data.update(extra_data)

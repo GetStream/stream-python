@@ -33,7 +33,7 @@ def connect(
     # support for the heroku STREAM_URL syntax
     if stream_url and not api_key:
         pattern = re.compile(
-            "https\:\/\/(\w+)\:(\w+)\@([\w-]*).*\?app_id=(\d+)", re.IGNORECASE
+            r"https\:\/\/(\w+)\:(\w+)\@([\w-]*).*\?app_id=(\d+)", re.IGNORECASE
         )
         result = pattern.match(stream_url)
         if result and len(result.groups()) == 4:

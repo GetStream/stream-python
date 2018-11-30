@@ -1,4 +1,3 @@
-from datetime import datetime
 import json
 import logging
 import os
@@ -316,12 +315,10 @@ class StreamClient(object):
         """
         params = None
 
-        if activity_copy_limit != None:
+        if activity_copy_limit is not None:
             params = dict(activity_copy_limit=activity_copy_limit)
         token = self.create_jwt_token("follower", "*", feed_id="*")
-        return self.post(
-            "follow_many/", token, params=params, data=follows
-        )
+        return self.post("follow_many/", token, params=params, data=follows)
 
     def update_activities(self, activities):
         """

@@ -1,6 +1,6 @@
 import re
 
-valid_re = re.compile("^[\w-]+$")
+valid_re = re.compile(r"^[\w-]+$")
 
 
 def validate_feed_id(feed_id):
@@ -24,7 +24,7 @@ def validate_feed_id(feed_id):
 
 def validate_feed_slug(feed_slug):
     """
-    Validates the feed slug falls into \w
+    Validates the feed slug
     """
     feed_slug = str(feed_slug)
     if not valid_re.match(feed_slug):
@@ -35,7 +35,7 @@ def validate_feed_slug(feed_slug):
 
 def validate_user_id(user_id):
     """
-    Validates the user id falls into \w
+    Validates the user id
     """
     user_id = str(user_id)
     if not valid_re.match(user_id):
