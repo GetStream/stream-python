@@ -1214,9 +1214,9 @@ class ClientTest(TestCase):
             reaction["activity_id"], "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4"
         )
         self.assertEqual(reaction["kind"], "like")
-        self.assertIn("created_at", reaction)
-        self.assertIn("updated_at", reaction)
-        self.assertIn("id", reaction)
+        self.assertTrue("created_at" in reaction)
+        self.assertTrue("updated_at" in reaction)
+        self.assertTrue("id" in reaction)
 
     def test_reaction_update(self):
         response = self.c.reactions.add(
@@ -1286,9 +1286,9 @@ class ClientTest(TestCase):
         response = self.c.users.add(str(uuid1()))
         user = self.c.users.get(response["id"])
         self.assertEqual(user["data"], {})
-        self.assertIn("created_at", user)
-        self.assertIn("updated_at", user)
-        self.assertIn("id", user)
+        self.assertTrue("created_at" in user)
+        self.assertTrue("updated_at" in user)
+        self.assertTrue("id" in user)
 
     def test_user_update(self):
         response = self.c.users.add(str(uuid1()))
@@ -1308,9 +1308,9 @@ class ClientTest(TestCase):
         response = self.c.collections.add("items", {"data": 1}, id=str(uuid1()))
         entry = self.c.collections.get("items", response["id"])
         self.assertEqual(entry["data"], {"data": 1})
-        self.assertIn("created_at", entry)
-        self.assertIn("updated_at", entry)
-        self.assertIn("id", entry)
+        self.assertTrue("created_at" in entry)
+        self.assertTrue("updated_at" in entry)
+        self.assertTrue("id" in entry)
 
     def test_collections_update(self):
         response = self.c.collections.add("items", {"data": 1}, str(uuid1()))
