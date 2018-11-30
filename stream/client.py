@@ -168,7 +168,7 @@ class StreamClient(object):
             self.raise_exception(parsed_result, status_code=response.status_code)
         return parsed_result
 
-    def create_user_session_token(self, user_id, **extra_data):
+    def create_user_token(self, user_id, **extra_data):
         """Setup the payload for the given user_id with optional
         extra data (key, value pairs) and encode it using jwt
         """
@@ -176,6 +176,9 @@ class StreamClient(object):
         for k, v in extra_data.items():
             payload[k] = v
         return jwt.encode(payload, self.api_secret, algorithm="HS256").decode("utf-8")
+
+    def create_user_session_token(self, user_id, **extra_data):
+        return self.create_user_token(user_id, **extra_data)
 
     def create_jwt_token(self, resource, action, feed_id=None, user_id=None):
         """

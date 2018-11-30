@@ -28,6 +28,8 @@ Documentation for this Python client are available at the [Stream website](https
 ### Usage
 
 ```python
+import datetime
+
 # Instantiate a new client
 import stream
 client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET')
@@ -116,15 +118,11 @@ client.activity_partial_update(id=activity_id, set=set, unset=unset)
 # ...or by combination of foreign_id and time
 client.activity_partial_update(foreign_id=foreign_id, time=activity_time, set=set, unset=unset)
 
-# Generating tokens for client side usage (JS client)
-token = user_feed_1.token
-# Javascript client side feed initialization
-# user1 = client.feed('user', '1', '{{ token }}');
+# Generating user token for client side usage (JS client)
+user_token = client.create_user_token("user-42")
 
-# Generate a read-only token for client side usage (JS client)
-readonly_token = user_feed_1.get_readonly_token()
 # Javascript client side feed initialization
-# user1 = client.feed('user', '1', '{{ readonly_token }}');
+# client = stream.connect(apiKey, userToken, appId);
 
 # Generate a redirect url for the Stream Analytics platform to track
 # events/impressions on url clicks
@@ -163,6 +161,15 @@ py.test --cov stream --cov-report html
 # against a local API backend
 LOCAL=true py.test
 ```
+
+Install black and flake8
+
+```
+pip install black
+pip install flake8
+```
+
+Install git hooks to avoid pushing invalid code (git commit will run black and flak8)
 
 ### Releasing a new version
 
