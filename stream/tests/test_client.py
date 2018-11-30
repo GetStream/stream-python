@@ -1205,27 +1205,36 @@ class ClientTest(TestCase):
         response = self.c.reactions.add(
             "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
         )
-        self.c.reactions.get(response["reaction"]["id"])
+        reaction = self.c.reactions.get(response["id"])
+        self.assertEqual(reaction["parent"], "")
+        self.assertEqual(reaction["data"], {})
+        self.assertEqual(reaction["latest_children"], {})
+        self.assertEqual(reaction["children_counts"], {})
+        self.assertEqual(reaction["activity_id"], "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4")
+        self.assertEqual(reaction["kind"], "like")
+        self.assertIn("created_at", reaction)
+        self.assertIn("updated_at", reaction)
+        self.assertIn("id", reaction)
 
     def test_reaction_update(self):
         response = self.c.reactions.add(
             "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
         )
-        self.c.reactions.update(response["reaction"]["id"], {"changed": True})
+        self.c.reactions.update(response["id"], {"changed": True})
 
     def test_reaction_delete(self):
         response = self.c.reactions.add(
             "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
         )
-        self.c.reactions.delete(response["reaction"]["id"])
+        self.c.reactions.delete(response["id"])
 
     def test_reaction_add_child(self):
         response = self.c.reactions.add(
             "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
         )
-        self.c.reactions.add_child("like", response["reaction"]["id"], "rob")
+        self.c.reactions.add_child("like", response["id"], "rob")
 
-    def test_reaction_filter(self):
+    def test_reaction_filter_random(self):
         self.c.reactions.filter(
             reaction_id="54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
             id_lte="54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
@@ -1237,3 +1246,34 @@ class ClientTest(TestCase):
         self.c.reactions.filter(
             user_id="mike", id_lte="54a60c1e-4ee3-494b-a1e3-50c06acb5ed4"
         )
+
+    def _first_result_should_be(self, response, element):
+        el = element.copy()
+        el.pop('duration')
+        self.assertEqual(len(response["results"]), 1)
+        self.assertEqual(response["results"][0], el)
+
+    def test_reaction_filter(self):
+        activity_id = str(uuid1())
+        user = str(uuid1())
+
+        response = self.c.reactions.add(
+            "like", activity_id, user
+        )
+        child = self.c.reactions.add_child(
+            "like", response["id"], user
+        )
+        reaction = self.c.reactions.get(response["id"])
+        r = self.c.reactions.filter(
+            reaction_id=reaction["id"],
+        )
+        self._first_result_should_be(r, child)
+
+        r = self.c.reactions.filter(
+            activity_id=activity_id,
+            id_lte=reaction["id"],
+        )
+        self._first_result_should_be(r, reaction)
+
+        r = self.c.reactions.filter(user_id=user, id_lte=reaction["id"])
+        self._first_result_should_be(r, reaction)
