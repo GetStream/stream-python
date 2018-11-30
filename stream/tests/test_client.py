@@ -1195,8 +1195,8 @@ class ClientTest(TestCase):
         self.assertEqual(ref, "SO:item:42")
 
     def test_create_user_reference(self):
-        ref = self.c.collections.create_user_reference("42")
-        self.assertEqual(ref, "SO:user:42")
+        ref = self.c.users.create_reference("42")
+        self.assertEqual(ref, "SU:42")
 
     def test_reaction_add(self):
         self.c.reactions.add("like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike")
@@ -1333,3 +1333,80 @@ class ClientTest(TestCase):
     def test_collections_delete(self):
         response = self.c.collections.add("items", {"data": 1}, str(uuid1()))
         self.c.collections.delete("items", response["id"])
+
+    def test_feed_enrichment_bad(self):
+        with self.assertRaises(TypeError):
+            self.c.feed("user", "mike").get(enrich=True, reactions=True)
+
+    def test_feed_enrichment_collection(self):
+        entry = self.c.collections.add("items", {"name": "time machine"})
+        entry.pop("duration")
+        f = getfeed("user", "mike")
+        activity_data = {
+            "actor": "mike",
+            "verb": "buy",
+            "object": self.c.collections.create_reference("items", entry),
+        }
+        f.add_activity(activity_data)
+        response = f.get()
+        self.assertTrue(
+            set(activity_data.items()).issubset(set(response["results"][0].items()))
+        )
+        enriched_response = f.get(enrich=True)
+        self.assertEqual(enriched_response["results"][0]["object"], entry)
+
+    def test_feed_enrichment_user(self):
+        user = self.c.users.add(str(uuid1()), {"name": "Mike"})
+        user.pop("duration")
+        f = getfeed("user", "mike")
+        activity_data = {
+            "actor": self.c.users.create_reference(user),
+            "verb": "buy",
+            "object": "time machine",
+        }
+        f.add_activity(activity_data)
+        response = f.get()
+        self.assertTrue(
+            set(activity_data.items()).issubset(set(response["results"][0].items()))
+        )
+        enriched_response = f.get(enrich=True)
+        self.assertEqual(enriched_response["results"][0]["actor"], user)
+
+    def test_feed_enrichment_own_reaction(self):
+        f = getfeed("user", "mike")
+        activity_data = {
+            "actor": "mike",
+            "verb": "buy",
+            "object": "object",
+        }
+        response = f.add_activity(activity_data)
+        reaction = self.c.reactions.add("like", response["id"], "mike")
+        reaction.pop("duration")
+        enriched_response = f.get(reactions={"own": True}, user_id="mike")
+        self.assertEqual(enriched_response["results"][0]["own_reactions"]["like"][0], reaction)
+
+    def test_feed_enrichment_recent_reaction(self):
+        f = getfeed("user", "mike")
+        activity_data = {
+            "actor": "mike",
+            "verb": "buy",
+            "object": "object",
+        }
+        response = f.add_activity(activity_data)
+        reaction = self.c.reactions.add("like", response["id"], "mike")
+        reaction.pop("duration")
+        enriched_response = f.get(reactions={"recent": True})
+        self.assertEqual(enriched_response["results"][0]["latest_reactions"]["like"][0], reaction)
+
+    def test_feed_enrichment_reaction_counts(self):
+        f = getfeed("user", "mike")
+        activity_data = {
+            "actor": "mike",
+            "verb": "buy",
+            "object": "object",
+        }
+        response = f.add_activity(activity_data)
+        reaction = self.c.reactions.add("like", response["id"], "mike")
+        reaction.pop("duration")
+        enriched_response = f.get(reactions={"counts": True})
+        self.assertEqual(enriched_response["results"][0]["reaction_counts"]["like"], 1)

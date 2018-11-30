@@ -3,6 +3,12 @@ class Users(object):
         self.client = client
         self.token = token
 
+    def create_reference(self, id):
+        _id = id
+        if isinstance(id, (dict,)) and id.get("id") is not None:
+            _id = id.get("id")
+        return "SU:%s" % _id
+
     def add(self, user_id, data=None, get_or_create=False):
         payload = dict(id=user_id, data=data)
         return self.client.post(

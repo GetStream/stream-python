@@ -11,11 +11,11 @@ class Collections(object):
         self.token = token
 
     def create_reference(self, collection_name, id):
-        return "SO:%s:%s" % (collection_name, id)
+        _id = id
+        if isinstance(id, (dict,)) and id.get("id") is not None:
+            _id = id.get("id")
+        return "SO:%s:%s" % (collection_name, _id)
    
-    def create_user_reference(self, id):
-        return self.create_reference("user", id)
-
     def upsert(self, collection_name, data):
         """
         "Insert new or update existing data.
