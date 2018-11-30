@@ -9,6 +9,7 @@ from stream.serializer import _datetime_encoder
 
 from stream import exceptions, serializer
 from stream.signing import sign
+from stream.users import Users
 from stream.utils import validate_feed_slug, validate_user_id, validate_foreign_id_time
 from stream.httpsig.requests_auth import HTTPSignatureAuth
 from requests import Request
@@ -98,6 +99,9 @@ class StreamClient(object):
 
         token = self.create_jwt_token("reactions", "*", feed_id="*")
         self.reactions = Reactions(self, token)
+
+        token = self.create_jwt_token("users", "*", feed_id="*")
+        self.users = Users(self, token)
 
     def feed(self, feed_slug, user_id):
         """

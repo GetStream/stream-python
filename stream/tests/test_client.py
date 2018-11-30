@@ -1,7 +1,7 @@
 from dateutil.tz import tzlocal
 import stream
 import time
-from stream.exceptions import ApiKeyException, InputException
+from stream.exceptions import ApiKeyException, InputException, StreamApiException
 import random
 import jwt
 
@@ -1210,7 +1210,9 @@ class ClientTest(TestCase):
         self.assertEqual(reaction["data"], {})
         self.assertEqual(reaction["latest_children"], {})
         self.assertEqual(reaction["children_counts"], {})
-        self.assertEqual(reaction["activity_id"], "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4")
+        self.assertEqual(
+            reaction["activity_id"], "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4"
+        )
         self.assertEqual(reaction["kind"], "like")
         self.assertIn("created_at", reaction)
         self.assertIn("updated_at", reaction)
@@ -1249,7 +1251,7 @@ class ClientTest(TestCase):
 
     def _first_result_should_be(self, response, element):
         el = element.copy()
-        el.pop('duration')
+        el.pop("duration")
         self.assertEqual(len(response["results"]), 1)
         self.assertEqual(response["results"][0], el)
 
@@ -1257,23 +1259,47 @@ class ClientTest(TestCase):
         activity_id = str(uuid1())
         user = str(uuid1())
 
-        response = self.c.reactions.add(
-            "like", activity_id, user
-        )
-        child = self.c.reactions.add_child(
-            "like", response["id"], user
-        )
+        response = self.c.reactions.add("like", activity_id, user)
+        child = self.c.reactions.add_child("like", response["id"], user)
         reaction = self.c.reactions.get(response["id"])
-        r = self.c.reactions.filter(
-            reaction_id=reaction["id"],
-        )
+        r = self.c.reactions.filter(reaction_id=reaction["id"])
         self._first_result_should_be(r, child)
 
-        r = self.c.reactions.filter(
-            activity_id=activity_id,
-            id_lte=reaction["id"],
-        )
+        r = self.c.reactions.filter(activity_id=activity_id, id_lte=reaction["id"])
         self._first_result_should_be(r, reaction)
 
         r = self.c.reactions.filter(user_id=user, id_lte=reaction["id"])
         self._first_result_should_be(r, reaction)
+
+    def test_user_add(self):
+        self.c.users.add(str(uuid1()))
+
+    def test_user_add_twice(self):
+        user_id = str(uuid1())
+        self.c.users.add(user_id)
+        with self.assertRaises(StreamApiException):
+            self.c.users.add(user_id)
+
+    def test_user_add_get_or_create(self):
+        user_id = str(uuid1())
+        r1 = self.c.users.add(user_id)
+        r2 = self.c.users.add(user_id, get_or_create=True)
+        self.assertEqual(r1["id"], r2["id"])
+        self.assertEqual(r1["created_at"], r2["created_at"])
+        self.assertEqual(r1["updated_at"], r2["updated_at"])
+
+    def test_user_get(self):
+        response = self.c.users.add(str(uuid1()))
+        user = self.c.users.get(response["id"])
+        self.assertEqual(user["data"], {})
+        self.assertIn("created_at", user)
+        self.assertIn("updated_at", user)
+        self.assertIn("id", user)
+
+    def test_user_update(self):
+        response = self.c.users.add(str(uuid1()))
+        self.c.users.update(response["id"], {"changed": True})
+
+    def test_user_delete(self):
+        response = self.c.users.add(str(uuid1()))
+        self.c.users.delete(response["id"])
