@@ -1,5 +1,4 @@
 class Collections(object):
-
     def __init__(self, client, token):
         """
         Used to manipulate data at the 'meta' endpoint
@@ -11,10 +10,10 @@ class Collections(object):
         self.token = token
 
     def create_reference(self, collection_name, id):
-        return "SO:%s:%s" % (collection_name, id)
-   
-    def create_user_reference(self, id):
-        return self.create_reference("user", id)
+        _id = id
+        if isinstance(id, (dict,)) and id.get("id") is not None:
+            _id = id.get("id")
+        return "SO:%s:%s" % (collection_name, _id)
 
     def upsert(self, collection_name, data):
         """
@@ -33,8 +32,12 @@ class Collections(object):
 
         data_json = {collection_name: data}
 
-        response = self.client.post('meta/', service_name='api',
-                                    signature=self.token, data={'data': data_json})
+        response = self.client.post(
+            "collections/",
+            service_name="api",
+            signature=self.token,
+            data={"data": data_json},
+        )
         return response
 
     def select(self, collection_name, ids):
@@ -56,15 +59,19 @@ class Collections(object):
 
         foreign_ids = []
         for i in range(len(ids)):
-            foreign_ids.append('%s:%s' % (collection_name, ids[i]))
-        foreign_ids = ','.join(foreign_ids)
+            foreign_ids.append("%s:%s" % (collection_name, ids[i]))
+        foreign_ids = ",".join(foreign_ids)
 
-        response = self.client.get('meta/', service_name='api', params={'foreign_ids': foreign_ids},
-                                   signature=self.token)
+        response = self.client.get(
+            "collections/",
+            service_name="api",
+            params={"foreign_ids": foreign_ids},
+            signature=self.token,
+        )
 
         return response
 
-    def delete(self, collection_name, ids):
+    def delete_many(self, collection_name, ids):
         """
         Delete data from meta.
         :param collection_name: Collection Name i.e 'user'
@@ -80,9 +87,42 @@ class Collections(object):
             ids = [ids]
         ids = [str(i) for i in ids]
 
-        params = {'collection_name': collection_name, 'ids': ids}
+        params = {"collection_name": collection_name, "ids": ids}
 
-        response = self.client.delete('meta/', service_name='api', params=params,
-                                      signature=self.token)
+        response = self.client.delete(
+            "collections/", service_name="api", params=params, signature=self.token
+        )
 
         return response
+
+    def add(self, collection_name, data, id=None, user_id=None):
+        payload = dict(id=id, data=data, user_id=user_id)
+        return self.client.post(
+            "collections/%s" % collection_name,
+            service_name="api",
+            signature=self.token,
+            data=payload,
+        )
+
+    def get(self, collection_name, id):
+        return self.client.get(
+            "collections/%s/%s" % (collection_name, id),
+            service_name="api",
+            signature=self.token,
+        )
+
+    def update(self, collection_name, id, data=None):
+        payload = dict(data=data)
+        return self.client.put(
+            "collections/%s/%s" % (collection_name, id),
+            service_name="api",
+            signature=self.token,
+            data=payload,
+        )
+
+    def delete(self, collection_name, id):
+        return self.client.delete(
+            "collections/%s/%s" % (collection_name, id),
+            service_name="api",
+            signature=self.token,
+        )

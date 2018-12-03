@@ -1,0 +1,25 @@
+[tool.black]
+line-length = 88
+py36 = true
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.egg
+  | \.eggs
+  | \.mypy_cache
+  | \.tox
+  | _build
+  | \.venv
+  | src
+  | bin
+  | stream_python\.egg-info
+  | fabfile.py
+  | lib
+  | docs
+  | buck-out
+  | build
+  | dist
+)/
+'''

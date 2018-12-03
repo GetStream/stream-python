@@ -1,5 +1,4 @@
 language: python
-sudo: false
 python:
   - 2.6
   - 2.7
@@ -12,13 +11,13 @@ matrix:
   include:
     - python: 3.7
       dist: xenial
-      sudo: true
 
 cache: pip
 
 install:
   - pip install -r dev_requirements.txt
 script:
+  - echo $STREAM_KEY
   - py.test -lv --cov=./
 after_script:
   - "pep8 --exclude=migrations --ignore=E501,E225,W293 stream"

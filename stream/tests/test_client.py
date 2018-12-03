@@ -343,7 +343,7 @@ class ClientTest(TestCase):
             client = stream.connect("a", "b", "c", location="nonexistant")
 
             def get_feed():
-                f = client.feed("user", "1").get()
+                client.feed("user", "1").get()
 
             self.assertRaises(requests.exceptions.ConnectionError, get_feed)
 
@@ -610,13 +610,13 @@ class ClientTest(TestCase):
     def _get_first_aggregated_activity(self, activities):
         try:
             return activities[0]["activities"][0]
-        except IndexError as e:
+        except IndexError:
             pass
 
     def _get_first_activity(self, activities):
         try:
             return activities[0]
-        except IndexError as e:
+        except IndexError:
             pass
 
     def test_empty_followings(self):
@@ -833,8 +833,8 @@ class ClientTest(TestCase):
 
         utcnow = datetime.datetime.utcnow()
         activity_data = {"actor": 1, "verb": "tweet", "object": 1, "time": utcnow}
-        response = self.user1.add_activity(activity_data)
-        response = self.user1.add_activity(activity_data)
+        self.user1.add_activity(activity_data)
+        self.user1.add_activity(activity_data)
 
         activities = self.user1.get(limit=2)["results"]
         self.assertDatetimeAlmostEqual(activities[0]["time"], utcnow)
@@ -940,7 +940,7 @@ class ClientTest(TestCase):
         try:
             doit()
             raise ValueError("should have raised InputException")
-        except InputException as e:
+        except InputException:
             pass
 
     def test_wrong_feed_spec(self):
@@ -1195,5 +1195,194 @@ class ClientTest(TestCase):
         self.assertEqual(ref, "SO:item:42")
 
     def test_create_user_reference(self):
-        ref = self.c.collections.create_user_reference("42")
-        self.assertEqual(ref, "SO:user:42")
+        ref = self.c.users.create_reference("42")
+        self.assertEqual(ref, "SU:42")
+
+    def test_reaction_add(self):
+        self.c.reactions.add("like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike")
+
+    def test_reaction_get(self):
+        response = self.c.reactions.add(
+            "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+        )
+        reaction = self.c.reactions.get(response["id"])
+        self.assertEqual(reaction["parent"], "")
+        self.assertEqual(reaction["data"], {})
+        self.assertEqual(reaction["latest_children"], {})
+        self.assertEqual(reaction["children_counts"], {})
+        self.assertEqual(
+            reaction["activity_id"], "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4"
+        )
+        self.assertEqual(reaction["kind"], "like")
+        self.assertTrue("created_at" in reaction)
+        self.assertTrue("updated_at" in reaction)
+        self.assertTrue("id" in reaction)
+
+    def test_reaction_update(self):
+        response = self.c.reactions.add(
+            "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+        )
+        self.c.reactions.update(response["id"], {"changed": True})
+
+    def test_reaction_delete(self):
+        response = self.c.reactions.add(
+            "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+        )
+        self.c.reactions.delete(response["id"])
+
+    def test_reaction_add_child(self):
+        response = self.c.reactions.add(
+            "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+        )
+        self.c.reactions.add_child("like", response["id"], "rob")
+
+    def test_reaction_filter_random(self):
+        self.c.reactions.filter(
+            reaction_id="54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
+            id_lte="54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
+        )
+        self.c.reactions.filter(
+            activity_id="54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
+            id_lte="54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
+        )
+        self.c.reactions.filter(
+            user_id="mike", id_lte="54a60c1e-4ee3-494b-a1e3-50c06acb5ed4"
+        )
+
+    def _first_result_should_be(self, response, element):
+        el = element.copy()
+        el.pop("duration")
+        self.assertEqual(len(response["results"]), 1)
+        self.assertEqual(response["results"][0], el)
+
+    def test_reaction_filter(self):
+        activity_id = str(uuid1())
+        user = str(uuid1())
+
+        response = self.c.reactions.add("like", activity_id, user)
+        child = self.c.reactions.add_child("like", response["id"], user)
+        reaction = self.c.reactions.get(response["id"])
+        r = self.c.reactions.filter(reaction_id=reaction["id"])
+        self._first_result_should_be(r, child)
+
+        r = self.c.reactions.filter(activity_id=activity_id, id_lte=reaction["id"])
+        self._first_result_should_be(r, reaction)
+
+        r = self.c.reactions.filter(user_id=user, id_lte=reaction["id"])
+        self._first_result_should_be(r, reaction)
+
+    def test_user_add(self):
+        self.c.users.add(str(uuid1()))
+
+    def test_user_add_get_or_create(self):
+        user_id = str(uuid1())
+        r1 = self.c.users.add(user_id)
+        r2 = self.c.users.add(user_id, get_or_create=True)
+        self.assertEqual(r1["id"], r2["id"])
+        self.assertEqual(r1["created_at"], r2["created_at"])
+        self.assertEqual(r1["updated_at"], r2["updated_at"])
+
+    def test_user_get(self):
+        response = self.c.users.add(str(uuid1()))
+        user = self.c.users.get(response["id"])
+        self.assertEqual(user["data"], {})
+        self.assertTrue("created_at" in user)
+        self.assertTrue("updated_at" in user)
+        self.assertTrue("id" in user)
+
+    def test_user_update(self):
+        response = self.c.users.add(str(uuid1()))
+        self.c.users.update(response["id"], {"changed": True})
+
+    def test_user_delete(self):
+        response = self.c.users.add(str(uuid1()))
+        self.c.users.delete(response["id"])
+
+    def test_collections_add(self):
+        self.c.collections.add("items", {"data": 1}, id=str(uuid1()), user_id="tom")
+
+    def test_collections_add_no_id(self):
+        self.c.collections.add("items", {"data": 1})
+
+    def test_collections_get(self):
+        response = self.c.collections.add("items", {"data": 1}, id=str(uuid1()))
+        entry = self.c.collections.get("items", response["id"])
+        self.assertEqual(entry["data"], {"data": 1})
+        self.assertTrue("created_at" in entry)
+        self.assertTrue("updated_at" in entry)
+        self.assertTrue("id" in entry)
+
+    def test_collections_update(self):
+        response = self.c.collections.add("items", {"data": 1}, str(uuid1()))
+        self.c.collections.update("items", response["id"], data={"changed": True})
+        entry = self.c.collections.get("items", response["id"])
+        self.assertEqual(entry["data"], {"changed": True})
+
+    def test_collections_delete(self):
+        response = self.c.collections.add("items", {"data": 1}, str(uuid1()))
+        self.c.collections.delete("items", response["id"])
+
+    def test_feed_enrichment_collection(self):
+        entry = self.c.collections.add("items", {"name": "time machine"})
+        entry.pop("duration")
+        f = getfeed("user", "mike")
+        activity_data = {
+            "actor": "mike",
+            "verb": "buy",
+            "object": self.c.collections.create_reference("items", entry),
+        }
+        f.add_activity(activity_data)
+        response = f.get()
+        self.assertTrue(
+            set(activity_data.items()).issubset(set(response["results"][0].items()))
+        )
+        enriched_response = f.get(enrich=True)
+        self.assertEqual(enriched_response["results"][0]["object"], entry)
+
+    def test_feed_enrichment_user(self):
+        user = self.c.users.add(str(uuid1()), {"name": "Mike"})
+        user.pop("duration")
+        f = getfeed("user", "mike")
+        activity_data = {
+            "actor": self.c.users.create_reference(user),
+            "verb": "buy",
+            "object": "time machine",
+        }
+        f.add_activity(activity_data)
+        response = f.get()
+        self.assertTrue(
+            set(activity_data.items()).issubset(set(response["results"][0].items()))
+        )
+        enriched_response = f.get(enrich=True)
+        self.assertEqual(enriched_response["results"][0]["actor"], user)
+
+    def test_feed_enrichment_own_reaction(self):
+        f = getfeed("user", "mike")
+        activity_data = {"actor": "mike", "verb": "buy", "object": "object"}
+        response = f.add_activity(activity_data)
+        reaction = self.c.reactions.add("like", response["id"], "mike")
+        reaction.pop("duration")
+        enriched_response = f.get(reactions={"own": True}, user_id="mike")
+        self.assertEqual(
+            enriched_response["results"][0]["own_reactions"]["like"][0], reaction
+        )
+
+    def test_feed_enrichment_recent_reaction(self):
+        f = getfeed("user", "mike")
+        activity_data = {"actor": "mike", "verb": "buy", "object": "object"}
+        response = f.add_activity(activity_data)
+        reaction = self.c.reactions.add("like", response["id"], "mike")
+        reaction.pop("duration")
+        enriched_response = f.get(reactions={"recent": True})
+        self.assertEqual(
+            enriched_response["results"][0]["latest_reactions"]["like"][0], reaction
+        )
+
+    def test_feed_enrichment_reaction_counts(self):
+        f = getfeed("user", "mike")
+        activity_data = {"actor": "mike", "verb": "buy", "object": "object"}
+        response = f.add_activity(activity_data)
+        reaction = self.c.reactions.add("like", response["id"], "mike")
+        reaction.pop("duration")
+        enriched_response = f.get(reactions={"counts": True})
+        self.assertEqual(enriched_response["results"][0]["reaction_counts"]["like"], 1)
