@@ -3,6 +3,18 @@
 ================
 
 ======
+3.0.0
+======
+:release-date: 2018-12-03
+:by: Tommaso Barbugli
+
+Add support for reactions
+Add support for users
+Removed HTTP Signatures based auth
+Use JWT auth for everything
+Add feed.get enrichment params
+
+======
 2.12.0
 ======
 :release-date: 2018-10-08
