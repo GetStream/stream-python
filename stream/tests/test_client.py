@@ -1238,14 +1238,17 @@ class ClientTest(TestCase):
 
     def test_reaction_filter_random(self):
         self.c.reactions.filter(
+            kind="like",
             reaction_id="54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
             id_lte="54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
         )
         self.c.reactions.filter(
+            kind="dunno",
             activity_id="54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
             id_lte="54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
         )
         self.c.reactions.filter(
+            kind="val",
             user_id="mike", id_lte="54a60c1e-4ee3-494b-a1e3-50c06acb5ed4"
         )
 
@@ -1262,14 +1265,21 @@ class ClientTest(TestCase):
         response = self.c.reactions.add("like", activity_id, user)
         child = self.c.reactions.add_child("like", response["id"], user)
         reaction = self.c.reactions.get(response["id"])
-        r = self.c.reactions.filter(reaction_id=reaction["id"])
+
+        response = self.c.reactions.add("comment", activity_id, user)
+        reaction_comment = self.c.reactions.get(response["id"])
+
+        r = self.c.reactions.filter(kind="like", reaction_id=reaction["id"])
         self._first_result_should_be(r, child)
 
-        r = self.c.reactions.filter(activity_id=activity_id, id_lte=reaction["id"])
+        r = self.c.reactions.filter(kind="like", activity_id=activity_id, id_lte=reaction["id"])
         self._first_result_should_be(r, reaction)
 
-        r = self.c.reactions.filter(user_id=user, id_lte=reaction["id"])
+        r = self.c.reactions.filter(kind="like", user_id=user, id_lte=reaction["id"])
         self._first_result_should_be(r, reaction)
+
+        r = self.c.reactions.filter(kind="comment", activity_id=activity_id)
+        self._first_result_should_be(r, reaction_comment)
 
     def test_user_add(self):
         self.c.users.add(str(uuid1()))
