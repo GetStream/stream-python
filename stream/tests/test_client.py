@@ -1329,7 +1329,7 @@ class ClientTest(TestCase):
         activity_data = {
             "actor": "mike",
             "verb": "buy",
-            "object": self.c.collections.create_reference("items", entry),
+            "object": self.c.collections.create_reference(entry=entry),
         }
         f.add_activity(activity_data)
         response = f.get()

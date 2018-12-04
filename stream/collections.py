@@ -9,11 +9,18 @@ class Collections(object):
         self.client = client
         self.token = token
 
-    def create_reference(self, collection_name, id):
-        _id = id
-        if isinstance(id, (dict,)) and id.get("id") is not None:
-            _id = id.get("id")
-        return "SO:%s:%s" % (collection_name, _id)
+    def create_reference(self, collection_name=None, id=None, entry=None):
+        if isinstance(entry, (dict,)):
+            _collection = entry["collection"]
+            _id = entry["id"]
+        elif collection_name is not None and id is not None:
+            _collection = collection_name
+            _id = id
+        else:
+            raise ValueError(
+                "must call with collection_name and id or with entry arguments"
+            )
+        return "SO:%s:%s" % (_collection, _id)
 
     def upsert(self, collection_name, data):
         """
