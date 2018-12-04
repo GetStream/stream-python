@@ -46,9 +46,13 @@ class Reactions(object):
             "reaction/", service_name="api", signature=self.token, data=payload
         )
 
-    def filter(self, kind, **params):
+    def filter(self, **params):
         lookup_field = ""
         lookup_value = ""
+        kind = None
+
+        if "kind" in params:
+            kind = params.pop("kind")
 
         if "reaction_id" in params:
             lookup_field = "reaction_id"
@@ -60,8 +64,12 @@ class Reactions(object):
             lookup_field = "user_id"
             lookup_value = params.pop("user_id")
 
+        endpoint = "reaction/%s/%s/" % (lookup_field, lookup_value)
+        if kind is not None:
+            endpoint = "reaction/%s/%s/%s/" % (lookup_field, lookup_value, kind)
+
         return self.client.get(
-            "reaction/%s/%s/%s/" % (lookup_field, lookup_value, kind),
+            endpoint,
             service_name="api",
             signature=self.token,
             params=params,
