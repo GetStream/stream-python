@@ -49,10 +49,8 @@ class Reactions(object):
     def filter(self, **params):
         lookup_field = ""
         lookup_value = ""
-        kind = None
 
-        if "kind" in params:
-            kind = params.pop("kind")
+        kind = params.pop("kind", None)
 
         if "reaction_id" in params:
             lookup_field = "reaction_id"
