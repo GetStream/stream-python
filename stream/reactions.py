@@ -67,8 +67,5 @@ class Reactions(object):
             endpoint = "reaction/%s/%s/%s/" % (lookup_field, lookup_value, kind)
 
         return self.client.get(
-            endpoint,
-            service_name="api",
-            signature=self.token,
-            params=params,
+            endpoint, service_name="api", signature=self.token, params=params
         )

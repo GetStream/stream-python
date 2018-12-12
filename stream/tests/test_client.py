@@ -1239,15 +1239,15 @@ class ClientTest(TestCase):
     def test_reaction_filter_random(self):
         self.c.reactions.filter(
             kind="like",
-            reaction_id="54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
-            id_lte="54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
+            reaction_id="87a9eec0-fd5f-11e8-8080-80013fed2f5b",
+            id_lte="87a9eec0-fd5f-11e8-8080-80013fed2f5b",
         )
         self.c.reactions.filter(
-            activity_id="54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
-            id_lte="54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
+            activity_id="87a9eec0-fd5f-11e8-8080-80013fed2f5b",
+            id_lte="87a9eec0-fd5f-11e8-8080-80013fed2f5b",
         )
         self.c.reactions.filter(
-            user_id="mike", id_lte="54a60c1e-4ee3-494b-a1e3-50c06acb5ed4"
+            user_id="mike", id_lte="87a9eec0-fd5f-11e8-8080-80013fed2f5b"
         )
 
     def _first_result_should_be(self, response, element):
@@ -1270,7 +1270,9 @@ class ClientTest(TestCase):
         r = self.c.reactions.filter(reaction_id=reaction["id"])
         self._first_result_should_be(r, child)
 
-        r = self.c.reactions.filter(kind="like", activity_id=activity_id, id_lte=reaction["id"])
+        r = self.c.reactions.filter(
+            kind="like", activity_id=activity_id, id_lte=reaction["id"]
+        )
         self._first_result_should_be(r, reaction)
 
         r = self.c.reactions.filter(kind="like", user_id=user, id_lte=reaction["id"])
