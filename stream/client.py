@@ -377,7 +377,7 @@ class StreamClient(object):
         self, id=None, foreign_id=None, time=None, set={}, unset=[]
     ):
         """
-        Partial update activity, via foreign ID or Foreign ID + timestamp
+        Partial update activity, via activity ID or Foreign ID + timestamp
 
         id: the activity ID
         foreign_id: the activity foreign ID
@@ -385,8 +385,6 @@ class StreamClient(object):
         set: object containing the set operations
         unset: list of unset operations
         """
-
-        auth_token = self.create_jwt_token("activities", "*", feed_id="*")
 
         if id is None and (foreign_id is None or time is None):
             raise TypeError(
@@ -404,6 +402,34 @@ class StreamClient(object):
         else:
             data["foreign_id"] = foreign_id
             data["time"] = time
+
+        return self.activities_partial_update(updates=[data])
+
+    def activities_partial_update(self, updates=[]):
+        """
+        Partial update activity, via activity ID or Foreign ID + timestamp
+
+        :param updates: list of partial updates to perform.
+
+        eg.
+        [
+            {
+                "foreign_id": "post:1",
+                "time": datetime.datetime.utcnow(),
+                "set": {
+                    "product.name": "boots",
+                    "product.price": 7.99,
+                    "popularity": 1000,
+                    "foo": {"bar": {"baz": "qux"}},
+                },
+                "unset": ["product.color"]
+            }
+        ]
+        """
+
+        auth_token = self.create_jwt_token("activities", "*", feed_id="*")
+
+        data = {"changes": updates}
 
         return self.post("activity/", auth_token, data=data)
 
