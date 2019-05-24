@@ -2,6 +2,15 @@
  Change history
 ================
 
+=====
+3.0.2
+=====
+:release-date: 2018-05-24
+:by: Jelte Fennema
+
+Fixes for filtering by reactions by kind
+
+
 ======
 3.0.1
 ======
