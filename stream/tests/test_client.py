@@ -1190,6 +1190,83 @@ class ClientTest(TestCase):
         expected["popularity"] = 9000
         self.assertEqual(updated, expected)
 
+    def test_activities_partial_update(self):
+
+        feed = self.c.feed("user", uuid4())
+        feed.add_activities(
+            [
+                {
+                    "actor": "barry",
+                    "object": "09",
+                    "verb": "tweet",
+                    "time": datetime.datetime.utcnow(),
+                    "foreign_id": "fid:123",
+                    "product": {"name": "shoes", "price": 9.99, "color": "blue"},
+                },
+                {
+                    "actor": "jerry",
+                    "object": "10",
+                    "verb": "tweet",
+                    "time": datetime.datetime.utcnow(),
+                    "foreign_id": "fid:456",
+                    "product": {"name": "shoes", "price": 9.99, "color": "blue"},
+                },
+                {
+                    "actor": "tommy",
+                    "object": "09",
+                    "verb": "tweet",
+                    "time": datetime.datetime.utcnow(),
+                    "foreign_id": "fid:789",
+                    "product": {"name": "shoes", "price": 9.99, "color": "blue"},
+                },
+            ]
+        )
+        activities = feed.get()["results"]
+
+        batch = [
+            {
+                "id": activities[0]["id"],
+                "set": {"product.color": "purple", "custom": {"some": "extra data"}},
+                "unset": ["product.price"],
+            },
+            {
+                "id": activities[2]["id"],
+                "set": {"product.price": 9001, "on_sale": True},
+            },
+        ]
+
+        # partial update by ID
+        self.c.activities_partial_update(batch)
+        updated = feed.get()["results"]
+        expected = activities
+        expected[0]["product"] = {"name": "shoes", "color": "purple"}
+        expected[0]["custom"] = {"some": "extra data"}
+        expected[2]["product"] = {"name": "shoes", "price": 9001, "color": "blue"}
+        expected[2]["on_sale"] = True
+        self.assertEqual(updated, expected)
+
+        # partial update by foreign ID + time
+        batch = [
+            {
+                "foreign_id": activities[1]["foreign_id"],
+                "time": activities[1]["time"],
+                "set": {"product.color": "beeeeeeige", "custom": {"modified_by": "me"}},
+                "unset": ["product.name"],
+            },
+            {
+                "foreign_id": activities[2]["foreign_id"],
+                "time": activities[2]["time"],
+                "unset": ["on_sale"],
+            },
+        ]
+        self.c.activities_partial_update(batch)
+        updated = feed.get()["results"]
+
+        expected[1]["product"] = {"price": 9.99, "color": "beeeeeeige"}
+        expected[1]["custom"] = {"modified_by": "me"}
+        del expected[2]["on_sale"]
+        self.assertEqual(updated, expected)
+
     def test_create_reference(self):
         ref = self.c.collections.create_reference("item", "42")
         self.assertEqual(ref, "SO:item:42")
