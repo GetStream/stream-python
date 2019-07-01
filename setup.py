@@ -23,7 +23,7 @@ if sys.version_info < (2, 7, 0):
     install_requires.append("pyjwt>=1.3.0,<1.6.0")
     install_requires.append("pycparser<2.19")
 else:
-    install_requires.append("pyjwt>=1.3.0,<1.7.0")
+    install_requires.append("pyjwt>=1.3.0,<1.8.0")
 
 
 class PyTest(TestCommand):
