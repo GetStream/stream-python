@@ -54,7 +54,7 @@ class Personalization(object):
 
     def delete(self, resource, **params):
         """
-        shortcut to delete metadata or activites
+        shortcut to delete metadata or activities
         :param resource: personalized url endpoint typical "meta"
         :param params: params to pass to url i.e user_id = "user:123"
         :return: data that was deleted if if successful or not.
