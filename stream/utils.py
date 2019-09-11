@@ -9,7 +9,7 @@ def validate_feed_id(feed_id):
 
     :param feed_id: a feed such as user:1
 
-    Raises ValueError if the format doesnt match
+    Raises ValueError if the format doesn't match
     """
     feed_id = str(feed_id)
     if len(feed_id.split(":")) != 2:
