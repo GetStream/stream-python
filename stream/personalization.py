@@ -42,6 +42,9 @@ class Personalization(object):
         """
 
         data = params["data"] or None
+        if data:
+            # avoid 414's by passing entire data chunk in uri
+            del params["data"]
 
         response = self.client.post(
             resource,
