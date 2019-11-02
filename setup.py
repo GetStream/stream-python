@@ -16,7 +16,7 @@ requests = "requests>=2.3.0,<3"
 if sys.version_info < (2, 7, 9):
     requests = "requests[security]>=2.4.1,<3"
 
-install_requires = ["pycryptodomex==3.4.7", requests, "six>=1.8.0"]
+install_requires = ["pycryptodomex>=3.4.7", requests, "six>=1.8.0"]
 
 if sys.version_info < (2, 7, 0):
     install_requires.append("pyOpenSSL<18.0.0")
