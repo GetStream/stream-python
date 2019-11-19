@@ -30,7 +30,7 @@ class Personalization(object):
 
     def post(self, resource, **params):
         """
-        "Generic function to post data to personalization endpoint
+        Generic function to post data to personalization endpoint
         :param resource: personalized resource endpoint i.e "follow_recommendations"
         :param params: params to pass to url (data is a reserved keyword to post to body)
 
@@ -57,7 +57,7 @@ class Personalization(object):
         shortcut to delete metadata or activities
         :param resource: personalized url endpoint typical "meta"
         :param params: params to pass to url i.e user_id = "user:123"
-        :return: data that was deleted if if successful or not.
+        :return: data that was deleted if successful or not.
         """
 
         response = self.client.delete(
