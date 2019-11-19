@@ -180,7 +180,7 @@ In order to release new version you need to be a maintainer on Pypi.
 - Commit and push to Github
 - Create a new tag for the version (eg. `v2.9.0`)
 - Create a new dist with python `python setup.py sdist`
-- Upload the new distributable with wine `twine upload dist/stream-python-VERSION-NAME.tar.gz`
+- Upload the new distributable with twine `twine upload dist/stream-python-VERSION-NAME.tar.gz`
 
 If unsure you can also test using the Pypi test servers `twine upload --repository-url https://test.pypi.org/legacy/ dist/stream-python-VERSION-NAME.tar.gz`
 
