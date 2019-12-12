@@ -373,12 +373,12 @@ class ClientTest(TestCase):
         self.user1.token
         self.user1.get_readonly_token()
 
-    def test_user_session_token(self):
+    def test_user_token(self):
         client = stream.connect(self.c.api_key, self.c.api_secret)
-        token = client.create_user_session_token("user")
+        token = client.create_user_token("user")
         payload = jwt.decode(token, self.c.api_secret, algorithms=["HS256"])
         self.assertEqual(payload["user_id"], "user")
-        token = client.create_user_session_token("user", client="python", testing=True)
+        token = client.create_user_token("user", client="python", testing=True)
         payload = jwt.decode(token, self.c.api_secret, algorithms=["HS256"])
         self.assertEqual(payload["client"], "python")
         self.assertEqual(payload["testing"], True)
