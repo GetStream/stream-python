@@ -30,7 +30,7 @@ class Collections(object):
         :return: http response, 201 if successful along with data posted.
 
         **Example**::
-            client.collection.upsert('user', [{"id": '1', "name": "Juniper", "hobbies": ["Playing", "Sleeping", "Eating"]},
+            client.collections.upsert('user', [{"id": '1', "name": "Juniper", "hobbies": ["Playing", "Sleeping", "Eating"]},
                                            {"id": '2', "name": "Ruby", "interests": ["Sunbeams", "Surprise Attacks"]}])
         """
 
@@ -56,8 +56,8 @@ class Collections(object):
         :return: meta data as json blob
 
         **Example**::
-            client.collection.select('user', 1)
-            client.collection.select('user', [1,2,3])
+            client.collections.select('user', 1)
+            client.collections.select('user', [1,2,3])
         """
 
         if type(ids) != list:
@@ -87,7 +87,7 @@ class Collections(object):
 
         **Example**::
             client.collections.delete('user', '1')
-            collections.delete('user', ['1','2','3'])
+            client.collections.delete('user', ['1','2','3'])
         """
 
         if type(ids) != list:
