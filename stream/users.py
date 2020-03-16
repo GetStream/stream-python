@@ -19,9 +19,9 @@ class Users(object):
             params={"get_or_create": get_or_create},
         )
 
-    def get(self, user_id):
+    def get(self, user_id, **params):
         return self.client.get(
-            "user/%s" % user_id, service_name="api", signature=self.token
+            "user/%s" % user_id, service_name="api", params=params, signature=self.token
         )
 
     def update(self, user_id, data=None):
