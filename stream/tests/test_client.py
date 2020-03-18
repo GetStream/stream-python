@@ -1480,3 +1480,8 @@ class ClientTest(TestCase):
         reaction.pop("duration")
         enriched_response = f.get(reactions={"counts": True})
         self.assertEqual(enriched_response["results"][0]["reaction_counts"]["like"], 1)
+
+    def test_og(self):
+        response = client.og("https://google.com")
+        self.assertTrue("title" in response)
+        self.assertTrue("description" in response)

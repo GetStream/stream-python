@@ -455,3 +455,12 @@ class StreamClient(object):
         # validate the target url is valid
         Request("GET", target_url).prepare()
         return prepared_request.url
+
+    def og(self, target_url):
+        """
+        Retrieve open graph information from a URL which you can
+        then use to add images and a description to activities.
+        """
+        auth_token = self.create_jwt_token("*", "*", feed_id="*")
+        params = {"url": target_url}
+        return self.get("og/", auth_token, params=params)
