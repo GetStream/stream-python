@@ -1377,6 +1377,13 @@ class ClientTest(TestCase):
         self.assertTrue("updated_at" in user)
         self.assertTrue("id" in user)
 
+    def test_user_get_with_follow_counts(self):
+        response = self.c.users.add(str(uuid1()))
+        user = self.c.users.get(response["id"], with_follow_counts=True)
+        self.assertEqual(user["id"], response["id"])
+        self.assertTrue("followers_count" in user)
+        self.assertTrue("following_count" in user)
+
     def test_user_update(self):
         response = self.c.users.add(str(uuid1()))
         self.c.users.update(response["id"], {"changed": True})
