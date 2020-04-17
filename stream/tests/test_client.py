@@ -4,6 +4,7 @@ import time
 from stream.exceptions import ApiKeyException, InputException
 import random
 import jwt
+import pytz
 
 try:
     from unittest.case import TestCase
@@ -831,7 +832,7 @@ class ClientTest(TestCase):
         b.) The same time and foreign id
         """
 
-        utcnow = datetime.datetime.utcnow()
+        utcnow = datetime.datetime.now(tz=pytz.utc)
         activity_data = {"actor": 1, "verb": "tweet", "object": 1, "time": utcnow}
         self.user1.add_activity(activity_data)
         self.user1.add_activity(activity_data)
@@ -869,7 +870,7 @@ class ClientTest(TestCase):
 
     def test_uniqueness_foreign_id(self):
         now = datetime.datetime.now(tzlocal())
-        utcnow = (now - now.utcoffset()).replace(tzinfo=None)
+        utcnow = now.astimezone(pytz.utc)
 
         activity_data = {
             "actor": 1,
@@ -900,7 +901,7 @@ class ClientTest(TestCase):
 
     def test_time_ordering(self):
         """
-        datetime.datetime.utcnow() is our recommended approach
+        datetime.datetime.now(tz=pytz.utc) is our recommended approach
         so if we add an activity
         add one using time
         add another activity it should be in the right spot
@@ -908,7 +909,7 @@ class ClientTest(TestCase):
 
         # timedelta is used to "make sure" that ordering is known even though
         # server time is not
-        custom_time = datetime.datetime.utcnow() - dt.timedelta(days=1)
+        custom_time = datetime.datetime.now(tz=pytz.utc) - dt.timedelta(days=1)
 
         feed = self.user2
         for index, activity_time in enumerate([None, custom_time, None]):
@@ -952,8 +953,8 @@ class ClientTest(TestCase):
 
     def test_serialization(self):
         today = datetime.date.today()
-        then = datetime.datetime.now().replace(microsecond=0)
-        now = datetime.datetime.now()
+        now = datetime.datetime.now(tz=pytz.utc)
+        then = now.replace(microsecond=0)
         data = dict(
             string="string",
             float=0.1,
