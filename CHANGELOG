@@ -3,6 +3,14 @@
 ================
 
 =====
+3.2.1
+=====
+:release-date: 2020-03-17
+:by: Ferhat Elmas
+
+Set timezone as utc in serialization hooks
+
+=====
 3.2.0
 =====
 :release-date: 2020-03-17
