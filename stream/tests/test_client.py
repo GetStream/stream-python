@@ -1020,6 +1020,21 @@ class ClientTest(TestCase):
             activities = feed.get(limit=5)["results"]
             self.assertEqual(len(activities), 0)
 
+    def test_unfollow_many(self):
+        unfollows = [
+            {"source": "user:1", "target": "timeline:1"},
+            {"source": "user:2", "target": "timeline:2", "keep_history": False},
+        ]
+
+        self.c.unfollow_many(unfollows)
+
+        unfollows.append({"source": "user:1", "target": 42})
+
+        def failing_unfollow():
+            self.c.unfollow_many(unfollows)
+
+        self.assertRaises(InputException, failing_unfollow)
+
     def test_add_to_many(self):
         activity = {"actor": 1, "verb": "tweet", "object": 1, "custom": "data"}
         feeds = [getfeed("flat", str(i)).id for i in range(10, 20)]
