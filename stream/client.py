@@ -323,6 +323,18 @@ class StreamClient(object):
         token = self.create_jwt_token("follower", "*", feed_id="*")
         return self.post("follow_many/", token, params=params, data=follows)
 
+    def unfollow_many(self, unfollows):
+        """
+        Unfollows many feeds at batch
+        :param unfollows: the list of unfollow relations
+
+        eg. [{'source': source, 'target': target, 'keep_history': keep_history}]
+        """
+        params = None
+
+        token = self.create_jwt_token("follower", "*", feed_id="*")
+        return self.post("unfollow_many/", token, params=params, data=unfollows)
+
     def update_activities(self, activities):
         """
         Update or create activities
