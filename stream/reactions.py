@@ -3,12 +3,21 @@ class Reactions(object):
         self.client = client
         self.token = token
 
-    def add(self, kind, activity_id, user_id, data=None, target_feeds=None):
+    def add(
+        self,
+        kind,
+        activity_id,
+        user_id,
+        data=None,
+        target_feeds=None,
+        target_feeds_extra_data=None,
+    ):
         payload = dict(
             kind=kind,
             activity_id=activity_id,
             data=data,
             target_feeds=target_feeds,
+            target_feeds_extra_data=target_feeds_extra_data,
             user_id=user_id,
         )
         return self.client.post(
@@ -34,12 +43,21 @@ class Reactions(object):
             "reaction/%s" % reaction_id, service_name="api", signature=self.token
         )
 
-    def add_child(self, kind, parent_id, user_id, data=None, target_feeds=None):
+    def add_child(
+        self,
+        kind,
+        parent_id,
+        user_id,
+        data=None,
+        target_feeds=None,
+        target_feeds_extra_data=None,
+    ):
         payload = dict(
             kind=kind,
             parent=parent_id,
             data=data,
             target_feeds=target_feeds,
+            target_feeds_extra_data=target_feeds_extra_data,
             user_id=user_id,
         )
         return self.client.post(

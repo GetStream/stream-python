@@ -1294,6 +1294,36 @@ class ClientTest(TestCase):
     def test_reaction_add(self):
         self.c.reactions.add("like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike")
 
+    def test_reaction_add_to_target_feeds(self):
+        r = self.c.reactions.add(
+            "superlike",
+            "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
+            "mike",
+            data={"popularity": 50},
+            target_feeds=["user:michelle"],
+            target_feeds_extra_data={"popularity": 100},
+        )
+        self.assertEqual(r["data"]["popularity"], 50)
+        a = self.c.feed("user", "michelle").get(limit=1)["results"][0]
+        self.assertTrue(r["id"] in a["reaction"])
+        self.assertEqual(a["verb"], "superlike")
+        self.assertEqual(a["popularity"], 100)
+
+        child = self.c.reactions.add_child(
+            "superlike",
+            r["id"],
+            "rob",
+            data={"popularity": 60},
+            target_feeds=["user:michelle"],
+            target_feeds_extra_data={"popularity": 200},
+        )
+
+        self.assertEqual(child["data"]["popularity"], 60)
+        a = self.c.feed("user", "michelle").get(limit=1)["results"][0]
+        self.assertTrue(child["id"] in a["reaction"])
+        self.assertEqual(a["verb"], "superlike")
+        self.assertEqual(a["popularity"], 200)
+
     def test_reaction_get(self):
         response = self.c.reactions.add(
             "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
