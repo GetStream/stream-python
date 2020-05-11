@@ -3,6 +3,14 @@
 ================
 
 =====
+3.4.0
+=====
+:release-date: 2020-05-11
+:by: Ferhat Elmas
+
+Expose target_feeds_extra_data to add extra data to activities from reactions
+
+=====
 3.3.0
 =====
 :release-date: 2020-05-04
