@@ -1163,9 +1163,9 @@ class ClientTest(TestCase):
         dt = datetime.datetime.utcnow()
         fid = "awesome-test"
 
-        actor = client.users.add(str(uuid1()), data={"name": "barry"})
+        actor = self.c.users.add(str(uuid1()), data={"name": "barry"})
         activity = {
-            "actor": client.users.create_reference(actor["id"]),
+            "actor": self.c.users.create_reference(actor["id"]),
             "object": "09",
             "verb": "tweet",
             "time": dt,
@@ -1175,8 +1175,8 @@ class ClientTest(TestCase):
         feed = getfeed("user", "test_get_activity")
         activity = feed.add_activity(activity)
 
-        reaction1 = client.reactions.add("like", activity["id"], "liker")
-        reaction2 = client.reactions.add("reshare", activity["id"], "sharer")
+        reaction1 = self.c.reactions.add("like", activity["id"], "liker")
+        reaction2 = self.c.reactions.add("reshare", activity["id"], "sharer")
 
         def validate(response):
             self.assertEqual(len(response["results"]), 1)
