@@ -105,7 +105,7 @@ client.get_activities(foreign_id_times=[
 ])
 
 # Enrich while getting activities
-client.get_activities(ids=[activity_id], enrich=True, reactions={"count": True})
+client.get_activities(ids=[activity_id], enrich=True, reactions={"counts": True})
 
 # Update some parts of an activity with activity_partial_update
 set = {
