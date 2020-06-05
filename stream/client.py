@@ -352,9 +352,13 @@ class StreamClient(object):
         """
         return self.update_activities([activity])
 
-    def get_activities(self, ids=None, foreign_id_times=None):
+    def get_activities(
+        self, ids=None, foreign_id_times=None, enrich=False, reactions=None, **params
+    ):
         """
         Retrieves activities by their ID or foreign_id + time combination
+
+        Pass enrich and reactions options for enrichment
 
         ids: list of activity IDs
         foreign_id_time: list of tuples (foreign_id, time)
@@ -371,7 +375,11 @@ class StreamClient(object):
                 "At most one of the parameters ids or foreign_id_time must be provided"
             )
 
-        query_params = {}
+        endpoint = "activities/"
+        if enrich or reactions is not None:
+            endpoint = "enrich/" + endpoint
+
+        query_params = {**params}
 
         if ids is not None:
             query_params["ids"] = ",".join(ids)
@@ -383,7 +391,18 @@ class StreamClient(object):
             query_params["foreign_ids"] = ",".join(foreign_ids)
             query_params["timestamps"] = ",".join(timestamps)
 
-        return self.get("activities/", auth_token, params=query_params)
+        if reactions is not None and not isinstance(reactions, (dict,)):
+            raise TypeError("reactions argument should be a dictionary")
+
+        if reactions is not None:
+            if reactions.get("own"):
+                query_params["withOwnReactions"] = True
+            if reactions.get("recent"):
+                query_params["withRecentReactions"] = True
+            if reactions.get("counts"):
+                query_params["withReactionCounts"] = True
+
+        return self.get(endpoint, auth_token, params=query_params)
 
     def activity_partial_update(
         self, id=None, foreign_id=None, time=None, set={}, unset=[]

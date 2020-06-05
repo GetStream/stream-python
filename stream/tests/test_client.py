@@ -1159,6 +1159,46 @@ class ClientTest(TestCase):
         self.assertEqual(len(response["results"]), 1)
         self.assertEqual(activity["foreign_id"], response["results"][0]["foreign_id"])
 
+    def test_get_activities_full_with_enrichment(self):
+        dt = datetime.datetime.utcnow()
+        fid = "awesome-test"
+
+        actor = client.users.add(str(uuid1()), data={"name": "barry"})
+        activity = {
+            "actor": client.users.create_reference(actor["id"]),
+            "object": "09",
+            "verb": "tweet",
+            "time": dt,
+            "foreign_id": fid,
+        }
+
+        feed = getfeed("user", "test_get_activity")
+        activity = feed.add_activity(activity)
+
+        reaction1 = client.reactions.add("like", activity["id"], "liker")
+        reaction2 = client.reactions.add("reshare", activity["id"], "sharer")
+
+        def validate(response):
+            self.assertEqual(len(response["results"]), 1)
+            self.assertEqual(response["results"][0]["id"], activity["id"])
+            self.assertEqual(
+                response["results"][0]["foreign_id"], activity["foreign_id"]
+            )
+            self.assertEqual(response["results"][0]["actor"]["data"]["name"], "barry")
+            latest_reactions = response["results"][0]["latest_reactions"]
+            self.assertEqual(len(latest_reactions), 2)
+            self.assertEqual(latest_reactions["like"][0]["id"], reaction1["id"])
+            self.assertEqual(latest_reactions["reshare"][0]["id"], reaction2["id"])
+            self.assertEqual(
+                response["results"][0]["reaction_counts"], {"like": 1, "reshare": 1}
+            )
+
+        reactions = {"recent": True, "counts": True}
+        validate(self.c.get_activities(ids=[activity["id"]], reactions=reactions))
+        validate(
+            self.c.get_activities(foreign_id_times=[(fid, dt)], reactions=reactions)
+        )
+
     def test_activity_partial_update(self):
         now = datetime.datetime.utcnow()
         feed = self.c.feed("user", uuid4())

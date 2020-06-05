@@ -104,6 +104,9 @@ client.get_activities(foreign_id_times=[
     (foreign_id, activity_time),
 ])
 
+# Enrich while getting activities
+client.get_activities(ids=[activity_id], enrich=True, reactions={"count": True})
+
 # Update some parts of an activity with activity_partial_update
 set = {
     'product.name': 'boots',
