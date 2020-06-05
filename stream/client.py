@@ -379,7 +379,9 @@ class StreamClient(object):
         if enrich or reactions is not None:
             endpoint = "enrich/" + endpoint
 
-        query_params = {**params}
+        query_params = {}
+        for key in params:
+            query_params[key] = params[key]
 
         if ids is not None:
             query_params["ids"] = ",".join(ids)
