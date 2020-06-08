@@ -6,24 +6,16 @@ from setuptools.command.test import test as TestCommand
 from stream import __version__, __maintainer__, __email__, __license__
 import sys
 
-unit = "unittest2py3k" if sys.version_info > (3, 0, 0) else "unittest2"
-tests_require = [unit, "pytest==3.2.5", "unittest2", "pytest-cov", "python-dateutil"]
+tests_require = ["pytest==3.2.5", "unittest2", "pytest-cov", "python-dateutil"]
 
 long_description = open("README.md", "r").read()
 
-requests = "requests>=2.3.0,<3"
-
-if sys.version_info < (2, 7, 9):
-    requests = "requests[security]>=2.4.1,<3"
-
-install_requires = ["pycryptodomex>=3.4.7,<4", requests, "six>=1.8.0", "pytz>=2019.3"]
-
-if sys.version_info < (2, 7, 0):
-    install_requires.append("pyOpenSSL<18.0.0")
-    install_requires.append("pyjwt>=1.3.0,<1.6.0")
-    install_requires.append("pycparser<2.19")
-else:
-    install_requires.append("pyjwt>=1.3.0,<1.8.0")
+install_requires = [
+    "pycryptodomex>=3.4.7,<4",
+    "requests>=2.3.0,<3",
+    "pyjwt>=1.3.0,<1.8.0",
+    "pytz>=2019.3",
+]
 
 
 class PyTest(TestCommand):
@@ -65,7 +57,6 @@ setup(
         "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: BSD License",
         "Natural Language :: English",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
