@@ -7,7 +7,9 @@ from stream import __version__, __maintainer__, __email__, __license__
 import sys
 
 tests_require = ["pytest==3.2.5", "unittest2", "pytest-cov", "python-dateutil"]
-lint_require = ["black", "flake8"]
+lint_require = ["flake8"]
+if sys.version_info >= (3, 6, 0):
+    lint_require.append("black")
 
 long_description = open("README.md", "r").read()
 
