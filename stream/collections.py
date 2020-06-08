@@ -1,4 +1,4 @@
-class Collections(object):
+class Collections:
     def __init__(self, client, token):
         """
         Used to manipulate data at the 'meta' endpoint
@@ -34,18 +34,17 @@ class Collections(object):
                                            {"id": '2', "name": "Ruby", "interests": ["Sunbeams", "Surprise Attacks"]}])
         """
 
-        if type(data) != list:
+        if not isinstance(data, list):
             data = [data]
 
         data_json = {collection_name: data}
 
-        response = self.client.post(
+        return self.client.post(
             "collections/",
             service_name="api",
             signature=self.token,
             data={"data": data_json},
         )
-        return response
 
     def select(self, collection_name, ids):
         """
@@ -60,23 +59,19 @@ class Collections(object):
             client.collections.select('user', [1,2,3])
         """
 
-        if type(ids) != list:
+        if not isinstance(ids, list):
             ids = [ids]
-        ids = [str(i) for i in ids]
 
-        foreign_ids = []
-        for i in range(len(ids)):
-            foreign_ids.append("%s:%s" % (collection_name, ids[i]))
-        foreign_ids = ",".join(foreign_ids)
+        foreign_ids = ",".join(
+            "%s:%s" % (collection_name, k) for i, k in enumerate(ids)
+        )
 
-        response = self.client.get(
+        return self.client.get(
             "collections/",
             service_name="api",
             params={"foreign_ids": foreign_ids},
             signature=self.token,
         )
-
-        return response
 
     def delete_many(self, collection_name, ids):
         """
@@ -90,17 +85,15 @@ class Collections(object):
             client.collections.delete('user', ['1','2','3'])
         """
 
-        if type(ids) != list:
+        if not isinstance(ids, list):
             ids = [ids]
         ids = [str(i) for i in ids]
 
         params = {"collection_name": collection_name, "ids": ids}
 
-        response = self.client.delete(
+        return self.client.delete(
             "collections/", service_name="api", params=params, signature=self.token
         )
-
-        return response
 
     def add(self, collection_name, data, id=None, user_id=None):
         payload = dict(id=id, data=data, user_id=user_id)

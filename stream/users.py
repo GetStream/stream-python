@@ -1,4 +1,4 @@
-class Users(object):
+class Users:
     def __init__(self, client, token):
         self.client = client
         self.token = token

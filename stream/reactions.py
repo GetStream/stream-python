@@ -1,4 +1,4 @@
-class Reactions(object):
+class Reactions:
     def __init__(self, client, token):
         self.client = client
         self.token = token

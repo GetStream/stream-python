@@ -1,5 +1,5 @@
-import re
 import os
+import re
 
 __author__ = "Thierry Schellenbach"
 __copyright__ = "Copyright 2014, Stream.io, Inc"
