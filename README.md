@@ -13,7 +13,7 @@ You can sign up for a Stream account at https://getstream.io/get_started.
 
 stream-python supports:
 
-- Python (3.4, 3.5, 3.6, 3.7, 3.8)
+- Python (3.5, 3.6, 3.7, 3.8)
 
 #### Install from Pypi
 
@@ -34,7 +34,7 @@ import datetime
 import stream
 client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET')
 
-# INstantiate a new client specifying datacenter location
+# INstantiate a new client specifying data center location
 client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', location='us-east')
 # Find your API keys here https://getstream.io/dashboard/
 
