@@ -3,6 +3,14 @@
 ================
 
 =====
+3.5.0
+=====
+:release-date: 2020-06-08
+:by: Ferhat Elmas
+
+Add enrichment support to direct activity get
+
+=====
 3.4.0
 =====
 :release-date: 2020-05-11
