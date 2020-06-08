@@ -22,7 +22,7 @@ jobs:
           echo "::add-path::/home/runner/.local/bin"
 
       - name: Install deps with ${{ matrix.python }}
-        run: pip install .[test, lint]
+        run: pip install ".[test, lint]"
 
       - name: Lint with ${{ matrix.python }}
         if: ${{ matrix.python == '3.8' }}
