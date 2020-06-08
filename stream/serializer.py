@@ -1,6 +1,5 @@
 import datetime
 import json
-import six
 import pytz
 
 """
@@ -30,7 +29,7 @@ def _datetime_decoder(dict_):
             dict_[key] = ""
             continue
 
-        if value is not None and isinstance(value, six.string_types):
+        if value is not None and isinstance(value, str):
             try:
                 # The api always returns times like this
                 # 2014-07-25T09:12:24.735

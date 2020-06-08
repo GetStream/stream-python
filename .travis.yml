@@ -1,6 +1,5 @@
 language: python
 python:
-  - 2.7
   - 3.4
   - 3.5
   - 3.6
@@ -21,6 +20,6 @@ script:
   - echo $STREAM_KEY
   - py.test -lv --cov=./
 after_script:
-  - "pep8 --exclude=migrations --ignore=E501,E225,W293 stream"
-  - "python setup.py install"
-  - "codecov"
+  - 'pep8 --exclude=migrations --ignore=E501,E225,W293 stream'
+  - 'python setup.py install'
+  - 'codecov'
