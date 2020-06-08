@@ -16,14 +16,17 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python }}
+
+      - name: Add pip bin to PATH
+        run: |
+          echo "::add-path::/home/runner/.local/bin"
       - name: Install, test and code coverage with ${{ matrix.python-version }}
         env:
           STREAM_KEY: ${{ secrets.STREAM_KEY }}
           STREAM_SECRET: ${{ secrets.STREAM_SECRET }}
         run: |
-          echo "$STREAM_KEY"
           pip install -r dev_requirements.txt
-          pytest -lv --cov=./
+          py.test -lv --cov=./
           pep8 --exclude=migrations --ignore=E501,E225,W293 stream
           python setup.py install
           codecov
