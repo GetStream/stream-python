@@ -3,6 +3,13 @@
 ================
 
 =====
+3.5.1
+=====
+:release-date: 2020-06-08
+
+Handle warning in JWT decode regarding missing algorithm
+
+=====
 3.5.0
 =====
 :release-date: 2020-06-08
