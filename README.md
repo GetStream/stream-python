@@ -23,7 +23,7 @@ pip install stream-python
 
 ### Full documentation
 
-Documentation for this Python client are available at the [Stream website](https://getstream.io/docs/?language=python) or on [Read the Docs](http://stream-python.readthedocs.org/en/latest/).
+Documentation for this Python client are available at the [Stream website](https://getstream.io/docs/?language=python).
 
 ### Usage
 
