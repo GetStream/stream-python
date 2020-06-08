@@ -937,9 +937,8 @@ class ClientTest(TestCase):
             "object": 1,
             "debug_example_undefined": "test",
         }
-        doit = lambda: self.user1.add_activity(activity_data)
         try:
-            doit()
+            self.user1.add_activity(activity_data)
             raise ValueError("should have raised InputException")
         except InputException:
             pass
@@ -1113,10 +1112,11 @@ class ClientTest(TestCase):
         # no protocol specified, this should raise an error
         target_url = "google.com"
         user_id = "tommaso"
-        create_redirect = lambda: self.c.create_redirect_url(
-            target_url, user_id, events
-        )
-        self.assertRaises(MissingSchema, create_redirect)
+
+        def redirect():
+            self.c.create_redirect_url(target_url, user_id, events)
+
+        self.assertRaises(MissingSchema, redirect)
 
     def test_follow_redirect_url(self):
         target_url = "http://google.com/?a=b&c=d"

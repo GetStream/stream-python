@@ -168,11 +168,10 @@ LOCAL=true py.test
 Install black and flake8
 
 ```
-pip install black
-pip install flake8
+pip install .[lint]
 ```
 
-Install git hooks to avoid pushing invalid code (git commit will run black and flak8)
+Install git hooks to avoid pushing invalid code (git commit will run `black` and `flake8`)
 
 ### Releasing a new version
 

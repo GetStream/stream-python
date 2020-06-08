@@ -7,6 +7,7 @@ from stream import __version__, __maintainer__, __email__, __license__
 import sys
 
 tests_require = ["pytest==3.2.5", "unittest2", "pytest-cov", "python-dateutil"]
+lint_require = ["black", "flake8"]
 
 long_description = open("README.md", "r").read()
 
@@ -45,7 +46,7 @@ setup(
     packages=find_packages(),
     zip_safe=False,
     install_requires=install_requires,
-    extras_require={"test": tests_require},
+    extras_require={"test": tests_require, "lint": lint_require},
     cmdclass={"test": PyTest},
     tests_require=tests_require,
     include_package_data=True,

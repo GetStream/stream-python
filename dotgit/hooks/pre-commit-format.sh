@@ -9,5 +9,4 @@ if ! black . --check -q; then
     exit 1
 fi
 
-flake8
-
+flake8 --ignore=E501,E225,W293,W503 .
