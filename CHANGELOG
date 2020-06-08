@@ -6,7 +6,6 @@
 3.5.0
 =====
 :release-date: 2020-06-08
-:by: Ferhat Elmas
 
 Add enrichment support to direct activity get
 
@@ -14,7 +13,6 @@ Add enrichment support to direct activity get
 3.4.0
 =====
 :release-date: 2020-05-11
-:by: Ferhat Elmas
 
 Expose target_feeds_extra_data to add extra data to activities from reactions
 
@@ -22,7 +20,6 @@ Expose target_feeds_extra_data to add extra data to activities from reactions
 3.3.0
 =====
 :release-date: 2020-05-04
-:by: Ferhat Elmas
 
 Add batch unfollow support
 
@@ -30,7 +27,6 @@ Add batch unfollow support
 3.2.1
 =====
 :release-date: 2020-03-17
-:by: Ferhat Elmas
 
 Set timezone as utc in serialization hooks
 
@@ -38,7 +34,6 @@ Set timezone as utc in serialization hooks
 3.2.0
 =====
 :release-date: 2020-03-17
-:by: Ferhat Elmas
 
 Add open graph scrape support
 Update python support (drop 2.6, add 3.8)
@@ -48,7 +43,6 @@ Fixes in docs for collections and personalization
 3.1.1
 =====
 :release-date: 2019-11-07
-:by: Tommaso Barbuli
 
 Bump crypto deps
 
@@ -56,7 +50,6 @@ Bump crypto deps
 3.1.0
 =====
 :release-date: 2018-05-24
-:by: Jelte Fennema
 
 Batch partial update
 
@@ -64,7 +57,6 @@ Batch partial update
 3.0.2
 =====
 :release-date: 2018-05-24
-:by: Jelte Fennema
 
 Fixes for filtering by reactions by kind
 
@@ -73,7 +65,6 @@ Fixes for filtering by reactions by kind
 3.0.1
 ======
 :release-date: 2018-12-04
-:by: Tommaso Barbugli
 
 Add short-hand version for collections.create_reference()
 
@@ -81,7 +72,6 @@ Add short-hand version for collections.create_reference()
 3.0.0
 ======
 :release-date: 2018-12-03
-:by: Tommaso Barbugli
 
 Add support for reactions
 Add support for users
@@ -93,7 +83,6 @@ Add feed.get enrichment params
 2.12.0
 ======
 :release-date: 2018-10-08
-:by: Peter van Kampen
 
 Add user-session-token support
 
@@ -101,7 +90,6 @@ Add user-session-token support
 2.11.0
 ======
 :release-date: 2017-08-23
-:by: Tommaso Barbugli
 
 Add collection helpers to create refs
 
@@ -109,7 +97,6 @@ Add collection helpers to create refs
 2.10.0
 ======
 :release-date: 2017-07-30
-:by: Tommaso Barbugli
 
 Partial activity API endpoint
 
@@ -117,7 +104,6 @@ Partial activity API endpoint
 2.9.3
 ======
 :release-date: 2017-07-20
-:by: Tommaso Barbugli
 
 Use Readme.md content as package long description
 
@@ -125,7 +111,6 @@ Use Readme.md content as package long description
 2.9.2
 ======
 :release-date: 2017-07-20
-:by: Tommaso Barbugli
 
 Fixed deserialization problem with datetime objects with zeroed microseconds
 Support newer versions of the pyJWT lib
@@ -135,7 +120,6 @@ Support newer versions of the pyJWT lib
 2.9.1
 ======
 :release-date: 2017-07-18
-:by: Tommaso Barbugli
 
 Renamed client.get_activities' foreign_id_time param to foreign_id_times
 
@@ -144,7 +128,6 @@ Renamed client.get_activities' foreign_id_time param to foreign_id_times
 2.9.0
 ======
 :release-date: 2017-07-05
-:by: Tommaso Barbugli
 
 Add support for get activity API endpoint
 
@@ -152,7 +135,6 @@ Add support for get activity API endpoint
 2.8.1
 ======
 :release-date: 2017-12-21
-:by: Tommaso Barbugli
 
 Fixes a regression with embedded httpsig and Python 3
 
@@ -160,7 +142,6 @@ Fixes a regression with embedded httpsig and Python 3
 2.8.0
 ======
 :release-date: 2017-12-21
-:by: Tommaso Barbugli
 
 Fixes install issues on Windows
 
@@ -171,42 +152,36 @@ Fixes install issues on Windows
 2.7.0
 ======
 :release-date: 2017-12-14
-:by: Aaron McMillin
 
 * All client methods that make requests will return the response
 
 2.6.2
 =====
 :release-date 2017-12-08
-:by: Balazs
 
 Consolidate API URL generation across API, Collections and Personalization services
 
 2.6.0
 =====
 :release-date 2017-12-08
-:by: Balazs
 
 Support the new collections endpoint and flexible get requests for personalization
 
 2.5.0
 ======
 :release-date: 2017-10-19
-:by: Tommaso Barbugli
 
 * Use new .com domain for API and Analytics
 
 2.4.0
 ======
 :release-date: 2017-08-31
-:by: Tommaso Barbugli
 
 * Added support for To target update endpoint
 
 2.3.11
 ======
 :release-date: 2017-05-22
-:by: Ian Douglas
 
 * Added support for Python 2.6.9 and downgrade to requests 2.2.1
 
@@ -214,7 +189,6 @@ Support the new collections endpoint and flexible get requests for personalizati
 2.3.9
 ==========
 :release-date: 2016-12-20
-:by: Jelte Fennema
 
 * Fix errors_from_fields function so it displays the extra data returned by the
     server about InputException errors.
@@ -223,14 +197,12 @@ Support the new collections endpoint and flexible get requests for personalizati
 2.3.8
 =====
 :release-date: 2016-06-09
-:by: Tommaso Barbugli
 
 * Add support for keep_history on unfollow
 
 2.3.7
 =====
 :release-date: 2016-06-02
-:by: Tommaso Barbugli
 
 * Add HTTP Signature auth method (for application auth resources)
 * Add support for follow_many batch operation
@@ -242,7 +214,6 @@ Support the new collections endpoint and flexible get requests for personalizati
 2.3.5
 =====
 :release-date: 2015-10-07
-:by: Thierry Schellenbach
 
 * Added support for activity update
 
@@ -250,7 +221,6 @@ Support the new collections endpoint and flexible get requests for personalizati
 2.3.3
 =====
 :release-date: 2015-10-07
-:by: Thierry Schellenbach
 
 * Added support for creating redirect urls
 
@@ -258,42 +228,36 @@ Support the new collections endpoint and flexible get requests for personalizati
 2.3.0
 =====
 :release-date: 2015-06-11
-:by: Tommaso Barbugli
 
 * Added support for read-only tokens
 
 2.1.4
 =====
 :release-date: 2015-01-14
-:by: Tommaso Barbugli
 
 * Added support for extra data for follow actions
 
 2.1.3
 =====
 :release-date: 2015-01-05
-:by: Thierry Schellenbach
 
 * Bugfix, mark_seen and mark_read now work
 
 2.1.0
 =====
 :release-date: 2014-12-19
-:by: Thierry Schellenbach
 
 * Added location support to reduce latency
 
 2.0.1
 =====
 :release-date: 2014-11-18
-:by: Thierry Schellenbach
 
 * Additional validation on feed_slug and user_id
 
 2.0.0
 =====
 :release-date: 2014-11-10
-:by: Thierry Schellenbach
 
 * Breaking change: New style feed syntax, client.feed('user', '1') instead of client.feed('user:3')
 * Breaking change: New style follow syntax, feed.follow('user', 3)
@@ -305,13 +269,11 @@ Support the new collections endpoint and flexible get requests for personalizati
 1.1.1
 =====
 :release-date: 2014-09-20 08:00 A.M GMT
-:by: Tommaso Barbugli
 
 * Add HTTP client retries
 
 1.1.0
 =====
 :release-date: 2014-09-08 08:00 A.M GMT
-:by: Tommaso Barbugli
 
 * Add support for mark read (notifications feeds)
