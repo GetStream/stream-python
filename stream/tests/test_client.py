@@ -376,10 +376,10 @@ class ClientTest(TestCase):
     def test_user_session_token(self):
         client = stream.connect(self.c.api_key, self.c.api_secret)
         token = client.create_user_session_token("user")
-        payload = jwt.decode(token, self.c.api_secret)
+        payload = jwt.decode(token, self.c.api_secret, algorithms=["HS256"])
         self.assertEqual(payload["user_id"], "user")
         token = client.create_user_session_token("user", client="python", testing=True)
-        payload = jwt.decode(token, self.c.api_secret)
+        payload = jwt.decode(token, self.c.api_secret, algorithms=["HS256"])
         self.assertEqual(payload["client"], "python")
         self.assertEqual(payload["testing"], True)
 
@@ -1069,7 +1069,9 @@ class ClientTest(TestCase):
         parsed_url = urlparse(redirect_url)
         qs = parse_qs(parsed_url.query)
 
-        decoded = jwt.decode(qs["authorization"][0], self.c.api_secret)
+        decoded = jwt.decode(
+            qs["authorization"][0], self.c.api_secret, algorithms=["HS256"]
+        )
 
         self.assertEqual(
             decoded,
