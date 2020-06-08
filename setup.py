@@ -31,7 +31,7 @@ class PyTest(TestCommand):
         # import here, cause outside the eggs aren't loaded
         import pytest
 
-        errno = pytest.main("-v --cov=./")
+        errno = pytest.main(["-v", "--cov=./"])
         sys.exit(errno)
 
 
