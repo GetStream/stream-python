@@ -21,8 +21,12 @@ jobs:
         run: |
           echo "::add-path::/home/runner/.local/bin"
 
+      - name: Upgrade setuptools
+        if: ${{ matrix.python == '3.5' }}
+        run: pip install --upgrade setuptools
+
       - name: Install deps with ${{ matrix.python }}
-        run: pip install ".[test, lint]"
+        run: pip install ".[test, ci]"
 
       - name: Lint with ${{ matrix.python }}
         if: ${{ matrix.python == '3.8' }}
