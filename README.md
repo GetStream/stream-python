@@ -30,15 +30,15 @@ Documentation for this Python client are available at the [Stream website](https
 ```python
 import datetime
 
-# Instantiate a new client
+# Create a new client
 import stream
 client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET')
 
-# INstantiate a new client specifying data center location
+# Create a new client specifying data center location
 client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', location='us-east')
 # Find your API keys here https://getstream.io/dashboard/
 
-# Instantiate a feed object
+# Create a feed object
 user_feed_1 = client.feed('user', '1')
 
 # Get activities from 5 to 10 (slow pagination)
