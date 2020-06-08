@@ -1,0 +1,44 @@
+name: build
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: [3.5, 3.6, 3.7, 3.8]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Add pip bin to PATH
+        run: |
+          echo "::add-path::/home/runner/.local/bin"
+
+      - name: Upgrade setuptools
+        if: ${{ matrix.python == '3.5' }}
+        run: pip install --upgrade setuptools
+
+      - name: Install deps with ${{ matrix.python }}
+        run: pip install ".[test, ci]"
+
+      - name: Lint with ${{ matrix.python }}
+        if: ${{ matrix.python == '3.8' }}
+        run: |
+          black --check stream
+          flake8 --ignore=E501,E225,W293,W503 stream
+
+      - name: Install, test and code coverage with ${{ matrix.python }}
+        env:
+          STREAM_KEY: ${{ secrets.STREAM_KEY }}
+          STREAM_SECRET: ${{ secrets.STREAM_SECRET }}
+        run: |
+          python setup.py test
+          python setup.py install
+          codecov

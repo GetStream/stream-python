@@ -1,7 +1,7 @@
 stream-python
 =============
 
-[![Build Status](https://travis-ci.org/GetStream/stream-python.svg?branch=master)](https://travis-ci.org/GetStream/stream-python) [![codecov](https://codecov.io/gh/GetStream/stream-python/branch/master/graph/badge.svg)](https://codecov.io/gh/GetStream/stream-python) [![PyPI version](https://badge.fury.io/py/stream-python.svg)](http://badge.fury.io/py/stream-python)
+[![build](https://github.com/GetStream/stream-python/workflows/build/badge.svg)](https://github.com/GetStream/stream-python/actions) [![codecov](https://codecov.io/gh/GetStream/stream-python/branch/master/graph/badge.svg)](https://codecov.io/gh/GetStream/stream-python) [![PyPI version](https://badge.fury.io/py/stream-python.svg)](http://badge.fury.io/py/stream-python)
 
 [stream-python](https://github.com/GetStream/stream-python) is the official Python client for [Stream](https://getstream.io/), a web service for building scalable newsfeeds and activity streams.
 
@@ -13,7 +13,7 @@ You can sign up for a Stream account at https://getstream.io/get_started.
 
 stream-python supports:
 
-- Python (3.4, 3.5, 3.6, 3.7, 3.8)
+- Python (3.5, 3.6, 3.7, 3.8)
 
 #### Install from Pypi
 
@@ -30,15 +30,15 @@ Documentation for this Python client are available at the [Stream website](https
 ```python
 import datetime
 
-# Instantiate a new client
+# Create a new client
 import stream
 client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET')
 
-# INstantiate a new client specifying datacenter location
+# Create a new client specifying data center location
 client = stream.connect('YOUR_API_KEY', 'API_KEY_SECRET', location='us-east')
 # Find your API keys here https://getstream.io/dashboard/
 
-# Instantiate a feed object
+# Create a feed object
 user_feed_1 = client.feed('user', '1')
 
 # Get activities from 5 to 10 (slow pagination)
@@ -168,11 +168,10 @@ LOCAL=true py.test
 Install black and flake8
 
 ```
-pip install black
-pip install flake8
+pip install .[lint]
 ```
 
-Install git hooks to avoid pushing invalid code (git commit will run black and flak8)
+Install git hooks to avoid pushing invalid code (git commit will run `black` and `flake8`)
 
 ### Releasing a new version
 

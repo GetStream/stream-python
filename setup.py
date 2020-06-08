@@ -7,6 +7,9 @@ from stream import __version__, __maintainer__, __email__, __license__
 import sys
 
 tests_require = ["pytest==3.2.5", "unittest2", "pytest-cov", "python-dateutil"]
+ci_require = ["flake8", "codecov"]
+if sys.version_info >= (3, 6, 0):
+    ci_require.append("black")
 
 long_description = open("README.md", "r").read()
 
@@ -28,7 +31,7 @@ class PyTest(TestCommand):
         # import here, cause outside the eggs aren't loaded
         import pytest
 
-        errno = pytest.main("-v --cov=./")
+        errno = pytest.main(["-v", "--cov=./"])
         sys.exit(errno)
 
 
@@ -45,7 +48,7 @@ setup(
     packages=find_packages(),
     zip_safe=False,
     install_requires=install_requires,
-    extras_require={"test": tests_require},
+    extras_require={"test": tests_require, "ci": ci_require},
     cmdclass={"test": PyTest},
     tests_require=tests_require,
     include_package_data=True,
@@ -58,7 +61,6 @@ setup(
         "License :: OSI Approved :: BSD License",
         "Natural Language :: English",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
