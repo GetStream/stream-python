@@ -1,0 +1,29 @@
+name: build
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.4, 3.5, 3.6, 3.7, 3.8]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install, test and code coverage with ${{ matrix.python-version }}
+        env:
+          STREAM_KEY: ${{ secrets.STREAM_KEY }}
+          STREAM_SECRET: ${{ secrets.STREAM_SECRET }}
+        run: |
+          echo "$STREAM_KEY"
+          pip install -r dev_requirements.txt
+          pytest -lv --cov=./
+          pep8 --exclude=migrations --ignore=E501,E225,W293 stream
+          python setup.py install
+          codecov
