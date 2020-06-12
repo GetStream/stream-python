@@ -4,16 +4,16 @@ import os
 
 import jwt
 import requests
-from stream.serializer import _datetime_encoder
+from requests import Request
 
 from stream import exceptions, serializer
-from stream.users import Users
-from stream.utils import validate_feed_slug, validate_user_id, validate_foreign_id_time
-from requests import Request
-from stream.reactions import Reactions
 from stream.collections import Collections
-from stream.personalization import Personalization
 from stream.feed import Feed
+from stream.personalization import Personalization
+from stream.reactions import Reactions
+from stream.serializer import _datetime_encoder
+from stream.users import Users
+from stream.utils import validate_feed_slug, validate_foreign_id_time, validate_user_id
 
 try:
     from urllib.parse import urlparse
@@ -23,7 +23,7 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 
-class StreamClient(object):
+class StreamClient:
     def __init__(
         self,
         api_key,
@@ -377,9 +377,7 @@ class StreamClient(object):
         if enrich or reactions is not None:
             endpoint = "enrich/" + endpoint
 
-        query_params = {}
-        for key in params:
-            query_params[key] = params[key]
+        query_params = {**params}
 
         if ids is not None:
             query_params["ids"] = ",".join(ids)
@@ -405,7 +403,7 @@ class StreamClient(object):
         return self.get(endpoint, auth_token, params=query_params)
 
     def activity_partial_update(
-        self, id=None, foreign_id=None, time=None, set={}, unset=[]
+        self, id=None, foreign_id=None, time=None, set=None, unset=None
     ):
         """
         Partial update activity, via activity ID or Foreign ID + timestamp
@@ -426,7 +424,7 @@ class StreamClient(object):
                 "Only one of the id or the foreign_id+time parameters can be provided"
             )
 
-        data = {"set": set, "unset": unset}
+        data = {"set": set or {}, "unset": unset or []}
 
         if id is not None:
             data["id"] = id
@@ -436,7 +434,7 @@ class StreamClient(object):
 
         return self.activities_partial_update(updates=[data])
 
-    def activities_partial_update(self, updates=[]):
+    def activities_partial_update(self, updates=None):
         """
         Partial update activity, via activity ID or Foreign ID + timestamp
 
@@ -460,7 +458,7 @@ class StreamClient(object):
 
         auth_token = self.create_jwt_token("activities", "*", feed_id="*")
 
-        data = {"changes": updates}
+        data = {"changes": updates or []}
 
         return self.post("activity/", auth_token, data=data)
 

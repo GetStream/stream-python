@@ -1,5 +1,6 @@
 import datetime
 import json
+
 import pytz
 
 """
@@ -13,11 +14,12 @@ DATE_FORMAT = "%Y-%m-%d"
 
 def _datetime_encoder(obj):
     if isinstance(obj, datetime.datetime):
-        if obj.utcoffset() is None:  # support for <= 3.3
+        if obj.utcoffset() is None:  # 3.5
             obj = pytz.utc.localize(obj)
         return datetime.datetime.strftime(obj.astimezone(pytz.utc), DATETIME_FORMAT)
     if isinstance(obj, datetime.date):
         return datetime.datetime.strftime(obj, DATE_FORMAT)
+    return None
 
 
 def _datetime_decoder(dict_):

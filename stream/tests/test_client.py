@@ -1,28 +1,28 @@
-from dateutil.tz import tzlocal
-import stream
-import time
-from stream.exceptions import ApiKeyException, InputException
+import copy
+import datetime
+import json
+import os
 import random
+import sys
+import time
+from itertools import count
+from uuid import uuid1, uuid4
+
 import jwt
 import pytz
+import requests
+from dateutil.tz import tzlocal
+from requests.exceptions import MissingSchema
+
+import stream
+from stream import serializer
+from stream.exceptions import ApiKeyException, InputException
 
 try:
     from unittest.case import TestCase
 except ImportError:
     from unittest import TestCase
-import json
 
-import os
-import sys
-import datetime
-import datetime as dt
-import copy
-import requests
-from stream import serializer
-from requests.exceptions import MissingSchema
-from itertools import count
-from uuid import uuid1
-from uuid import uuid4
 
 try:
     from urlparse import urlparse, parse_qs
@@ -152,15 +152,15 @@ class ClientTest(TestCase):
             )
 
     def test_collections_url_default(self):
-        client = stream.connect("key", "secret")
-        feed_url = client.get_full_url(relative_url="meta/", service_name="api")
+        c = stream.connect("key", "secret")
+        feed_url = c.get_full_url(relative_url="meta/", service_name="api")
 
         if not self.local_tests:
             self.assertEqual(feed_url, "https://api.stream-io-api.com/api/v1.0/meta/")
 
     def test_personalization_url_default(self):
-        client = stream.connect("key", "secret")
-        feed_url = client.get_full_url(
+        c = stream.connect("key", "secret")
+        feed_url = c.get_full_url(
             relative_url="recommended", service_name="personalization"
         )
 
@@ -171,15 +171,15 @@ class ClientTest(TestCase):
             )
 
     def test_api_url_default(self):
-        client = stream.connect("key", "secret")
-        feed_url = client.get_full_url(service_name="api", relative_url="feed/")
+        c = stream.connect("key", "secret")
+        feed_url = c.get_full_url(service_name="api", relative_url="feed/")
 
         if not self.local_tests:
             self.assertEqual(feed_url, "https://api.stream-io-api.com/api/v1.0/feed/")
 
     def test_collections_url_location(self):
-        client = stream.connect("key", "secret", location="tokyo")
-        feed_url = client.get_full_url(relative_url="meta/", service_name="api")
+        c = stream.connect("key", "secret", location="tokyo")
+        feed_url = c.get_full_url(relative_url="meta/", service_name="api")
 
         if not self.local_tests:
             self.assertEqual(
@@ -187,8 +187,8 @@ class ClientTest(TestCase):
             )
 
     def test_personalization_url_location(self):
-        client = stream.connect("key", "secret", location="tokyo")
-        feed_url = client.get_full_url(
+        c = stream.connect("key", "secret", location="tokyo")
+        feed_url = c.get_full_url(
             relative_url="recommended", service_name="personalization"
         )
 
@@ -199,8 +199,8 @@ class ClientTest(TestCase):
             )
 
     def test_api_url_location(self):
-        client = stream.connect("key", "secret", location="tokyo")
-        feed_url = client.get_full_url(service_name="api", relative_url="feed/")
+        c = stream.connect("key", "secret", location="tokyo")
+        feed_url = c.get_full_url(service_name="api", relative_url="feed/")
 
         if not self.local_tests:
             self.assertEqual(
@@ -259,22 +259,22 @@ class ClientTest(TestCase):
     def test_heroku(self):
         url = "https://thierry:pass@getstream.io/?app_id=1"
         os.environ["STREAM_URL"] = url
-        client = stream.connect()
-        self.assertEqual(client.api_key, "thierry")
-        self.assertEqual(client.api_secret, "pass")
-        self.assertEqual(client.app_id, "1")
+        c = stream.connect()
+        self.assertEqual(c.api_key, "thierry")
+        self.assertEqual(c.api_secret, "pass")
+        self.assertEqual(c.app_id, "1")
 
     def test_heroku_no_location(self):
         url = "https://bvt88g4kvc63:twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd@stream-io-api.com/?app_id=669"
         os.environ["STREAM_URL"] = url
-        client = stream.connect()
-        self.assertEqual(client.api_key, "bvt88g4kvc63")
+        c = stream.connect()
+        self.assertEqual(c.api_key, "bvt88g4kvc63")
         self.assertEqual(
-            client.api_secret,
+            c.api_secret,
             "twc5ywfste5bm2ngqkzs7ukxk3pn96yweghjrxcmcrarnt3j4dqj3tucbhym5wfd",
         )
-        self.assertEqual(client.app_id, "669")
-        feed_url = client.get_full_url("api", "feed/")
+        self.assertEqual(c.app_id, "669")
+        feed_url = c.get_full_url("api", "feed/")
 
         if self.local_tests:
             self.assertEqual(feed_url, "http://localhost:8000/api/v1.0/feed/")
@@ -284,14 +284,14 @@ class ClientTest(TestCase):
     def test_heroku_location_compat(self):
         url = "https://ahj2ndz7gsan:gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy@us-east.getstream.io/?app_id=1"
         os.environ["STREAM_URL"] = url
-        client = stream.connect()
-        self.assertEqual(client.api_key, "ahj2ndz7gsan")
+        c = stream.connect()
+        self.assertEqual(c.api_key, "ahj2ndz7gsan")
         self.assertEqual(
-            client.api_secret,
+            c.api_secret,
             "gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy",
         )
 
-        feed_url = client.get_full_url("api", "feed/")
+        feed_url = c.get_full_url("api", "feed/")
         if self.local_tests:
             self.assertEqual(feed_url, "http://localhost:8000/api/v1.0/feed/")
         else:
@@ -299,52 +299,52 @@ class ClientTest(TestCase):
                 feed_url, "https://us-east-api.stream-io-api.com/api/v1.0/feed/"
             )
 
-        self.assertEqual(client.app_id, "1")
+        self.assertEqual(c.app_id, "1")
 
     def test_heroku_location(self):
         url = "https://ahj2ndz7gsan:gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy@us-east.stream-io-api.com/?app_id=1"
         os.environ["STREAM_URL"] = url
-        client = stream.connect()
-        self.assertEqual(client.api_key, "ahj2ndz7gsan")
+        c = stream.connect()
+        self.assertEqual(c.api_key, "ahj2ndz7gsan")
         self.assertEqual(
-            client.api_secret,
+            c.api_secret,
             "gthc2t9gh7pzq52f6cky8w4r4up9dr6rju9w3fjgmkv6cdvvav2ufe5fv7e2r9qy",
         )
 
-        feed_url = client.get_full_url("api", "feed/")
+        feed_url = c.get_full_url("api", "feed/")
         if self.local_tests:
             self.assertEqual(feed_url, "http://localhost:8000/api/v1.0/feed/")
         else:
             self.assertEqual(
                 feed_url, "https://us-east-api.stream-io-api.com/api/v1.0/feed/"
             )
-        self.assertEqual(client.app_id, "1")
+        self.assertEqual(c.app_id, "1")
 
     def test_heroku_overwrite(self):
         url = "https://thierry:pass@getstream.io/?app_id=1"
         os.environ["STREAM_URL"] = url
-        client = stream.connect("a", "b", "c")
-        self.assertEqual(client.api_key, "a")
-        self.assertEqual(client.api_secret, "b")
-        self.assertEqual(client.app_id, "c")
+        c = stream.connect("a", "b", "c")
+        self.assertEqual(c.api_key, "a")
+        self.assertEqual(c.api_secret, "b")
+        self.assertEqual(c.app_id, "c")
 
     def test_location_support(self):
-        client = stream.connect("a", "b", "c", location="us-east")
+        c = stream.connect("a", "b", "c", location="us-east")
 
         full_location = "https://us-east-api.stream-io-api.com/api/v1.0/feed/"
         if self.local_tests:
             full_location = "http://localhost:8000/api/v1.0/feed/"
 
-        self.assertEqual(client.location, "us-east")
-        feed_url = client.get_full_url("api", "feed/")
+        self.assertEqual(c.location, "us-east")
+        feed_url = c.get_full_url("api", "feed/")
         self.assertEqual(feed_url, full_location)
 
         # test a wrong location, can only work on non-local test running
         if not self.local_tests:
-            client = stream.connect("a", "b", "c", location="nonexistant")
+            c = stream.connect("a", "b", "c", location="nonexistant")
 
             def get_feed():
-                client.feed("user", "1").get()
+                c.feed("user", "1").get()
 
             self.assertRaises(requests.exceptions.ConnectionError, get_feed)
 
@@ -370,15 +370,14 @@ class ClientTest(TestCase):
         self.assertRaises(ValueError, invalid_follow_user_id)
 
     def test_token_retrieval(self):
-        self.user1.token
-        self.user1.get_readonly_token()
+        _ = self.user1.token
+        _ = self.user1.get_readonly_token()
 
     def test_user_token(self):
-        client = stream.connect(self.c.api_key, self.c.api_secret)
-        token = client.create_user_token("user")
+        token = self.c.create_user_token("user")
         payload = jwt.decode(token, self.c.api_secret, algorithms=["HS256"])
         self.assertEqual(payload["user_id"], "user")
-        token = client.create_user_token("user", client="python", testing=True)
+        token = self.c.create_user_token("user", client="python", testing=True)
         payload = jwt.decode(token, self.c.api_secret, algorithms=["HS256"])
         self.assertEqual(payload["client"], "python")
         self.assertEqual(payload["testing"], True)
@@ -475,17 +474,19 @@ class ClientTest(TestCase):
             "foreign_id": "tweet:10",
         }
 
-        self.user1.add_activity(activity_data)["id"]
+        self.user1.add_activity(activity_data)
         activities = self.user1.get(limit=8)["results"]
         self.assertEqual(len(activities), 1)
+        self.assertNotEqual(activities[0]["id"], "")
+        self.assertEqual(activities[0]["foreign_id"], "tweet:10")
 
         self.user1.remove_activity(foreign_id="tweet:10")
         # verify that no activities were returned
         activities = self.user1.get(limit=8)["results"]
         self.assertEqual(len(activities), 0)
 
-        # verify this doesnt raise an error, but fails silently
-        self.user1.remove_activity(foreign_id="tweet:unknowandmissing")
+        # verify this doesn't raise an error, but fails silently
+        self.user1.remove_activity(foreign_id="tweet:unknownandmissing")
 
     def test_add_activities(self):
         activity_data = [
@@ -579,7 +580,7 @@ class ClientTest(TestCase):
         feed = getfeed("user", "test_flat_follow_no_copy")
         follower = getfeed("flat", "test_flat_follow_no_copy")
         activity_data = {"actor": 1, "verb": "tweet", "object": 1}
-        feed.add_activity(activity_data)["id"]
+        feed.add_activity(activity_data)
         follower.follow(feed.slug, feed.user_id, activity_copy_limit=0)
 
         activities = follower.get(limit=3)["results"]
@@ -594,14 +595,14 @@ class ClientTest(TestCase):
             "object": 1,
             "foreign_id": "test:1",
         }
-        feed.add_activity(activity_data)["id"]
+        feed.add_activity(activity_data)
         activity_data = {
             "actor": 1,
             "verb": "tweet",
             "object": 1,
             "foreign_id": "test:2",
         }
-        feed.add_activity(activity_data)["id"]
+        feed.add_activity(activity_data)
         follower.follow(feed.slug, feed.user_id, activity_copy_limit=1)
 
         activities = follower.get(limit=3)["results"]
@@ -679,20 +680,20 @@ class ClientTest(TestCase):
         self.assertEqual(followings["results"][0]["target_id"], "user:apy")
 
     def test_update_activity_to_targets(self):
-        time = datetime.datetime.utcnow().isoformat()
+        now = datetime.datetime.utcnow().isoformat()
         foreign_id = "user:1"
         activity_data = {
             "actor": 1,
             "verb": "tweet",
             "object": 1,
             "foreign_id": foreign_id,
-            "time": time,
+            "time": now,
         }
         activity_data["to"] = ["user:1", "user:2"]
         self.user1.add_activity(activity_data)
 
         ret = self.user1.update_activity_to_targets(
-            foreign_id, time, new_targets=["user:3", "user:2"]
+            foreign_id, now, new_targets=["user:3", "user:2"]
         )
         self.assertEqual(len(ret["activity"]["to"]), 2)
         self.assertTrue("user:2" in ret["activity"]["to"])
@@ -700,7 +701,7 @@ class ClientTest(TestCase):
 
         ret = self.user1.update_activity_to_targets(
             foreign_id,
-            time,
+            now,
             added_targets=["user:4", "user:5"],
             removed_targets=["user:3"],
         )
@@ -909,7 +910,7 @@ class ClientTest(TestCase):
 
         # timedelta is used to "make sure" that ordering is known even though
         # server time is not
-        custom_time = datetime.datetime.now(tz=pytz.utc) - dt.timedelta(days=1)
+        custom_time = datetime.datetime.now(tz=pytz.utc) - datetime.timedelta(days=1)
 
         feed = self.user2
         for index, activity_time in enumerate([None, custom_time, None]):
@@ -944,10 +945,6 @@ class ClientTest(TestCase):
             pass
 
     def test_wrong_feed_spec(self):
-        self.c = stream.connect(
-            "5crf3bhfzesnMISSING",
-            "tfq2sdqpj9g446sbv653x3aqmgn33hsn8uzdc9jpskaw8mj6vsnhzswuwptuj9su",
-        )
         self.assertRaises(TypeError, lambda: getfeed("user1"))
 
     def test_serialization(self):
@@ -1216,16 +1213,16 @@ class ClientTest(TestCase):
         )
         activity = feed.get()["results"][0]
 
-        set = {
+        to_set = {
             "product.name": "boots",
             "product.price": 7.99,
             "popularity": 1000,
             "foo": {"bar": {"baz": "qux"}},
         }
-        unset = ["product.color"]
+        to_unset = ["product.color"]
 
         # partial update by ID
-        self.c.activity_partial_update(id=activity["id"], set=set, unset=unset)
+        self.c.activity_partial_update(id=activity["id"], set=to_set, unset=to_unset)
         updated = feed.get()["results"][0]
         expected = activity
         expected["product"] = {"name": "boots", "price": 7.99}
@@ -1234,13 +1231,13 @@ class ClientTest(TestCase):
         self.assertEqual(updated, expected)
 
         # partial update by foreign ID + time
-        set = {"foo.bar.baz": 42, "popularity": 9000}
-        unset = ["product.price"]
+        to_set = {"foo.bar.baz": 42, "popularity": 9000}
+        to_unset = ["product.price"]
         self.c.activity_partial_update(
             foreign_id=activity["foreign_id"],
             time=activity["time"],
-            set=set,
-            unset=unset,
+            set=to_set,
+            unset=to_unset,
         )
         updated = feed.get()["results"][0]
         expected["product"] = {"name": "boots"}

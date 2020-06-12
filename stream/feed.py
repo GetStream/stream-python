@@ -1,7 +1,7 @@
-from stream.utils import validate_feed_id, validate_user_id, validate_feed_slug
+from stream.utils import validate_feed_id, validate_feed_slug, validate_user_id
 
 
-class Feed(object):
+class Feed:
     def __init__(self, client, feed_slug, user_id, token):
         """
         Initializes the Feed class
@@ -61,8 +61,7 @@ class Feed(object):
             activity_data["to"] = self.add_to_signature(activity_data["to"])
 
         token = self.create_scope_token("feed", "write")
-        result = self.client.post(self.feed_url, data=activity_data, signature=token)
-        return result
+        return self.client.post(self.feed_url, data=activity_data, signature=token)
 
     def add_activities(self, activity_list):
         """
@@ -87,8 +86,8 @@ class Feed(object):
         token = self.create_scope_token("feed", "write")
         data = dict(activities=activities)
         if activities:
-            result = self.client.post(self.feed_url, data=data, signature=token)
-            return result
+            return self.client.post(self.feed_url, data=data, signature=token)
+        return None
 
     def remove_activity(self, activity_id=None, foreign_id=None):
         """
@@ -106,8 +105,7 @@ class Feed(object):
         token = self.create_scope_token("feed", "delete")
         if foreign_id is not None:
             params["foreign_id"] = "1"
-        result = self.client.delete(url, signature=token, params=params)
-        return result
+        return self.client.delete(url, signature=token, params=params)
 
     def get(self, enrich=False, reactions=None, **params):
         """
@@ -143,8 +141,7 @@ class Feed(object):
             if reactions.get("counts"):
                 params["withReactionCounts"] = True
 
-        response = self.client.get(feed_url, params=params, signature=token)
-        return response
+        return self.client.get(feed_url, params=params, signature=token)
 
     def follow(
         self, target_feed_slug, target_user_id, activity_copy_limit=None, **extra_data
@@ -168,8 +165,7 @@ class Feed(object):
             data["activity_copy_limit"] = activity_copy_limit
         token = self.create_scope_token("follower", "write")
         data.update(extra_data)
-        response = self.client.post(url, data=data, signature=token)
-        return response
+        return self.client.post(url, data=data, signature=token)
 
     def unfollow(self, target_feed_slug, target_user_id, keep_history=False):
         """
@@ -183,31 +179,27 @@ class Feed(object):
         params = {}
         if keep_history:
             params["keep_history"] = True
-        response = self.client.delete(url, signature=token, params=params)
-        return response
+        return self.client.delete(url, signature=token, params=params)
 
     def followers(self, offset=0, limit=25, feeds=None):
         """
         Lists the followers for the given feed
         """
-        feeds = feeds is not None and ",".join(feeds) or ""
+        feeds = ",".join(feeds) if feeds is not None else ""
         params = {"limit": limit, "offset": offset, "filter": feeds}
         url = self.feed_url + "followers/"
         token = self.create_scope_token("follower", "read")
-        response = self.client.get(url, params=params, signature=token)
-        return response
+        return self.client.get(url, params=params, signature=token)
 
     def following(self, offset=0, limit=25, feeds=None):
         """
         List the feeds which this feed is following
         """
-        if feeds is not None:
-            feeds = feeds is not None and ",".join(feeds) or ""
+        feeds = ",".join(feeds) if feeds is not None else ""
         params = {"offset": offset, "limit": limit, "filter": feeds}
         url = self.feed_url + "follows/"
         token = self.create_scope_token("follower", "read")
-        response = self.client.get(url, params=params, signature=token)
-        return response
+        return self.client.get(url, params=params, signature=token)
 
     def add_to_signature(self, recipients):
         """
