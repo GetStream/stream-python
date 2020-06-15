@@ -13,7 +13,12 @@ from stream.personalization import Personalization
 from stream.reactions import Reactions
 from stream.serializer import _datetime_encoder
 from stream.users import Users
-from stream.utils import validate_feed_slug, validate_foreign_id_time, validate_user_id
+from stream.utils import (
+    validate_feed_slug,
+    validate_foreign_id_time,
+    validate_user_id,
+    get_reaction_params,
+)
 
 try:
     from urllib.parse import urlparse
@@ -389,16 +394,7 @@ class StreamClient:
             query_params["foreign_ids"] = ",".join(foreign_ids)
             query_params["timestamps"] = ",".join(timestamps)
 
-        if reactions is not None and not isinstance(reactions, (dict,)):
-            raise TypeError("reactions argument should be a dictionary")
-
-        if reactions is not None:
-            if reactions.get("own"):
-                query_params["withOwnReactions"] = True
-            if reactions.get("recent"):
-                query_params["withRecentReactions"] = True
-            if reactions.get("counts"):
-                query_params["withReactionCounts"] = True
+        query_params.update(get_reaction_params(reactions))
 
         return self.get(endpoint, auth_token, params=query_params)
 
