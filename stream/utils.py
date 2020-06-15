@@ -54,3 +54,23 @@ def validate_foreign_id_time(foreign_id_time):
 
         if len(v) != 2:
             raise ValueError("foreign_id_time elements should have two elements")
+
+
+def get_reaction_params(reactions):
+    if reactions is not None and not isinstance(reactions, (dict,)):
+        raise TypeError("reactions argument should be a dictionary")
+
+    params = {}
+    if reactions is not None:
+        if reactions.get("own"):
+            params["withOwnReactions"] = True
+        if reactions.get("recent"):
+            params["withRecentReactions"] = True
+        if reactions.get("counts"):
+            params["withReactionCounts"] = True
+        kinds = reactions.get("kinds")
+        if kinds:
+            if isinstance(kinds, list):
+                kinds = ",".join(k.strip() for k in kinds if k.strip())
+            params["reactionKindsFilter"] = kinds
+    return params

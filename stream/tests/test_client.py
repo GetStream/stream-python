@@ -1198,6 +1198,56 @@ class ClientTest(TestCase):
             self.c.get_activities(foreign_id_times=[(fid, dt)], reactions=reactions)
         )
 
+    def test_get_activities_full_with_enrichment_and_reaction_kinds(self):
+        dt = datetime.datetime.utcnow()
+        fid = "awesome-test"
+
+        actor = self.c.users.add(str(uuid1()), data={"name": "barry"})
+        activity = {
+            "actor": self.c.users.create_reference(actor["id"]),
+            "object": "09",
+            "verb": "tweet",
+            "time": dt,
+            "foreign_id": fid,
+        }
+
+        feed = getfeed("user", "test_get_activity")
+        activity = feed.add_activity(activity)
+
+        self.c.reactions.add("like", activity["id"], "liker")
+        self.c.reactions.add("reshare", activity["id"], "sharer")
+        self.c.reactions.add("comment", activity["id"], "commenter")
+
+        reactions = {"recent": True, "counts": True, "kinds": "like,comment"}
+        response = self.c.get_activities(ids=[activity["id"]], reactions=reactions)
+        self.assertEqual(len(response["results"]), 1)
+        self.assertEqual(response["results"][0]["id"], activity["id"])
+        self.assertEqual(
+            sorted(response["results"][0]["latest_reactions"].keys()),
+            ["comment", "like"],
+        )
+        self.assertEqual(
+            response["results"][0]["reaction_counts"], {"like": 1, "comment": 1}
+        )
+
+        reactions = {
+            "recent": True,
+            "counts": True,
+            "kinds": ["", "reshare   ", "comment\n"],
+        }
+        response = self.c.get_activities(
+            foreign_id_times=[(fid, dt)], reactions=reactions
+        )
+        self.assertEqual(len(response["results"]), 1)
+        self.assertEqual(response["results"][0]["id"], activity["id"])
+        self.assertEqual(
+            sorted(response["results"][0]["latest_reactions"].keys()),
+            ["comment", "reshare"],
+        )
+        self.assertEqual(
+            response["results"][0]["reaction_counts"], {"comment": 1, "reshare": 1}
+        )
+
     def test_activity_partial_update(self):
         now = datetime.datetime.utcnow()
         feed = self.c.feed("user", uuid4())

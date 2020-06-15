@@ -1,4 +1,9 @@
-from stream.utils import validate_feed_id, validate_feed_slug, validate_user_id
+from stream.utils import (
+    validate_feed_id,
+    validate_feed_slug,
+    validate_user_id,
+    get_reaction_params,
+)
 
 
 class Feed:
@@ -130,17 +135,7 @@ class Feed:
         else:
             feed_url = self.feed_url
 
-        if reactions is not None and not isinstance(reactions, (dict,)):
-            raise TypeError("reactions argument should be a dictionary")
-
-        if reactions is not None:
-            if reactions.get("own"):
-                params["withOwnReactions"] = True
-            if reactions.get("recent"):
-                params["withRecentReactions"] = True
-            if reactions.get("counts"):
-                params["withReactionCounts"] = True
-
+        params.update(get_reaction_params(reactions))
         return self.client.get(feed_url, params=params, signature=token)
 
     def follow(
