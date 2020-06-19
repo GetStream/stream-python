@@ -14,7 +14,7 @@ if sys.version_info >= (3, 6, 0):
 long_description = open("README.md", "r").read()
 
 install_requires = [
-    "pycryptodomex>=3.4.7,<4",
+    "pycryptodomex>=3.8.1,<4",
     "requests>=2.3.0,<3",
     "pyjwt>=1.3.0,<1.8.0",
     "pytz>=2019.3",
