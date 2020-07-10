@@ -1620,3 +1620,24 @@ class ClientTest(TestCase):
         response = client.og("https://google.com")
         self.assertTrue("title" in response)
         self.assertTrue("description" in response)
+
+    def test_follow_stats(self):
+        uniq = uuid4()
+        f = client.feed("user", uniq)
+        f.follow("user", uuid4())
+        f.follow("user", uuid4())
+        f.follow("user", uuid4())
+
+        client.feed("user", uuid4()).follow("user", uniq)
+        client.feed("timeline", uuid4()).follow("user", uniq)
+
+        feed_id = "user:" + str(uniq)
+        response = client.follow_stats(feed_id)["results"]
+        self.assertEqual(response["following"]["count"], 3)
+        self.assertEqual(response["followers"]["count"], 2)
+
+        response = client.follow_stats(
+            feed_id, followers_slugs=["timeline"], following_slugs=["timeline"]
+        )["results"]
+        self.assertEqual(response["following"]["count"], 0)
+        self.assertEqual(response["followers"]["count"], 1)

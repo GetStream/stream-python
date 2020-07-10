@@ -489,3 +489,34 @@ class StreamClient:
         auth_token = self.create_jwt_token("*", "*", feed_id="*")
         params = {"url": target_url}
         return self.get("og/", auth_token, params=params)
+
+    def follow_stats(self, feed_id, followers_slugs=None, following_slugs=None):
+        """
+        Retrieve the number of follower and following feed stats of a given feed.
+        For each count, feed slugs can be provided to filter counts accordingly.
+
+        eg.
+        client.follow_stats(me, followers_slugs=['user'], following_slugs=['commodities'])
+        this means to find counts of users following me and count of commodities I am following
+        """
+        auth_token = self.create_jwt_token("*", "*", feed_id="*")
+        params = {
+            "followers": feed_id,
+            "following": feed_id,
+        }
+
+        if followers_slugs:
+            params["followers_slugs"] = (
+                ",".join(followers_slugs)
+                if isinstance(followers_slugs, list)
+                else followers_slugs
+            )
+
+        if following_slugs:
+            params["following_slugs"] = (
+                ",".join(following_slugs)
+                if isinstance(following_slugs, list)
+                else following_slugs
+            )
+
+        return self.get("stats/follow/", auth_token, params=params)
