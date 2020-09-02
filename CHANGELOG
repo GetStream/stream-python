@@ -3,6 +3,20 @@
 ================
 
 =====
+4.0.0
+=====
+:release-date: 2020-09-02
+
+Drop old create_user_session_token in favor create_user_token
+Drop python support before 3.4
+Allow custom data in client.create_jwt_token
+Add kind filter for reactions in enrichment
+Add follow stat support
+Move to github actions from travis and improve static analysis
+Update readme for old docs
+Update some crypto dependencies
+
+=====
 3.5.1
 =====
 :release-date: 2020-06-08
