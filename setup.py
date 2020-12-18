@@ -7,9 +7,7 @@ from stream import __version__, __maintainer__, __email__, __license__
 import sys
 
 tests_require = ["pytest==3.2.5", "unittest2", "pytest-cov", "python-dateutil"]
-ci_require = ["flake8", "codecov"]
-if sys.version_info >= (3, 6, 0):
-    ci_require.append("black")
+ci_require = ["black", "flake8", "pytest-cov"]
 
 long_description = open("README.md", "r").read()
 
@@ -61,10 +59,10 @@ setup(
         "License :: OSI Approved :: BSD License",
         "Natural Language :: English",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
 )
