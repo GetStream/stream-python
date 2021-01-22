@@ -1,3 +1,7 @@
+## 5.0.1 - 2021-01-22
+
+* Bump pyjwt to 2.x
+
 ## 5.0.0 - 2020-09-17
 
 * Drop python 3.5 and add 3.9
