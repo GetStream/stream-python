@@ -1,6 +1,6 @@
 ## 5.1.0 - 2021-04-16
 
-* Add analytics support for `track_engagments` and `track_impressions`
+* Add analytics support for `track_engagements` and `track_impressions`
 * Update license to BSD-3 canonical description
 
 ## 5.0.1 - 2021-01-22
