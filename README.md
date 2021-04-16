@@ -184,6 +184,4 @@ If unsure you can also test using the Pypi test servers `twine upload --reposito
 
 ### Copyright and License Information
 
-Copyright (c) 2014-2017 Stream.io Inc, and individual contributors. All rights reserved.
-
-See the file "LICENSE" for information on the history of this software, terms & conditions for usage, and a DISCLAIMER OF ALL WARRANTIES.
+Project is licensed under the [BSD 3-Clause](LICENSE).
