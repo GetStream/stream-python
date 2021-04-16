@@ -55,5 +55,7 @@ docs/_build/
 
 secrets.*sh
 .idea
+.vscode/
 
 .venv
+.envrc
