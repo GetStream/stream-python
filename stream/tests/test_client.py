@@ -126,6 +126,20 @@ class ClientTest(TestCase):
                 feed_url, "https://qa-api.stream-io-api.com/api/v1.0/meta/"
             )
 
+    def test_analytics_url(self):
+        feed_url = client.get_full_url(
+            relative_url="engagement/", service_name="analytics"
+        )
+
+        if self.local_tests:
+            self.assertEqual(
+                feed_url, "http://localhost:8000/analytics/v1.0/engagement/"
+            )
+        else:
+            self.assertEqual(
+                feed_url, "https://qa.stream-io-api.com/analytics/v1.0/engagement/"
+            )
+
     def test_personalization_url(self):
         feed_url = client.get_full_url(
             relative_url="recommended", service_name="personalization"
@@ -1615,6 +1629,53 @@ class ClientTest(TestCase):
         reaction.pop("duration")
         enriched_response = f.get(reactions={"counts": True})
         self.assertEqual(enriched_response["results"][0]["reaction_counts"]["like"], 1)
+
+    def test_track_engagements(self):
+        engagements = [
+            {
+                "content": "1",
+                "label": "click",
+                "features": [
+                    {"group": "topic", "value": "js"},
+                    {"group": "user", "value": "tommaso"},
+                ],
+                "user_data": "tommaso",
+            },
+            {
+                "content": "2",
+                "label": "click",
+                "features": [
+                    {"group": "topic", "value": "go"},
+                    {"group": "user", "value": "tommaso"},
+                ],
+                "user_data": {"id": "486892", "alias": "Julian"},
+            },
+            {
+                "content": "3",
+                "label": "click",
+                "features": [{"group": "topic", "value": "go"}],
+                "user_data": {"id": "tommaso", "alias": "tommaso"},
+            },
+        ]
+        client.track_engagements(engagements)
+
+    def test_track_impressions(self):
+        impressions = [
+            {
+                "content_list": ["1", "2", "3"],
+                "features": [
+                    {"group": "topic", "value": "js"},
+                    {"group": "user", "value": "tommaso"},
+                ],
+                "user_data": {"id": "tommaso", "alias": "tommaso"},
+            },
+            {
+                "content_list": ["2", "3", "5"],
+                "features": [{"group": "topic", "value": "js"}],
+                "user_data": {"id": "486892", "alias": "Julian"},
+            },
+        ]
+        client.track_impressions(impressions)
 
     def test_og(self):
         response = client.og("https://google.com")
