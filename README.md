@@ -1,7 +1,7 @@
 stream-python
 =============
 
-[![build](https://github.com/GetStream/stream-python/workflows/build/badge.svg)](https://github.com/GetStream/stream-python/actions) [![codecov](https://codecov.io/gh/GetStream/stream-python/branch/master/graph/badge.svg)](https://codecov.io/gh/GetStream/stream-python) [![PyPI version](https://badge.fury.io/py/stream-python.svg)](http://badge.fury.io/py/stream-python) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/stream-python.svg)
+[![build](https://github.com/GetStream/stream-python/workflows/build/badge.svg)](https://github.com/GetStream/stream-python/actions) [![PyPI version](https://badge.fury.io/py/stream-python.svg)](http://badge.fury.io/py/stream-python) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/stream-python.svg)
 
 [stream-python](https://github.com/GetStream/stream-python) is the official Python client for [Stream](https://getstream.io/), a web service for building scalable newsfeeds and activity streams.
 
