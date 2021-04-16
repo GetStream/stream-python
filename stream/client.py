@@ -133,9 +133,9 @@ class StreamClient:
 
     def get_full_url(self, service_name, relative_url):
         if self.api_location:
-            hostname = "%s-%s.%s" % (
+            hostname = "%s%s.%s" % (
                 self.api_location,
-                service_name,
+                "" if service_name == "analytics" else f"-{service_name}",
                 self.base_domain_name,
             )
         elif service_name:
@@ -472,7 +472,7 @@ class StreamClient:
         params = dict(auth_type="jwt", authorization=auth_token, url=target_url)
         params["api_key"] = self.api_key
         params["events"] = json.dumps(events)
-        url = self.base_analytics_url + "redirect/"
+        url = f"{self.base_analytics_url}redirect/"
         # we get the url from the prepare request, this skips issues with
         # python's urlencode implementation
         request = Request("GET", url, params=params)
@@ -480,6 +480,76 @@ class StreamClient:
         # validate the target url is valid
         Request("GET", target_url).prepare()
         return prepared_request.url
+
+    def track_engagements(self, engagements):
+        """
+        Creates a list of engagements
+
+        ;param engagements: Slice of engagements to create.
+
+        eg.
+        [
+            {
+                "content": "1",
+                "label": "click",
+                "features": [
+                    {"group": "topic", "value": "js"},
+                    {"group": "user", "value": "tommaso"},
+                ],
+                "user_data": "tommaso",
+            },
+            {
+                "content": "2",
+                "label": "click",
+                "features": [
+                    {"group": "topic", "value": "go"},
+                    {"group": "user", "value": "tommaso"},
+                ],
+                "user_data": {"id": "486892", "alias": "Julian"},
+            },
+            {
+                "content": "3",
+                "label": "click",
+                "features": [{"group": "topic", "value": "go"}],
+                "user_data": {"id": "tommaso", "alias": "tommaso"},
+            },
+        ]
+        """
+
+        auth_token = self.create_jwt_token("*", "*", feed_id="*")
+        self.post(
+            "engagement/",
+            auth_token,
+            data={"content_list": engagements},
+            service_name="analytics",
+        )
+
+    def track_impressions(self, impressions):
+        """
+        Creates a list of impressions
+
+        ;param impressions: Slice of impressions to create.
+
+        eg.
+        [
+            {
+                "content_list": ["1", "2", "3"],
+                "features": [
+                    {"group": "topic", "value": "js"},
+                    {"group": "user", "value": "tommaso"},
+                ],
+                "user_data": {"id": "tommaso", "alias": "tommaso"},
+            },
+            {
+                "content_list": ["2", "3", "5"],
+                "features": [{"group": "topic", "value": "js"}],
+                "user_data": {"id": "486892", "alias": "Julian"},
+            },
+        ]
+        """
+
+        auth_token = self.create_jwt_token("*", "*", feed_id="*")
+        self.post("impression/", auth_token, data=impressions, service_name="analytics")
 
     def og(self, target_url):
         """
