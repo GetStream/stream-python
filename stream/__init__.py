@@ -5,7 +5,7 @@ __author__ = "Thierry Schellenbach"
 __copyright__ = "Copyright 2014, Stream.io, Inc"
 __credits__ = ["Thierry Schellenbach, mellowmorning.com, @tschellenbach"]
 __license__ = "BSD-3-Clause"
-__version__ = "5.1.1"
+__version__ = "6.0.0"
 __maintainer__ = "Thierry Schellenbach"
 __email__ = "support@getstream.io"
 __status__ = "Production"
@@ -19,6 +19,7 @@ def connect(
     timeout=3.0,
     location=None,
     base_url=None,
+    use_async=False,
 ):
     """
     Returns a Client object
@@ -26,8 +27,9 @@ def connect(
     :param api_key: your api key or heroku url
     :param api_secret: the api secret
     :param app_id: the app id (used for listening to feed changes)
+    :param use_async: flag to set AsyncClient
     """
-    from stream.client import StreamClient
+    from stream.client import AsyncStreamClient, StreamClient
 
     stream_url = os.environ.get("STREAM_URL")
     # support for the heroku STREAM_URL syntax
@@ -41,6 +43,17 @@ def connect(
             location = None if location in ("getstream", "stream-io-api") else location
         else:
             raise ValueError("Invalid api key or heroku url")
+
+    if use_async:
+        return AsyncStreamClient(
+            api_key,
+            api_secret,
+            app_id,
+            version,
+            timeout,
+            location=location,
+            base_url=base_url,
+        )
 
     return StreamClient(
         api_key,

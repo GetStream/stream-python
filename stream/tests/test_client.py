@@ -31,10 +31,10 @@ except ImportError:
     from urllib.parse import urlparse, parse_qs
 
 
-def connect_debug():
+def connect_debug(use_async=False):
     try:
-        key = os.environ["STREAM_KEY"]
-        secret = os.environ["STREAM_SECRET"]
+        key = "n8udba92h9hf"
+        secret = "5mjaw2a5bynt3fzdnxy2pwxh7fw89gg2dq3mm4jy56vhrwnadfst7yssatmaxhkv"
     except KeyError:
         print(
             "To run the tests the STREAM_KEY and STREAM_SECRET variables "
@@ -45,7 +45,7 @@ def connect_debug():
         )
         sys.exit(1)
 
-    return stream.connect(key, secret, location="qa", timeout=30)
+    return stream.connect(key, secret, location="qa", timeout=30, use_async=use_async)
 
 
 client = connect_debug()
@@ -703,8 +703,8 @@ class ClientTest(TestCase):
             "object": 1,
             "foreign_id": foreign_id,
             "time": now,
+            "to": ["user:1", "user:2"],
         }
-        activity_data["to"] = ["user:1", "user:2"]
         self.user1.add_activity(activity_data)
 
         ret = self.user1.update_activity_to_targets(

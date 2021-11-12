@@ -6,7 +6,9 @@ from setuptools.command.test import test as TestCommand
 from stream import __version__, __maintainer__, __email__, __license__
 import sys
 
-tests_require = ["pytest", "unittest2", "pytest-cov", "python-dateutil"]
+tests_require = [
+    "pytest", "unittest2", "pytest-cov", "python-dateutil", "pytest-asyncio",
+]
 ci_require = ["black", "flake8", "pytest-cov"]
 
 long_description = open("README.md", "r").read()
@@ -16,6 +18,7 @@ install_requires = [
     "requests>=2.3.0,<3",
     "pyjwt>=2.0.0,<3",
     "pytz>=2019.3",
+    "aiohttp>=3.8.0",
 ]
 
 
