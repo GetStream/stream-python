@@ -19,6 +19,7 @@ lint-fix:
 test:  ## Run tests
 	STREAM_KEY=$(STREAM_KEY) STREAM_SECRET=$(STREAM_SECRET) pytest stream/tests
 
+
 check: lint test  ## Run linters + tests
 
 reviewdog:

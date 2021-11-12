@@ -13,8 +13,11 @@ def validate_feed_id(feed_id):
     """
     feed_id = str(feed_id)
     if len(feed_id.split(":")) != 2:
-        msg = "Invalid feed_id spec %s, please specify the feed_id as feed_slug:feed_id"
-        raise ValueError(msg % feed_id)
+        msg = (
+            f"Invalid feed_id spec {feed_id}, "
+            f"please specify the feed_id as feed_slug:feed_id"
+        )
+        raise ValueError(msg)
 
     feed_slug, user_id = feed_id.split(":")
     validate_feed_slug(feed_slug)
@@ -28,8 +31,8 @@ def validate_feed_slug(feed_slug):
     """
     feed_slug = str(feed_slug)
     if not valid_re.match(feed_slug):
-        msg = "Invalid feed slug %s, please only use letters, numbers and _"
-        raise ValueError(msg % feed_slug)
+        msg = f"Invalid feed slug {feed_slug}, please only use letters, numbers and _"
+        raise ValueError(msg)
     return feed_slug
 
 
@@ -39,8 +42,8 @@ def validate_user_id(user_id):
     """
     user_id = str(user_id)
     if not valid_re.match(user_id):
-        msg = "Invalid user id %s, please only use letters, numbers and _"
-        raise ValueError(msg % user_id)
+        msg = f"Invalid user id {user_id}, please only use letters, numbers and _"
+        raise ValueError(msg)
     return user_id
 
 

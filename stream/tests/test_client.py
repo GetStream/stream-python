@@ -13,22 +13,13 @@ import pytz
 import requests
 from dateutil.tz import tzlocal
 from requests.exceptions import MissingSchema
+from urllib.parse import parse_qs, urlparse
+from unittest import TestCase
 
 import stream
 from stream import serializer
 from stream.exceptions import ApiKeyException, InputException
 from stream.feed import Feed
-
-try:
-    from unittest.case import TestCase
-except ImportError:
-    from unittest import TestCase
-
-
-try:
-    from urlparse import urlparse, parse_qs
-except ImportError:
-    from urllib.parse import urlparse, parse_qs
 
 
 def connect_debug():
@@ -45,7 +36,7 @@ def connect_debug():
         )
         sys.exit(1)
 
-    return stream.connect(key, secret, location="qa", timeout=30)
+    return stream.connect(key, secret, location="qa", timeout=30, use_async=False)
 
 
 client = connect_debug()
@@ -703,8 +694,8 @@ class ClientTest(TestCase):
             "object": 1,
             "foreign_id": foreign_id,
             "time": now,
+            "to": ["user:1", "user:2"],
         }
-        activity_data["to"] = ["user:1", "user:2"]
         self.user1.add_activity(activity_data)
 
         ret = self.user1.update_activity_to_targets(
