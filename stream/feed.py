@@ -20,7 +20,7 @@ class Feed:
         self.slug = feed_slug
         self.user_id = str(user_id)
         self.id = "%s:%s" % (feed_slug, user_id)
-        self.token = token
+        self.token = token.decode('utf-8')
 
         self.feed_url = "feed/%s/" % self.id.replace(":", "/")
         self.enriched_feed_url = "enrich/feed/%s/" % self.id.replace(":", "/")
