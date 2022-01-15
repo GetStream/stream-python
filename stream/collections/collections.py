@@ -19,9 +19,7 @@ class Collections(BaseCollection):
         if not isinstance(ids, list):
             ids = [ids]
 
-        foreign_ids = ",".join(
-            f"{collection_name}:{k}" for i, k in enumerate(ids)
-        )
+        foreign_ids = ",".join(f"{collection_name}:{k}" for i, k in enumerate(ids))
 
         return self.client.get(
             self.URL,

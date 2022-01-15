@@ -269,9 +269,7 @@ class StreamClient(BaseStreamClient):
             params=default_params,
             timeout=self.timeout,
         )
-        logger.debug(
-            f"stream api call {response.url}, headers {headers} data {data}"
-        )
+        logger.debug(f"stream api call {response.url}, headers {headers} data {data}")
         return self._parse_response(response)
 
     def _parse_response(self, response):
