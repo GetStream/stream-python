@@ -17,6 +17,7 @@ from requests.exceptions import MissingSchema
 import stream
 from stream import serializer
 from stream.exceptions import ApiKeyException, InputException
+from stream.feed import Feed
 
 try:
     from unittest.case import TestCase
@@ -1702,3 +1703,13 @@ class ClientTest(TestCase):
         )["results"]
         self.assertEqual(response["following"]["count"], 0)
         self.assertEqual(response["followers"]["count"], 1)
+
+    def test_token_type(self): 
+        """
+            test to check whether token is a byte or string
+        """
+        with_bytes = Feed(client, "user", "1", b"token")
+        self.assertEqual(with_bytes.token, "token")
+
+        with_str = Feed(client, "user", "1", "token")
+        self.assertEqual(with_str.token, "token")
