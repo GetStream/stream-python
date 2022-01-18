@@ -1,3 +1,7 @@
+## 5.1.1 - 2022-01-18
+
+* Handle backward compatible pyjwt 1.x support for token generation
+
 ## 5.1.0 - 2021-04-16
 
 * Add analytics support for `track_engagements` and `track_impressions`
