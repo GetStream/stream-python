@@ -1704,9 +1704,9 @@ class ClientTest(TestCase):
         self.assertEqual(response["following"]["count"], 0)
         self.assertEqual(response["followers"]["count"], 1)
 
-    def test_token_type(self): 
+    def test_token_type(self):
         """
-            test to check whether token is a byte or string
+        test to check whether token is a byte or string
         """
         with_bytes = Feed(client, "user", "1", b"token")
         self.assertEqual(with_bytes.token, "token")
