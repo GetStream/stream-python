@@ -269,6 +269,8 @@ class StreamClient(BaseStreamClient):
             params=default_params,
             timeout=self.timeout,
         )
+        # remove JWT from logs
+        headers.pop("Authorization", None)
         logger.debug(f"stream api call {response.url}, headers {headers} data {data}")
         return self._parse_response(response)
 

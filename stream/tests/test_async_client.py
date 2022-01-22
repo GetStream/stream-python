@@ -3,8 +3,8 @@ import random
 from datetime import datetime, timedelta
 from uuid import uuid1, uuid4
 
-import pytz
 import pytest
+import pytz
 from dateutil.tz import tzlocal
 
 import stream

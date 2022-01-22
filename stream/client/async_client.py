@@ -41,8 +41,6 @@ class AsyncStreamClient(BaseStreamClient):
             base_url=base_url,
             location=location,
         )
-        self.session = aiohttp.ClientSession
-
         token = self.create_jwt_token("collections", "*", feed_id="*", user_id="*")
         self.collections = AsyncCollections(self, token)
 
@@ -234,7 +232,7 @@ class AsyncStreamClient(BaseStreamClient):
         if method.lower() in ["post", "put", "delete"]:
             serialized = serializer.dumps(data)
 
-        async with self.session() as session:
+        async with aiohttp.ClientSession() as session:
             async with session.request(
                 method,
                 url,
@@ -242,9 +240,9 @@ class AsyncStreamClient(BaseStreamClient):
                 headers=headers,
                 params=default_params,
                 timeout=self.timeout,
-                verify_ssl=False,
             ) as response:
-
+                # remove JWT from logs
+                headers.pop("Authorization", None)
                 logger.debug(
                     f"stream api call {response}, headers {headers} data {data}",
                 )
