@@ -1,27 +1,43 @@
-stream-python
-=============
+# Official Python SDK for [Stream Feeds](https://getstream.io/activity-feeds/)
 
 [![build](https://github.com/GetStream/stream-python/workflows/build/badge.svg)](https://github.com/GetStream/stream-python/actions) [![PyPI version](https://badge.fury.io/py/stream-python.svg)](http://badge.fury.io/py/stream-python) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/stream-python.svg)
 
-[stream-python](https://github.com/GetStream/stream-python) is the official Python client for [Stream](https://getstream.io/), a web service for building scalable newsfeeds and activity streams.
+<p align="center">
+    <img src="./assets/logo.svg" width="50%" height="50%">
+</p>
+<p align="center">
+    Official Python API client for Stream Feeds, a web service for building scalable newsfeeds and activity streams.
+    <br />
+    <a href="https://getstream.io/activity-feeds/docs/?language=python"><strong>Explore the docs »</strong></a>
+    <br />
+    <br />
+    <a href="https://github.com/GetStream/stream-django">Django Code Sample</a>
+    ·
+    <a href="https://github.com/GetStream/stream-python/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/GetStream/stream-python/issues">Request Feature</a>
+</p>
 
-Note there is also a higher level [Django - Stream integration](https://github.com/getstream/stream-django) library which hooks into the Django ORM.
+## 📝 About Stream
 
-You can sign up for a Stream account at https://getstream.io/get_started.
+You can sign up for a Stream account at our [Get Started](https://getstream.io/get_started/) page.
 
-### Installation
+You can use this library to access feeds API endpoints server-side.
 
-#### Install from Pypi
+For the client-side integrations (web and mobile) have a look at the JavaScript, iOS and Android SDK libraries ([docs](https://getstream.io/activity-feeds/)).
+
+## ⚙️ Installation
+
 
 ```bash
-pip install stream-python
+$ pip install stream-python
 ```
 
-### Full documentation
+## 📚 Full documentation
 
 Documentation for this Python client are available at the [Stream website](https://getstream.io/docs/?language=python).
 
-### Usage
+## ✨ Getting started
 
 ```python
 import datetime
@@ -149,44 +165,11 @@ redirect_url = client.create_redirect_url('http://google.com/', 'user_id', event
 
 [JS client](http://github.com/getstream/stream-js).
 
-### Contributing
+## ✍️ Contributing
 
-First, make sure you can run the test suite. Tests are run via py.test
+We welcome code changes that improve this library or fix a problem, please make sure to follow all best practices and add tests if applicable before submitting a Pull Request on Github. We are very happy to merge your code in the official repository. Make sure to sign our [Contributor License Agreement (CLA)](https://docs.google.com/forms/d/e/1FAIpQLScFKsKkAJI7mhCr7K9rEIOpqIDThrWxuvxnwUq2XkHyG154vQ/viewform) first. See our [license file](./LICENSE) for more details.
 
-```bash
-py.test
-# with coverage
-py.test --cov stream --cov-report html
-# against a local API backend
-LOCAL=true py.test
-```
-
-Install black and flake8
-
-```
-pip install .[ci]
-```
-
-Install git hooks to avoid pushing invalid code (git commit will run `black` and `flake8`)
-
-### Releasing a new version
-
-In order to release new version you need to be a maintainer on Pypi.
-
-- Update CHANGELOG
-- Update the version on setup.py
-- Commit and push to Github
-- Create a new tag for the version (eg. `v2.9.0`)
-- Create a new dist with python `python setup.py sdist`
-- Upload the new distributable with twine `twine upload dist/stream-python-VERSION-NAME.tar.gz`
-
-If unsure you can also test using the Pypi test servers `twine upload --repository-url https://test.pypi.org/legacy/ dist/stream-python-VERSION-NAME.tar.gz`
-
-### Copyright and License Information
-
-Project is licensed under the [BSD 3-Clause](LICENSE).
-
-## We are hiring!
+## 🧑‍💻 We are hiring!
 
 We've recently closed a [$38 million Series B funding round](https://techcrunch.com/2021/03/04/stream-raises-38m-as-its-chat-and-activity-feed-apis-power-communications-for-1b-users/) and we keep actively growing.
 Our APIs are used by more than a billion end-users, and you'll have a chance to make a huge impact on the product within a team of the strongest engineers all over the world.
