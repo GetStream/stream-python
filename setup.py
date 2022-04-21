@@ -8,8 +8,9 @@ install_requires = [
     "requests>=2.3.0,<3",
     "pyjwt>=2.0.0,<3",
     "pytz>=2019.3",
+    "aiohttp>=3.6.0",
 ]
-tests_require = ["pytest", "pytest-cov", "python-dateutil"]
+tests_require = ["pytest", "pytest-cov", "python-dateutil", "pytest-asyncio"]
 ci_require = ["black", "flake8", "pytest-cov"]
 
 long_description = open("README.md", "r").read()

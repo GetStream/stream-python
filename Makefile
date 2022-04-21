@@ -23,4 +23,4 @@ check: lint test  ## Run linters + tests
 
 reviewdog:
 	black --check --diff --quiet stream | reviewdog -f=diff -f.diff.strip=0 -filter-mode="diff_context" -name=black -reporter=github-pr-review
-	flake8 --ignore=E501,W503 stream | reviewdog -f=flake8 -name=flake8 -reporter=github-pr-review
+	flake8 --ignore=E501,W503,E225,W293,F401 stream | reviewdog -f=flake8 -name=flake8 -reporter=github-pr-review

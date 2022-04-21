@@ -8,10 +8,10 @@ class StreamApiException(Exception):
     code = 1
 
     def __repr__(self):
-        return "%s (%s)" % (self.__class__.__name__, self.detail)
+        return f"{self.__class__.__name__} ({self.detail})"
 
     def __unicode__(self):
-        return "%s (%s)" % (self.__class__.__name__, self.detail)
+        return f"{self.__class__.__name__} ({self.detail})"
 
 
 class ApiKeyException(StreamApiException):

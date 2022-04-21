@@ -58,6 +58,7 @@ docs/_build/
 secrets.*sh
 .idea
 .vscode/
+.python-version
 
 .venv
 .envrc

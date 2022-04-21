@@ -5,7 +5,6 @@ import os
 import random
 import sys
 import time
-from itertools import count
 from uuid import uuid1, uuid4
 
 import jwt
@@ -13,22 +12,13 @@ import pytz
 import requests
 from dateutil.tz import tzlocal
 from requests.exceptions import MissingSchema
+from urllib.parse import parse_qs, urlparse
+from unittest import TestCase
 
 import stream
 from stream import serializer
 from stream.exceptions import ApiKeyException, InputException
 from stream.feed import Feed
-
-try:
-    from unittest.case import TestCase
-except ImportError:
-    from unittest import TestCase
-
-
-try:
-    from urlparse import urlparse, parse_qs
-except ImportError:
-    from urllib.parse import urlparse, parse_qs
 
 
 def connect_debug():
@@ -45,24 +35,17 @@ def connect_debug():
         )
         sys.exit(1)
 
-    return stream.connect(key, secret, location="qa", timeout=30)
+    return stream.connect(key, secret, location="qa", timeout=30, use_async=False)
 
 
 client = connect_debug()
-
-counter = count()
-test_identifier = uuid4()
-
-
-def get_unique_postfix():
-    return "---test_%s-feed_%s" % (test_identifier, next(counter))
 
 
 def getfeed(feed_slug, user_id):
     """
     Adds the random postfix to the user id
     """
-    return client.feed(feed_slug, user_id + get_unique_postfix())
+    return client.feed(feed_slug, f"user_id-{uuid4()}")
 
 
 def api_request_parse_validator(test):
@@ -703,8 +686,8 @@ class ClientTest(TestCase):
             "object": 1,
             "foreign_id": foreign_id,
             "time": now,
+            "to": ["user:1", "user:2"],
         }
-        activity_data["to"] = ["user:1", "user:2"]
         self.user1.add_activity(activity_data)
 
         ret = self.user1.update_activity_to_targets(
@@ -869,7 +852,7 @@ class ClientTest(TestCase):
         self.flat3.follow("user", self.user1.user_id)
         # add the same activity twice
         now = datetime.datetime.now(tzlocal())
-        tweet = "My Way %s" % get_unique_postfix()
+        tweet = f"My Way {uuid4()}"
         activity_data = {
             "actor": 1,
             "verb": "tweet",
