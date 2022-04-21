@@ -1,6 +1,7 @@
 import asyncio
 import os
 import sys
+from uuid import uuid4
 
 import pytest
 
@@ -45,29 +46,29 @@ async def async_client():
 
 @pytest.fixture
 def user1(async_client):
-    return async_client.feed("user", "1")
+    return async_client.feed("user", f"1-{uuid4()}")
 
 
 @pytest.fixture
 def user2(async_client):
-    return async_client.feed("user", "2")
+    return async_client.feed("user", f"2-{uuid4()}")
 
 
 @pytest.fixture
 def aggregated2(async_client):
-    return async_client.feed("aggregated", "2")
+    return async_client.feed("aggregated", f"2-{uuid4()}")
 
 
 @pytest.fixture
 def aggregated3(async_client):
-    return async_client.feed("aggregated", "3")
+    return async_client.feed("aggregated", f"3-{uuid4()}")
 
 
 @pytest.fixture
 def topic(async_client):
-    return async_client.feed("topic", "1")
+    return async_client.feed("topic", f"1-{uuid4()}")
 
 
 @pytest.fixture
 def flat3(async_client):
-    return async_client.feed("flat", "3")
+    return async_client.feed("flat", f"3-{uuid4()}")

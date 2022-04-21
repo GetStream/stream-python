@@ -9,7 +9,6 @@ from dateutil.tz import tzlocal
 
 import stream
 from stream.exceptions import ApiKeyException, InputException
-from stream.tests.test_client import get_unique_postfix
 
 
 def assert_first_activity_id_equal(activities, correct_activity_id):
@@ -82,7 +81,7 @@ async def test_update_activities_create(async_client):
 
 @pytest.mark.asyncio
 async def test_add_activity(async_client):
-    feed = async_client.feed("user", "py1")
+    feed = async_client.feed("user", f"py1-{uuid4()}")
     activity_data = {"actor": 1, "verb": "tweet", "object": 1}
     response = await feed.add_activity(activity_data)
     activity_id = response["id"]
@@ -93,7 +92,7 @@ async def test_add_activity(async_client):
 
 @pytest.mark.asyncio
 async def test_add_activity_to_inplace_change(async_client):
-    feed = async_client.feed("user", "py1")
+    feed = async_client.feed("user", f"py1-{uuid4()}")
     team_feed = async_client.feed("user", "teamy")
     activity_data = {"actor": 1, "verb": "tweet", "object": 1}
     activity_data["to"] = [team_feed.id]
@@ -103,8 +102,8 @@ async def test_add_activity_to_inplace_change(async_client):
 
 @pytest.mark.asyncio
 async def test_add_activities_to_inplace_change(async_client):
-    feed = async_client.feed("user", "py1")
-    team_feed = async_client.feed("user", "teamy")
+    feed = async_client.feed("user", f"py1-{uuid4()}")
+    team_feed = async_client.feed("user", f"teamy-{uuid4()}")
     activity_data = {"actor": 1, "verb": "tweet", "object": 1}
     activity_data["to"] = [team_feed.id]
     await feed.add_activities([activity_data])
@@ -116,7 +115,7 @@ async def test_add_activity_to(async_client):
     # test for sending an activities to the team feed using to
     feeds = ["user", "teamy", "team_follower"]
     user_feed, team_feed, team_follower_feed = map(
-        lambda x: async_client.feed("user", x), feeds
+        lambda x: async_client.feed("user", f"{x}-{uuid4()}"), feeds
     )
     await team_follower_feed.follow(team_feed.slug, team_feed.user_id)
     activity_data = {"actor": 1, "verb": "tweet", "object": 1, "to": [team_feed.id]}
@@ -202,8 +201,8 @@ async def test_add_activities(user1):
 
 @pytest.mark.asyncio
 async def test_add_activities_to(async_client, user1):
-    pyto2 = async_client.feed("user", "pyto2")
-    pyto3 = async_client.feed("user", "pyto3")
+    pyto2 = async_client.feed("user", f"pyto2-{uuid4()}")
+    pyto3 = async_client.feed("user", f"pyto3-{uuid4()}")
 
     to = [pyto2.id, pyto3.id]
     activity_data = [
@@ -230,7 +229,7 @@ async def test_add_activities_to(async_client, user1):
 
 @pytest.mark.asyncio
 async def test_follow_and_source(async_client):
-    feed = async_client.feed("user", "test_follow")
+    feed = async_client.feed("user", f"test_follow-{uuid4()}")
     agg_feed = async_client.feed("aggregated", "test_follow")
     actor_id = random.randint(10, 100000)
     activity_data = {"actor": actor_id, "verb": "tweet", "object": 1}
@@ -248,14 +247,14 @@ async def test_follow_and_source(async_client):
 
 @pytest.mark.asyncio
 async def test_empty_followings(async_client):
-    asocial = async_client.feed("user", "asocialpython")
+    asocial = async_client.feed("user", f"asocialpython-{uuid4()}")
     followings = await asocial.following()
     assert followings["results"] == []
 
 
 @pytest.mark.asyncio
 async def test_get_followings(async_client):
-    social = async_client.feed("user", "psocial")
+    social = async_client.feed("user", f"psocial-{uuid4()}")
     await social.follow("user", "apy")
     await social.follow("user", "bpy")
     await social.follow("user", "cpy")
@@ -271,17 +270,17 @@ async def test_get_followings(async_client):
 
 @pytest.mark.asyncio
 async def test_empty_followers(async_client):
-    asocial = async_client.feed("user", "asocialpython")
+    asocial = async_client.feed("user", f"asocialpython-{uuid4()}")
     followers = await asocial.followers()
     assert followers["results"] == []
 
 
 @pytest.mark.asyncio
 async def test_get_followers(async_client):
-    social = async_client.feed("user", "psocial")
-    spammy1 = async_client.feed("user", "spammy1")
-    spammy2 = async_client.feed("user", "spammy2")
-    spammy3 = async_client.feed("user", "spammy3")
+    social = async_client.feed("user", f"psocial-{uuid4()}")
+    spammy1 = async_client.feed("user", f"spammy1-{uuid4()}")
+    spammy2 = async_client.feed("user", f"spammy2-{uuid4()}")
+    spammy3 = async_client.feed("user", f"spammy3-{uuid4()}")
     for feed in [spammy1, spammy2, spammy3]:
         await feed.follow("user", social.user_id)
     followers = await social.followers(offset=0, limit=2)
@@ -296,7 +295,7 @@ async def test_get_followers(async_client):
 
 @pytest.mark.asyncio
 async def test_empty_do_i_follow(async_client):
-    social = async_client.feed("user", "psocial")
+    social = async_client.feed("user", f"psocial-{uuid4()}")
     await social.follow("user", "apy")
     await social.follow("user", "bpy")
     followings = await social.following(feeds=["user:missingpy"])
@@ -305,7 +304,7 @@ async def test_empty_do_i_follow(async_client):
 
 @pytest.mark.asyncio
 async def test_do_i_follow(async_client):
-    social = async_client.feed("user", "psocial")
+    social = async_client.feed("user", f"psocial-{uuid4()}")
     await social.follow("user", "apy")
     await social.follow("user", "bpy")
     followings = await social.following(feeds=["user:apy"])
@@ -376,7 +375,7 @@ async def test_get(user1):
 
 @pytest.mark.asyncio
 async def test_get_not_marked_seen(async_client):
-    notification_feed = async_client.feed("notification", "test_mark_seen")
+    notification_feed = async_client.feed("notification", f"test_mark_seen-{uuid4()}")
     response = await notification_feed.get(limit=3)
     activities = response["results"]
     for activity in activities:
@@ -385,7 +384,7 @@ async def test_get_not_marked_seen(async_client):
 
 @pytest.mark.asyncio
 async def test_mark_seen_on_get(async_client):
-    notification_feed = async_client.feed("notification", "test_mark_seen")
+    notification_feed = async_client.feed("notification", f"test_mark_seen-{uuid4()}")
     response = await notification_feed.get(limit=100)
     activities = response["results"]
     for activity in activities:
@@ -433,7 +432,7 @@ async def test_mark_seen_on_get(async_client):
 
 @pytest.mark.asyncio
 async def test_mark_read_by_id(async_client):
-    notification_feed = async_client.feed("notification", "py2")
+    notification_feed = async_client.feed("notification", f"py2-{uuid4()}")
     response = await notification_feed.get(limit=3)
     activities = response["results"]
     ids = []
@@ -515,7 +514,7 @@ async def test_uniqueness_topic(flat3, topic, user1):
     await flat3.follow("user", user1.user_id)
     # add the same activity twice
     now = datetime.now(tzlocal())
-    tweet = f"My Way {get_unique_postfix()}"
+    tweet = f"My Way {uuid4()}"
     activity_data = {
         "actor": 1,
         "verb": "tweet",
@@ -615,8 +614,8 @@ async def test_missing_actor(user1):
 
 @pytest.mark.asyncio
 async def test_follow_many(async_client):
-    sources = [async_client.feed("user", str(i)).id for i in range(10)]
-    targets = [async_client.feed("flat", str(i)).id for i in range(10)]
+    sources = [async_client.feed("user", f"{i}-{uuid4()}").id for i in range(10)]
+    targets = [async_client.feed("flat", f"{i}-{uuid4()}").id for i in range(10)]
     feeds = [{"source": s, "target": t} for s, t in zip(sources, targets)]
     await async_client.follow_many(feeds)
 
@@ -631,13 +630,13 @@ async def test_follow_many(async_client):
         response = await async_client.feed(*source.split(":")).following()
         follows = response["results"]
         assert len(follows) == 1
-        assert follows[0]["feed_id"] in sources
-        assert follows[0]["target_id"] == source
+        assert follows[0]["feed_id"] == source
+        assert follows[0]["target_id"] in targets
 
 
 @pytest.mark.asyncio
 async def test_follow_many_acl(async_client):
-    sources = [async_client.feed("user", str(i)) for i in range(10)]
+    sources = [async_client.feed("user", f"{i}-{uuid4()}") for i in range(10)]
     # ensure every source is empty first
     for feed in sources:
         response = await feed.get(limit=100)
@@ -645,7 +644,7 @@ async def test_follow_many_acl(async_client):
         for activity in activities:
             await feed.remove_activity(activity["id"])
 
-    targets = [async_client.feed("flat", str(i)) for i in range(10)]
+    targets = [async_client.feed("flat", f"{i}-{uuid4()}") for i in range(10)]
     # ensure every source is empty first
     for feed in targets:
         response = await feed.get(limit=100)
@@ -696,7 +695,7 @@ async def test_unfollow_many(async_client):
 @pytest.mark.asyncio
 async def test_add_to_many(async_client):
     activity = {"actor": 1, "verb": "tweet", "object": 1, "custom": "data"}
-    feeds = [async_client.feed("flat", str(i)).id for i in range(10, 20)]
+    feeds = [async_client.feed("flat", f"{i}-{uuid4()}").id for i in range(10, 20)]
     await async_client.add_to_many(activity, feeds)
 
     for feed in feeds:
@@ -732,7 +731,7 @@ async def test_get_activities_full(async_client):
         "foreign_id": fid,
     }
 
-    feed = async_client.feed("user", "test_get_activity")
+    feed = async_client.feed("user", f"test_get_activity-{uuid4()}")
     response = await feed.add_activity(activity)
 
     response = await async_client.get_activities(ids=[response["id"]])
@@ -760,7 +759,7 @@ async def test_get_activities_full_with_enrichment(async_client):
         "foreign_id": fid,
     }
 
-    feed = async_client.feed("user", "test_get_activity")
+    feed = async_client.feed("user", f"test_get_activity-{uuid4()}")
     activity = await feed.add_activity(activity)
 
     reaction1 = await async_client.reactions.add("like", activity["id"], "liker")
@@ -802,7 +801,7 @@ async def test_get_activities_full_with_enrichment_and_reaction_kinds(async_clie
         "foreign_id": fid,
     }
 
-    feed = async_client.feed("user", "test_get_activity")
+    feed = async_client.feed("user", f"test_get_activity-{uuid4()}")
     activity = await feed.add_activity(activity)
 
     await async_client.reactions.add("like", activity["id"], "liker")
@@ -983,16 +982,18 @@ async def test_reaction_add(async_client):
 
 @pytest.mark.asyncio
 async def test_reaction_add_to_target_feeds(async_client):
+    feed_id = f"user:michelle-{uuid4()}"
     r = await async_client.reactions.add(
         "superlike",
         "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
         "mike",
         data={"popularity": 50},
-        target_feeds=["user:michelle"],
+        target_feeds=[feed_id],
         target_feeds_extra_data={"popularity": 100},
     )
     assert r["data"]["popularity"] == 50
-    response = await async_client.feed("user", "michelle").get(limit=1)
+    feed = async_client.feed(*feed_id.split(":"))
+    response = await feed.get(limit=1)
     a = response["results"][0]
     assert r["id"] in a["reaction"]
     assert a["verb"] == "superlike"
@@ -1003,12 +1004,12 @@ async def test_reaction_add_to_target_feeds(async_client):
         r["id"],
         "rob",
         data={"popularity": 60},
-        target_feeds=["user:michelle"],
+        target_feeds=[feed_id],
         target_feeds_extra_data={"popularity": 200},
     )
 
     assert child["data"]["popularity"] == 60
-    response = await async_client.feed("user", "michelle").get(limit=1)
+    response = await feed.get(limit=1)
     a = response["results"][0]
     assert child["id"] in a["reaction"]
     assert a["verb"] == "superlike"
@@ -1196,7 +1197,7 @@ async def test_collections_delete(async_client):
 async def test_feed_enrichment_collection(async_client):
     entry = await async_client.collections.add("items", {"name": "time machine"})
     entry.pop("duration")
-    f = async_client.feed("user", "mike")
+    f = async_client.feed("user", f"mike-{uuid4()}")
     activity_data = {
         "actor": "mike",
         "verb": "buy",
@@ -1213,7 +1214,7 @@ async def test_feed_enrichment_collection(async_client):
 async def test_feed_enrichment_user(async_client):
     user = await async_client.users.add(str(uuid1()), {"name": "Mike"})
     user.pop("duration")
-    f = async_client.feed("user", "mike")
+    f = async_client.feed("user", f"mike-{uuid4()}")
     activity_data = {
         "actor": async_client.users.create_reference(user),
         "verb": "buy",
@@ -1228,7 +1229,7 @@ async def test_feed_enrichment_user(async_client):
 
 @pytest.mark.asyncio
 async def test_feed_enrichment_own_reaction(async_client):
-    f = async_client.feed("user", "mike")
+    f = async_client.feed("user", f"mike-{uuid4()}")
     activity_data = {"actor": "mike", "verb": "buy", "object": "object"}
     response = await f.add_activity(activity_data)
     reaction = await async_client.reactions.add("like", response["id"], "mike")
@@ -1239,7 +1240,7 @@ async def test_feed_enrichment_own_reaction(async_client):
 
 @pytest.mark.asyncio
 async def test_feed_enrichment_recent_reaction(async_client):
-    f = async_client.feed("user", "mike")
+    f = async_client.feed("user", f"mike-{uuid4()}")
     activity_data = {"actor": "mike", "verb": "buy", "object": "object"}
     response = await f.add_activity(activity_data)
     reaction = await async_client.reactions.add("like", response["id"], "mike")
@@ -1250,7 +1251,7 @@ async def test_feed_enrichment_recent_reaction(async_client):
 
 @pytest.mark.asyncio
 async def test_feed_enrichment_reaction_counts(async_client):
-    f = async_client.feed("user", "mike")
+    f = async_client.feed("user", f"mike-{uuid4()}")
     activity_data = {"actor": "mike", "verb": "buy", "object": "object"}
     response = await f.add_activity(activity_data)
     reaction = await async_client.reactions.add("like", response["id"], "mike")

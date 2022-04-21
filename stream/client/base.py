@@ -461,7 +461,18 @@ class BaseStreamClient(AbstractStreamClient, ABC):
         if self.custom_api_port:
             base_url = f"{base_url}:{self.custom_api_port}"
 
-        url = base_url + "/" + service_name + "/" + self.version + "/" + relative_url
+        url = (
+            base_url
+            + "/"
+            + service_name
+            + "/"
+            + self.version
+            + "/"
+            + relative_url.replace(
+                "//", "/"
+            )  # non-standard url will cause redirect and so can lose its body
+        )
+
         return url
 
     def get_default_params(self):
