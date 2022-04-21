@@ -53,6 +53,8 @@ coverage.xml
 # Sphinx documentation
 docs/_build/
 
+
+.python-version
 secrets.*sh
 .idea
 .vscode/

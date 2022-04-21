@@ -2,36 +2,17 @@
 
 
 from setuptools import setup, find_packages
-from setuptools.command.test import test as TestCommand
 from stream import __version__, __maintainer__, __email__, __license__
-import sys
-
-tests_require = ["pytest", "unittest2", "pytest-cov", "python-dateutil"]
-ci_require = ["black", "flake8", "pytest-cov"]
-
-long_description = open("README.md", "r").read()
 
 install_requires = [
-    "pycryptodomex>=3.8.1,<4",
     "requests>=2.3.0,<3",
     "pyjwt>=2.0.0,<3",
     "pytz>=2019.3",
 ]
+tests_require = ["pytest", "pytest-cov", "python-dateutil"]
+ci_require = ["black", "flake8", "pytest-cov"]
 
-
-class PyTest(TestCommand):
-    def finalize_options(self):
-        TestCommand.finalize_options(self)
-        self.test_args = []
-        self.test_suite = True
-
-    def run_tests(self):
-        # import here, cause outside the eggs aren't loaded
-        import pytest
-
-        errno = pytest.main(["-v", "--cov=./"])
-        sys.exit(errno)
-
+long_description = open("README.md", "r").read()
 
 setup(
     name="stream-python",
@@ -42,14 +23,21 @@ setup(
     description="Client for getstream.io. Build scalable newsfeeds & activity streams in a few hours instead of weeks.",
     long_description=long_description,
     long_description_content_type="text/markdown",
+    project_urls={
+        "Bug Tracker": "https://github.com/GetStream/stream-python/issues",
+        "Documentation": "https://getstream.io/activity-feeds/docs/python/?language=python",
+        "Release Notes": "https://github.com/GetStream/stream-python/releases/tag/v{}".format(
+            __version__
+        ),
+    },
     license=__license__,
-    packages=find_packages(),
+    packages=find_packages(exclude=["*tests*"]),
     zip_safe=False,
     install_requires=install_requires,
     extras_require={"test": tests_require, "ci": ci_require},
-    cmdclass={"test": PyTest},
     tests_require=tests_require,
     include_package_data=True,
+    python_requires=">=3.7",
     classifiers=[
         "Intended Audience :: Developers",
         "Intended Audience :: System Administrators",
@@ -59,10 +47,10 @@ setup(
         "License :: OSI Approved :: BSD License",
         "Natural Language :: English",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
 )

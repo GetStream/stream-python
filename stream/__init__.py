@@ -2,7 +2,7 @@ import os
 import re
 
 __author__ = "Thierry Schellenbach"
-__copyright__ = "Copyright 2014, Stream.io, Inc"
+__copyright__ = "Copyright 2022, Stream.io, Inc"
 __credits__ = ["Thierry Schellenbach, mellowmorning.com, @tschellenbach"]
 __license__ = "BSD-3-Clause"
 __version__ = "5.1.1"
