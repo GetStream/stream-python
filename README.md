@@ -20,13 +20,15 @@
 
 ## 📝 About Stream
 
+> 💡 Note: this is a library for the **Feeds** product. The Chat SDKs can be found [here](https://getstream.io/chat/docs/).
+
 You can sign up for a Stream account at our [Get Started](https://getstream.io/get_started/) page.
 
 You can use this library to access feeds API endpoints server-side.
 
 For the client-side integrations (web and mobile) have a look at the JavaScript, iOS and Android SDK libraries ([docs](https://getstream.io/activity-feeds/)).
 
-> 💡 Note: this is a library for the **Feeds** product. The Chat SDKs can be found [here](https://getstream.io/chat/docs/).
+> 💡 We have a Django integration available [here](https://github.com/GetStream/stream-django).
 
 ## ⚙️ Installation
 
