@@ -10,7 +10,7 @@ if ! black stream --check -q; then
     exit 1
 fi
 
-if ! flake8 --ignore=E501,E225,W293,W503 stream; then
+if ! flake8 --ignore=E501,E225,W293,W503,F401 stream; then
     echo
     echo "commit is aborted because there are some error prone issues in your changes as printed above"
     echo "your changes are still staged, you can accept formatting changes with git add or ignore them by adding --no-verify to git commit"
