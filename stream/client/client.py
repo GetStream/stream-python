@@ -169,7 +169,6 @@ class StreamClient(BaseStreamClient):
         return self.activities_partial_update(updates=[data])
 
     def activities_partial_update(self, updates=None):
-
         auth_token = self.create_jwt_token("activities", "*", feed_id="*")
 
         data = {"changes": updates or []}
@@ -195,7 +194,6 @@ class StreamClient(BaseStreamClient):
         return prepared_request.url
 
     def track_engagements(self, engagements):
-
         auth_token = self.create_jwt_token("*", "*", feed_id="*")
         self.post(
             "engagement/",
@@ -205,7 +203,6 @@ class StreamClient(BaseStreamClient):
         )
 
     def track_impressions(self, impressions):
-
         auth_token = self.create_jwt_token("*", "*", feed_id="*")
         self.post("impression/", auth_token, data=impressions, service_name="analytics")
 

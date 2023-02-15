@@ -16,7 +16,6 @@ class AbstractPersonalization(ABC):
 
 
 class BasePersonalization(AbstractPersonalization, ABC):
-
     SERVICE_NAME = "personalization"
 
     def __init__(self, client, token):

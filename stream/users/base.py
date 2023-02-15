@@ -24,7 +24,6 @@ class AbstractUsers(ABC):
 
 
 class BaseUsers(AbstractUsers, ABC):
-
     API_ENDPOINT = "user/"
     SERVICE_NAME = "api"
 
