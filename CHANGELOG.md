@@ -1,3 +1,20 @@
+# Changelog
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [5.2.0](https://github.com/GetStream/stream-python/compare/v5.1.1...v5.2.0) (2023-02-16)
+
+
+### Features
+
+* added async support ([b4515d3](https://github.com/GetStream/stream-python/commit/b4515d337be88ff50ba1cbad8645b1fbc8862ce0))
+* added async support ([e5b33d6](https://github.com/GetStream/stream-python/commit/e5b33d6b34d53523d369f58a3bb118b9ffbf228e))
+
+
+### Bug Fixes
+
+* redirect, uniqueness and deprecations ([aefdcd3](https://github.com/GetStream/stream-python/commit/aefdcd39ff8a41a443455f1a41cc819039015cdb))
+
 ## 5.1.1 - 2022-01-18
 
 * Handle backward compatible pyjwt 1.x support for token generation
