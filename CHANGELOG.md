@@ -8,7 +8,6 @@ All notable changes to this project will be documented in this file. See [standa
 ### Features
 
 * added async support ([b4515d3](https://github.com/GetStream/stream-python/commit/b4515d337be88ff50ba1cbad8645b1fbc8862ce0))
-* added async support ([e5b33d6](https://github.com/GetStream/stream-python/commit/e5b33d6b34d53523d369f58a3bb118b9ffbf228e))
 
 
 ### Bug Fixes
