@@ -44,7 +44,6 @@ class AbstractReactions(ABC):
 
 
 class BaseReactions(AbstractReactions, ABC):
-
     API_ENDPOINT = "reaction/"
     SERVICE_NAME = "api"
 

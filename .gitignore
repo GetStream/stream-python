@@ -61,4 +61,9 @@ secrets.*sh
 .python-version
 
 .venv
+.venv3.7
+.venv3.8
+.venv3.9
+.venv3.10
+.venv3.11
 .envrc

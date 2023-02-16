@@ -1,9 +1,9 @@
 import asyncio
 import os
 import sys
+import pytest_asyncio
 from uuid import uuid4
 
-import pytest
 
 from stream import connect
 
@@ -17,7 +17,7 @@ def wrapper(meth):
     return _parse_response
 
 
-@pytest.fixture(scope="module")
+@pytest_asyncio.fixture(scope="module")
 def event_loop():
     """Create an instance of the default event loop for each test case."""
     loop = asyncio.get_event_loop_policy().new_event_loop()
@@ -25,7 +25,7 @@ def event_loop():
     loop.close()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def async_client():
     key = os.getenv("STREAM_KEY")
     secret = os.getenv("STREAM_SECRET")
@@ -44,31 +44,31 @@ async def async_client():
     yield client
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 def user1(async_client):
     return async_client.feed("user", f"1-{uuid4()}")
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 def user2(async_client):
     return async_client.feed("user", f"2-{uuid4()}")
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 def aggregated2(async_client):
     return async_client.feed("aggregated", f"2-{uuid4()}")
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 def aggregated3(async_client):
     return async_client.feed("aggregated", f"3-{uuid4()}")
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 def topic(async_client):
     return async_client.feed("topic", f"1-{uuid4()}")
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 def flat3(async_client):
     return async_client.feed("flat", f"3-{uuid4()}")

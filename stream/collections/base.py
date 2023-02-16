@@ -72,7 +72,6 @@ class AbstractCollection(ABC):
 
 
 class BaseCollection(AbstractCollection, ABC):
-
     URL = "collections/"
     SERVICE_NAME = "api"
 

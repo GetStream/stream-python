@@ -1294,7 +1294,6 @@ class ClientTest(TestCase):
         self.assertEqual(updated, expected)
 
     def test_activities_partial_update(self):
-
         feed = self.c.feed("user", uuid4())
         feed.add_activities(
             [
