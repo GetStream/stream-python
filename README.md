@@ -3,7 +3,7 @@
 [![build](https://github.com/GetStream/stream-python/workflows/build/badge.svg)](https://github.com/GetStream/stream-python/actions) [![PyPI version](https://badge.fury.io/py/stream-python.svg)](http://badge.fury.io/py/stream-python) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/stream-python.svg)
 
 <p align="center">
-    <img src="./assets/logo.svg" width="50%" height="50%">
+    <img src="https://raw.githubusercontent.com/GetStream/stream-python/8a0e88a6cf115a34c2d6d39a54527398f3fa5a90/assets/logo.svg" width="50%" height="50%">
 </p>
 <p align="center">
     Official Python API client for Stream Feeds, a web service for building scalable newsfeeds and activity streams.
