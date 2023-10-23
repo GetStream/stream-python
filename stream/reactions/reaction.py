@@ -42,9 +42,18 @@ class Reactions(BaseReactions):
             data=payload,
         )
 
-    def delete(self, reaction_id):
+    def delete(self, reaction_id, soft=False):
         url = f"{self.API_ENDPOINT}{reaction_id}"
         return self.client.delete(
+            url,
+            service_name=self.SERVICE_NAME,
+            signature=self.token,
+            params={"soft": soft},
+        )
+
+    def restore(self, reaction_id):
+        url = f"{self.API_ENDPOINT}{reaction_id}/restore"
+        return self.client.put(
             url, service_name=self.SERVICE_NAME, signature=self.token
         )
 
@@ -123,9 +132,18 @@ class AsyncReactions(BaseReactions):
             data=payload,
         )
 
-    async def delete(self, reaction_id):
+    async def delete(self, reaction_id, soft=False):
         url = f"{self.API_ENDPOINT}{reaction_id}"
         return await self.client.delete(
+            url,
+            service_name=self.SERVICE_NAME,
+            signature=self.token,
+            params={"soft": soft},
+        )
+
+    async def restore(self, reaction_id):
+        url = f"{self.API_ENDPOINT}{reaction_id}/restore"
+        return await self.client.put(
             url, service_name=self.SERVICE_NAME, signature=self.token
         )
 
