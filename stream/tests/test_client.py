@@ -17,7 +17,7 @@ from unittest import TestCase
 
 import stream
 from stream import serializer
-from stream.exceptions import ApiKeyException, InputException
+from stream.exceptions import ApiKeyException, InputException, DoesNotExistException
 from stream.feed import Feed
 
 
@@ -1438,6 +1438,37 @@ class ClientTest(TestCase):
             "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
         )
         self.c.reactions.delete(response["id"])
+
+    def test_reaction_hard_delete(self):
+        response = self.c.reactions.add(
+            "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+        )
+        self.c.reactions.delete(response["id"], soft=False)
+
+    def test_reaction_soft_delete(self):
+        response = self.c.reactions.add(
+            "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+        )
+        self.c.reactions.delete(response["id"], soft=True)
+
+    def test_reaction_soft_delete_and_restore(self):
+        response = self.c.reactions.add(
+            "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+        )
+        self.c.reactions.delete(response["id"], soft=True)
+        r1 = self.c.reactions.get(response["id"])
+        self.assertIsNot(r1["deleted_at"], None)
+        self.c.reactions.restore(response["id"])
+        r1 = self.c.reactions.get(response["id"])
+        self.assertTrue("deleted_at" not in r1)
+
+    def test_reaction_invalid_restore(self):
+        response = self.c.reactions.add(
+            "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+        )
+        self.assertRaises(
+            DoesNotExistException, lambda: self.c.reactions.restore(response["id"])
+        )
 
     def test_reaction_add_child(self):
         response = self.c.reactions.add(

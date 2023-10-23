@@ -8,7 +8,7 @@ import pytz
 from dateutil.tz import tzlocal
 
 import stream
-from stream.exceptions import ApiKeyException, InputException
+from stream.exceptions import ApiKeyException, InputException, DoesNotExistException
 
 
 def assert_first_activity_id_equal(activities, correct_activity_id):
@@ -1047,6 +1047,44 @@ async def test_reaction_delete(async_client):
         "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
     )
     await async_client.reactions.delete(response["id"])
+
+
+@pytest.mark.asyncio
+async def test_reaction_hard_delete(async_client):
+    response = await async_client.reactions.add(
+        "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+    )
+    await async_client.reactions.delete(response["id"], soft=False)
+
+
+@pytest.mark.asyncio
+async def test_reaction_soft_delete(async_client):
+    response = await async_client.reactions.add(
+        "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+    )
+    await async_client.reactions.delete(response["id"], soft=True)
+
+
+@pytest.mark.asyncio
+async def test_reaction_soft_delete_and_restore(async_client):
+    response = await async_client.reactions.add(
+        "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+    )
+    await async_client.reactions.delete(response["id"], soft=True)
+    r1 = await async_client.reactions.get(response["id"])
+    assert r1.get("deleted_at", None) is not None
+    await async_client.reactions.restore(response["id"])
+    r1 = await async_client.reactions.get(response["id"])
+    assert "deleted_at" not in r1
+
+
+@pytest.mark.asyncio
+async def test_reaction_invalid_restore(async_client):
+    response = await async_client.reactions.add(
+        "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+    )
+    with pytest.raises(DoesNotExistException):
+        await async_client.reactions.restore(response["id"])
 
 
 @pytest.mark.asyncio
