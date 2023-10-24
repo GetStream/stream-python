@@ -31,7 +31,9 @@ def connect(
     """
     from stream.client import AsyncStreamClient, StreamClient
 
-    location = os.environ.get("STREAM_REGION")
+    if location is None:
+        location = os.environ.get("STREAM_REGION")
+
     stream_url = os.environ.get("STREAM_URL")
     # support for the heroku STREAM_URL syntax
     if stream_url and not api_key:

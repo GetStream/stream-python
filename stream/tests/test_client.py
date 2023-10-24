@@ -150,14 +150,14 @@ class ClientTest(TestCase):
             )
 
     def test_collections_url_default(self):
-        c = stream.connect("key", "secret")
+        c = stream.connect("key", "secret", location="")
         feed_url = c.get_full_url(relative_url="meta/", service_name="api")
 
         if not self.local_tests:
             self.assertEqual(feed_url, "https://api.stream-io-api.com/api/v1.0/meta/")
 
     def test_personalization_url_default(self):
-        c = stream.connect("key", "secret")
+        c = stream.connect("key", "secret", location="")
         feed_url = c.get_full_url(
             relative_url="recommended", service_name="personalization"
         )
@@ -169,7 +169,7 @@ class ClientTest(TestCase):
             )
 
     def test_api_url_default(self):
-        c = stream.connect("key", "secret")
+        c = stream.connect("key", "secret", location="")
         feed_url = c.get_full_url(service_name="api", relative_url="feed/")
 
         if not self.local_tests:
