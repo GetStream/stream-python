@@ -5,10 +5,10 @@ from setuptools import setup, find_packages
 from stream import __version__, __maintainer__, __email__, __license__
 
 install_requires = [
-    "requests>=2.28.0,<3",
-    "pyjwt>=2.6.0,<3",
-    "pytz>=2022.7.1",
-    "aiohttp>=3.8.4",
+    "requests>=2.31.0,<3",
+    "pyjwt>=2.8.0,<3",
+    "pytz>=2023.3.post1",
+    "aiohttp>=3.9.0b0",
 ]
 tests_require = ["pytest", "pytest-cov", "python-dateutil", "pytest-asyncio"]
 ci_require = ["black", "flake8", "pytest-cov"]

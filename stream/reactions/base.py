@@ -23,7 +23,11 @@ class AbstractReactions(ABC):
         pass
 
     @abstractmethod
-    def delete(self, reaction_id):
+    def delete(self, reaction_id, soft=False):
+        pass
+
+    @abstractmethod
+    def restore(self, reaction_id):
         pass
 
     @abstractmethod

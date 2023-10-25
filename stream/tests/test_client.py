@@ -17,7 +17,7 @@ from unittest import TestCase
 
 import stream
 from stream import serializer
-from stream.exceptions import ApiKeyException, InputException
+from stream.exceptions import ApiKeyException, InputException, DoesNotExistException
 from stream.feed import Feed
 
 
@@ -150,14 +150,14 @@ class ClientTest(TestCase):
             )
 
     def test_collections_url_default(self):
-        c = stream.connect("key", "secret")
+        c = stream.connect("key", "secret", location="")
         feed_url = c.get_full_url(relative_url="meta/", service_name="api")
 
         if not self.local_tests:
             self.assertEqual(feed_url, "https://api.stream-io-api.com/api/v1.0/meta/")
 
     def test_personalization_url_default(self):
-        c = stream.connect("key", "secret")
+        c = stream.connect("key", "secret", location="")
         feed_url = c.get_full_url(
             relative_url="recommended", service_name="personalization"
         )
@@ -169,7 +169,7 @@ class ClientTest(TestCase):
             )
 
     def test_api_url_default(self):
-        c = stream.connect("key", "secret")
+        c = stream.connect("key", "secret", location="")
         feed_url = c.get_full_url(service_name="api", relative_url="feed/")
 
         if not self.local_tests:
@@ -1438,6 +1438,37 @@ class ClientTest(TestCase):
             "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
         )
         self.c.reactions.delete(response["id"])
+
+    def test_reaction_hard_delete(self):
+        response = self.c.reactions.add(
+            "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+        )
+        self.c.reactions.delete(response["id"], soft=False)
+
+    def test_reaction_soft_delete(self):
+        response = self.c.reactions.add(
+            "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+        )
+        self.c.reactions.delete(response["id"], soft=True)
+
+    def test_reaction_soft_delete_and_restore(self):
+        response = self.c.reactions.add(
+            "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+        )
+        self.c.reactions.delete(response["id"], soft=True)
+        r1 = self.c.reactions.get(response["id"])
+        self.assertIsNot(r1["deleted_at"], None)
+        self.c.reactions.restore(response["id"])
+        r1 = self.c.reactions.get(response["id"])
+        self.assertTrue("deleted_at" not in r1)
+
+    def test_reaction_invalid_restore(self):
+        response = self.c.reactions.add(
+            "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+        )
+        self.assertRaises(
+            DoesNotExistException, lambda: self.c.reactions.restore(response["id"])
+        )
 
     def test_reaction_add_child(self):
         response = self.c.reactions.add(
