@@ -11,6 +11,7 @@ class AbstractReactions(ABC):
         data=None,
         target_feeds=None,
         target_feeds_extra_data=None,
+        moderation_template=None,
     ):
         pass
 
@@ -39,6 +40,7 @@ class AbstractReactions(ABC):
         data=None,
         target_feeds=None,
         target_feeds_extra_data=None,
+        moderation_template=None,
     ):
         pass
 

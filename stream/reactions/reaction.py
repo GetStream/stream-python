@@ -10,6 +10,7 @@ class Reactions(BaseReactions):
         data=None,
         target_feeds=None,
         target_feeds_extra_data=None,
+        moderation_template=None,
     ):
         payload = dict(
             kind=kind,
@@ -19,6 +20,8 @@ class Reactions(BaseReactions):
             target_feeds_extra_data=target_feeds_extra_data,
             user_id=user_id,
         )
+        if moderation_template is not None:
+            payload["moderation_template"] = moderation_template
         return self.client.post(
             self.API_ENDPOINT,
             service_name=self.SERVICE_NAME,
@@ -65,6 +68,7 @@ class Reactions(BaseReactions):
         data=None,
         target_feeds=None,
         target_feeds_extra_data=None,
+        moderation_template=None,
     ):
         payload = dict(
             kind=kind,
@@ -74,6 +78,8 @@ class Reactions(BaseReactions):
             target_feeds_extra_data=target_feeds_extra_data,
             user_id=user_id,
         )
+        if moderation_template is not None:
+            payload["moderation_template"] = moderation_template
         return self.client.post(
             self.API_ENDPOINT,
             service_name=self.SERVICE_NAME,
@@ -100,6 +106,7 @@ class AsyncReactions(BaseReactions):
         data=None,
         target_feeds=None,
         target_feeds_extra_data=None,
+        moderation_template=None,
     ):
         payload = dict(
             kind=kind,
@@ -109,6 +116,8 @@ class AsyncReactions(BaseReactions):
             target_feeds_extra_data=target_feeds_extra_data,
             user_id=user_id,
         )
+        if moderation_template is not None:
+            payload["moderation_template"] = moderation_template
         return await self.client.post(
             self.API_ENDPOINT,
             service_name=self.SERVICE_NAME,
@@ -155,6 +164,7 @@ class AsyncReactions(BaseReactions):
         data=None,
         target_feeds=None,
         target_feeds_extra_data=None,
+        moderation_template=None,
     ):
         payload = dict(
             kind=kind,
@@ -164,6 +174,8 @@ class AsyncReactions(BaseReactions):
             target_feeds_extra_data=target_feeds_extra_data,
             user_id=user_id,
         )
+        if moderation_template is not None:
+            payload["moderation_template"] = moderation_template
         return await self.client.post(
             self.API_ENDPOINT,
             service_name=self.SERVICE_NAME,
