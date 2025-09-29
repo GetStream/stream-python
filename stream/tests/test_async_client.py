@@ -1148,6 +1148,93 @@ async def test_reaction_filter(async_client):
 
 
 @pytest.mark.asyncio
+async def test_reaction_add_with_moderation_template(async_client):
+    """Test adding a reaction with moderation template"""
+    try:
+        response = await async_client.reactions.add(
+            "like",
+            "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
+            "mike",
+            moderation_template="test_moderation_template",
+        )
+        # If moderation is enabled, verify the reaction was created
+        assert "id" in response
+        reaction = await async_client.reactions.get(response["id"])
+        assert reaction["kind"] == "like"
+        assert reaction["user_id"] == "mike"
+    except Exception as e:
+        # If moderation is not enabled, we expect a specific error
+        # The important thing is that the moderation_template parameter
+        # was accepted and passed to the API without causing a client-side error
+        error_message = str(e)
+        assert (
+            "moderation not enabled" in error_message
+        ), f"Expected moderation error, but got: {error_message}"
+
+
+@pytest.mark.asyncio
+async def test_reaction_add_child_with_moderation_template(async_client):
+    """Test adding a child reaction with moderation template"""
+    # First create a parent reaction
+    parent_response = await async_client.reactions.add(
+        "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+    )
+
+    try:
+        # Add child with moderation template
+        child_response = await async_client.reactions.add_child(
+            "reply",
+            parent_response["id"],
+            "rob",
+            data={"text": "Great post!"},
+            moderation_template="child_moderation_template",
+        )
+        # If moderation is enabled, verify the child reaction was created
+        assert "id" in child_response
+        child_reaction = await async_client.reactions.get(child_response["id"])
+        assert child_reaction["kind"] == "reply"
+        assert child_reaction["user_id"] == "rob"
+        assert child_reaction["parent"] == parent_response["id"]
+    except Exception as e:
+        # If moderation is not enabled, we expect a specific error
+        # The important thing is that the moderation_template parameter
+        # was accepted and passed to the API without causing a client-side error
+        error_message = str(e)
+        assert (
+            "moderation not enabled" in error_message
+        ), f"Expected moderation error, but got: {error_message}"
+
+
+@pytest.mark.asyncio
+async def test_reaction_add_without_moderation_template_backwards_compatibility(
+    async_client,
+):
+    """Test that existing functionality still works without moderation template"""
+    response = await async_client.reactions.add(
+        "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+    )
+    assert "id" in response
+    reaction = await async_client.reactions.get(response["id"])
+    assert reaction["kind"] == "like"
+
+
+@pytest.mark.asyncio
+async def test_reaction_add_child_without_moderation_template_backwards_compatibility(
+    async_client,
+):
+    """Test that existing child functionality still works without moderation template"""
+    parent_response = await async_client.reactions.add(
+        "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+    )
+    child_response = await async_client.reactions.add_child(
+        "reply", parent_response["id"], "rob"
+    )
+    assert "id" in child_response
+    child_reaction = await async_client.reactions.get(child_response["id"])
+    assert child_reaction["parent"] == parent_response["id"]
+
+
+@pytest.mark.asyncio
 async def test_user_add(async_client):
     await async_client.users.add(str(uuid1()))
 
