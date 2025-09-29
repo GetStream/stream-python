@@ -1476,6 +1476,83 @@ class ClientTest(TestCase):
         )
         self.c.reactions.add_child("like", response["id"], "rob")
 
+    def test_reaction_add_with_moderation_template(self):
+        """Test adding a reaction with moderation template"""
+        try:
+            response = self.c.reactions.add(
+                "like",
+                "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4",
+                "mike",
+                moderation_template="test_moderation_template",
+            )
+            # If moderation is enabled, verify the reaction was created
+            self.assertTrue("id" in response)
+            reaction = self.c.reactions.get(response["id"])
+            self.assertEqual(reaction["kind"], "like")
+            self.assertEqual(reaction["user_id"], "mike")
+        except Exception as e:
+            # If moderation is not enabled, we expect a specific error
+            # The important thing is that the moderation_template parameter
+            # was accepted and passed to the API without causing a client-side error
+            error_message = str(e)
+            self.assertTrue(
+                "moderation not enabled" in error_message,
+                f"Expected moderation error, but got: {error_message}",
+            )
+
+    def test_reaction_add_child_with_moderation_template(self):
+        """Test adding a child reaction with moderation template"""
+        # First create a parent reaction
+        parent_response = self.c.reactions.add(
+            "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+        )
+
+        try:
+            # Add child with moderation template
+            child_response = self.c.reactions.add_child(
+                "reply",
+                parent_response["id"],
+                "rob",
+                data={"text": "Great post!"},
+                moderation_template="child_moderation_template",
+            )
+            # If moderation is enabled, verify the child reaction was created
+            self.assertTrue("id" in child_response)
+            child_reaction = self.c.reactions.get(child_response["id"])
+            self.assertEqual(child_reaction["kind"], "reply")
+            self.assertEqual(child_reaction["user_id"], "rob")
+            self.assertEqual(child_reaction["parent"], parent_response["id"])
+        except Exception as e:
+            # If moderation is not enabled, we expect a specific error
+            # The important thing is that the moderation_template parameter
+            # was accepted and passed to the API without causing a client-side error
+            error_message = str(e)
+            self.assertTrue(
+                "moderation not enabled" in error_message,
+                f"Expected moderation error, but got: {error_message}",
+            )
+
+    def test_reaction_add_without_moderation_template(self):
+        """Test that existing functionality still works without moderation template"""
+        response = self.c.reactions.add(
+            "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+        )
+        self.assertTrue("id" in response)
+        reaction = self.c.reactions.get(response["id"])
+        self.assertEqual(reaction["kind"], "like")
+
+    def test_reaction_add_child_without_moderation_template(self):
+        """Test that existing child functionality still works without moderation template"""
+        parent_response = self.c.reactions.add(
+            "like", "54a60c1e-4ee3-494b-a1e3-50c06acb5ed4", "mike"
+        )
+        child_response = self.c.reactions.add_child(
+            "reply", parent_response["id"], "rob"
+        )
+        self.assertTrue("id" in child_response)
+        child_reaction = self.c.reactions.get(child_response["id"])
+        self.assertEqual(child_reaction["parent"], parent_response["id"])
+
     def test_reaction_filter_random(self):
         self.c.reactions.filter(
             kind="like",
