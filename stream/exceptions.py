@@ -15,7 +15,6 @@ class StreamApiException(Exception):
 
 
 class ApiKeyException(StreamApiException):
-
     """
     Raised when there is an issue with your Access Key
     """
@@ -25,7 +24,6 @@ class ApiKeyException(StreamApiException):
 
 
 class SignatureException(StreamApiException):
-
     """
     Raised when there is an issue with the signature you provided
     """
@@ -35,7 +33,6 @@ class SignatureException(StreamApiException):
 
 
 class InputException(StreamApiException):
-
     """
     Raised when you send the wrong data to the API
     """
@@ -45,7 +42,6 @@ class InputException(StreamApiException):
 
 
 class CustomFieldException(StreamApiException):
-
     """
     Raised when there are missing or misconfigured custom fields
     """
@@ -55,7 +51,6 @@ class CustomFieldException(StreamApiException):
 
 
 class FeedConfigException(StreamApiException):
-
     """
     Raised when there are missing or misconfigured custom fields
     """
@@ -65,7 +60,6 @@ class FeedConfigException(StreamApiException):
 
 
 class SiteSuspendedException(StreamApiException):
-
     """
     Raised when the site requesting the data is suspended
     """
@@ -75,7 +69,6 @@ class SiteSuspendedException(StreamApiException):
 
 
 class InvalidPaginationException(StreamApiException):
-
     """
     Raised when there is an issue with your Access Key
     """
@@ -108,7 +101,6 @@ class RankingException(FeedConfigException):
 
 
 class RateLimitReached(StreamApiException):
-
     """
     Raised when too many requests are performed
     """
