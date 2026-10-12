@@ -1,3 +1,8 @@
+> **`stream-python` is a Feeds v2 client and is now in maintenance mode.** It will continue to
+> receive critical fixes, so it is safe to keep using with a v2 app. New projects should start
+> with Feeds v3 and [`stream-py`](https://github.com/GetStream/stream-py) (PyPI `getstream`).
+> Migration guide: https://getstream.io/activity-feeds/docs/python/v2-to-v3-migration/
+
 # Official Python SDK for [Stream Feeds](https://getstream.io/activity-feeds/)
 
 [![build](https://github.com/GetStream/stream-python/workflows/build/badge.svg)](https://github.com/GetStream/stream-python/actions) [![PyPI version](https://badge.fury.io/py/stream-python.svg)](http://badge.fury.io/py/stream-python) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/stream-python.svg)
