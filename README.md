@@ -1,7 +1,15 @@
-> **`stream-python` is a Feeds v2 client and is now in maintenance mode.** It will continue to
-> receive critical fixes, so it is safe to keep using with a v2 app. New projects should start
-> with Feeds v3 and [`stream-py`](https://github.com/GetStream/stream-py) (PyPI `getstream`).
-> Migration guide: https://getstream.io/activity-feeds/docs/python/v2-to-v3-migration/
+> **Feeds v2 has been superseded by Feeds v3.** `stream-python` is the Feeds v2 client for Python.
+> It is in maintenance mode: it still gets critical fixes and is safe to keep using with an
+> existing v2 app. New projects should start on Feeds v3 with
+> [`stream-py`](https://github.com/GetStream/stream-py) (PyPI `getstream`).
+>
+> **Moving a v2 app to v3:** you start the migration from the Stream Dashboard, and it keeps your
+> v2 and v3 data in sync while you switch your code over. Step by step:
+> [Feeds v2 to v3 migration guide](https://getstream.io/activity-feeds/docs/python/v2-to-v3-migration/).
+> If you use an AI coding agent, [Stream's Agent Skills](https://getstream.io/agent-skills/docs/) can help:
+> [`/stream-feeds-migration`](https://getstream.io/agent-skills/docs/skills/stream-feeds-migration/)
+> builds the migration mapping from your own v2 data, and `/stream-docs` answers Feeds v3
+> questions while you port your code.
 
 # Official Python SDK for [Stream Feeds](https://getstream.io/activity-feeds/)
 
